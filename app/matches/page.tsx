@@ -10,11 +10,11 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { AddMatchDialog } from "@/components/matches/addMatchDialog";
 import { EditMatchDialog } from "@/components/matches/editMatchDialog";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Match } from "../hooks/useAppData";
@@ -40,14 +40,16 @@ export default function MatchRecordsPage() {
   );
 }
 
-const getNextTuesdays = (count: number) => {
+const getNextTuesdays = (count: number, fromDate?: string) => {
   const dates = [];
-  let d = new Date();
-  // Find the first Tuesday from now
+  let d = fromDate ? new Date(fromDate) : new Date();
+
+  // Find the first Tuesday from d
+  // If fromDate is a Tuesday, we want the *next* one, so we add 7
   d.setDate(d.getDate() + ((7 - d.getDay() + 2) % 7 || 7));
-  
+
   for (let i = 0; i < count; i++) {
-    dates.push(new Date(d).toISOString().split('T')[0]); 
+    dates.push(new Date(d).toISOString().split('T')[0]);
     d.setDate(d.getDate() + 7);
   }
   return dates;
@@ -62,13 +64,13 @@ const shuffle = (array: any[]) => {
   return newArr;
 };
 
-const generateFixtures = (teams: any[], weekCount: number) => {
+const generateFixtures = (teams: any[], weekCount: number, startWeek: number = 1, startDate?: string) => {
   const fixtures = [];
   const teamList = [...teams];
   if (teamList.length % 2 !== 0) teamList.push({ id: 'bye', name: 'BYE' });
 
   const numTeams = teamList.length;
-  const tuesdays = getNextTuesdays(weekCount); // Dynamic count
+  const tuesdays = getNextTuesdays(weekCount, startDate);
   const timeSlots = ["8:00", "10:00", "12:00", "14:00"];
 
   for (let weekIndex = 0; weekIndex < weekCount; weekIndex++) {
@@ -95,8 +97,8 @@ const generateFixtures = (teams: any[], weekCount: number) => {
           homeReds: 0,
           awayReds: 0,
           minutesPlayed: 90,
-          matchDay: weekIndex + 1,
-          date: currentTuesday, // "YYYY-MM-DD"
+          matchDay: startWeek + weekIndex,
+          scheduledDate: currentTuesday, 
           time: shuffledTimes[matchInWeekCounter % shuffledTimes.length],
           league: "Seasonal League",
           status: "upcoming"    // Generator sets to upcoming, not played
@@ -125,12 +127,27 @@ function MatchRecordsContent() {
 
   const handleAutoGenerate = async (weekCount: number) => {
     if (teams.length < 2) return alert("Add more teams first!");
+
+    // Find the last match week and date to continue from
+    const lastWeek = matches.length > 0 
+      ? Math.max(...matches.map(m => m.matchDay || 0)) 
+      : 0;
     
+    // Sort matches by date to find the latest date
+    const lastMatchInstance = matches.length > 0
+      ? [...matches].sort((a, b) => {
+          const dateA = new Date(a.scheduledDate || 0).getTime();
+          const dateB = new Date(b.scheduledDate || 0).getTime();
+          return dateB - dateA;
+        })[0]
+      : null;
+    const lastDate = lastMatchInstance?.scheduledDate;
+
     const confirmGen = confirm(`Generate ${weekCount} weeks of Tuesday fixtures? This will add them to your records.`);
     if (!confirmGen) return;
 
     setIsGenerating(true);
-    const newFixtures = generateFixtures(teams, weekCount);
+    const newFixtures = generateFixtures(teams, weekCount, lastWeek + 1, lastDate);
 
     try {
       // Loop through and save each
@@ -151,7 +168,7 @@ function MatchRecordsContent() {
     if (matches.length === 0) {
       setIsDeleteDialogOpen(false)
       return alert("No matches to delete!");
-    } 
+    }
 
     const confirmDelete = confirm(
       "DANGER: This will delete EVERY match fixture in the database. This action cannot be undone. Proceed?"
@@ -177,11 +194,11 @@ function MatchRecordsContent() {
 
   const handleDeleteMatchWeek = async (day: string) => {
     const matchesInWeek = groupedMatches[day];
-    
+
     const confirmDelete = confirm(
       `Are you sure you want to delete all ${matchesInWeek.length} fixtures for Match Week ${day}?`
     );
-    
+
     if (!confirmDelete) return;
 
     setIsDeleting(true); // START OVERLAY
@@ -223,7 +240,7 @@ function MatchRecordsContent() {
 
   const downloadMatchWeek = async () => {
     if (!exportRef.current) return;
-    
+
     try {
       const dataUrl = await domToPng(exportRef.current, {
         scale: 2,
@@ -272,9 +289,9 @@ function MatchRecordsContent() {
         )}
 
         {isDeleting && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <DeleteLoadingOverlay message="Clearing Week Fixtures" />
@@ -287,7 +304,7 @@ function MatchRecordsContent() {
           <h1 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight">Match Records</h1>
           <p className="text-muted-foreground mt-1">Fixtures and season results</p>
         </motion.div>
-        
+
         <div className="flex items-center gap-3">
           {/* Filter UI - Strictly obeying current style */}
           <div className="flex p-1 bg-secondary/30 rounded-xl border border-border/50">
@@ -312,7 +329,7 @@ function MatchRecordsContent() {
                 <Button onClick={() => setIsAddDialogOpen(true)} className="gap-2 shadow-lg shadow-primary/20">
                   <Plus className="w-4 h-4" /> Add Match
                 </Button>
-                
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="icon" className="h-10 w-10">
@@ -326,8 +343,8 @@ function MatchRecordsContent() {
                     <DropdownMenuItem onClick={downloadMatchWeek}>
                       <Download className="w-4 h-4 mr-2" /> Download UI
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => setIsDeleteDialogOpen(true)} 
+                    <DropdownMenuItem
+                      onClick={() => setIsDeleteDialogOpen(true)}
                       disabled={isDeleting || isGenerating}
                       className="text-destructive focus:text-destructive"
                     >
@@ -339,8 +356,8 @@ function MatchRecordsContent() {
 
               {/* DESKTOP VIEW: Full Horizontal Row */}
               <div className="hidden md:flex items-center gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setIsDeleteDialogOpen(true)}
                   disabled={isDeleting || isGenerating}
                   className="gap-2 border-destructive/20 text-destructive hover:bg-destructive/10 hover:border-destructive hover:text-destructive transition-all"
@@ -349,9 +366,9 @@ function MatchRecordsContent() {
                   Clear All
                 </Button>
 
-                <Button 
-                  variant="secondary" 
-                  onClick={() => setIsGenDialogOpen(true)} 
+                <Button
+                  variant="secondary"
+                  onClick={() => setIsGenDialogOpen(true)}
                   disabled={isGenerating}
                   className="gap-2 border-primary/20"
                 >
@@ -370,16 +387,16 @@ function MatchRecordsContent() {
             </>
           )}
         </div>
-        
+
       </div>
 
       {/* MATCH LIST SECTION */}
       <section className="space-y-6" ref={exportRef}>
         <AnimatePresence mode="popLayout">
           {matchDays.length === 0 ? (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               className="text-center py-20 bg-secondary/5 rounded-3xl border-dashed border-2"
             >
               <ClipboardList className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
@@ -389,10 +406,10 @@ function MatchRecordsContent() {
             <Accordion type="multiple" defaultValue={[matchDays[0]]} className="space-y-6">
               {matchDays.map((day) => (
                 <AccordionItem key={day} value={day} className="border-none">
-                  <motion.div 
-                    key={day} 
+                  <motion.div
+                    key={day}
                     id={`day-section-${day}`}
-                    layout 
+                    layout
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
@@ -409,9 +426,9 @@ function MatchRecordsContent() {
                       <div className="h-px flex-1 bg-border" />
 
                       <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={(e) => {
                             e.stopPropagation(); // Prevents the accordion from toggling
                             downloadSpecificDay(day);
@@ -422,9 +439,9 @@ function MatchRecordsContent() {
                         </Button>
 
                         {isAdmin && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDeleteMatchWeek(day);
@@ -436,15 +453,15 @@ function MatchRecordsContent() {
                         )}
                       </div>
                     </div>
-    
+
                     <AccordionContent className="pt-4 pb-2 px-1">
                       <div className="grid gap-4">
                         {groupedMatches[day].map((match: any) => (
-                          <MatchCard 
-                            key={match.id} 
-                            match={match} 
-                            teams={teams} 
-                            isAdmin={isAdmin} 
+                          <MatchCard
+                            key={match.id}
+                            match={match}
+                            teams={teams}
+                            isAdmin={isAdmin}
                             onEdit={(m: Match) => { setMatchToEdit(m); setIsEditDialogOpen(true); }}
                             onDelete={deleteMatch}
                           />
@@ -461,16 +478,16 @@ function MatchRecordsContent() {
 
       <AddMatchDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
       {matchToEdit && (
-        <EditMatchDialog 
-          match={matchToEdit} 
-          open={isEditDialogOpen} 
-          onOpenChange={setIsEditDialogOpen} 
+        <EditMatchDialog
+          match={matchToEdit}
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
         />
       )}
-      <GenerateFixturesDialog 
-        open={isGenDialogOpen} 
-        onOpenChange={setIsGenDialogOpen} 
-        onConfirm={handleAutoGenerate} 
+      <GenerateFixturesDialog
+        open={isGenDialogOpen}
+        onOpenChange={setIsGenDialogOpen}
+        onConfirm={handleAutoGenerate}
       />
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="border-destructive/50">
@@ -479,7 +496,7 @@ function MatchRecordsContent() {
               <AlertTriangle className="w-5 h-5" /> Extreme Action Required
             </DialogTitle>
             <DialogDescription>
-              You are about to wipe the entire season's fixtures. This will delete all 
+              You are about to wipe the entire season's fixtures. This will delete all
               <strong> {matches.length} matches</strong> permanently.
             </DialogDescription>
           </DialogHeader>
@@ -517,8 +534,8 @@ function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
       layout
       className={cn(
         "relative group p-4 lg:p-6 rounded-2xl transition-all duration-300 border-2",
-        isPlayed 
-          ? "bg-card border-border hover:border-primary/30 shadow-sm" 
+        isPlayed
+          ? "bg-card border-border hover:border-primary/30 shadow-sm"
           : "bg-primary/[0.02] border-dashed border-primary/20 hover:border-primary/40"
       )}
     >
@@ -535,7 +552,7 @@ function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
               <DropdownMenuItem onClick={() => onEdit(match)}>
                 <Edit2 className="w-4 h-4 mr-2" /> {isPlayed ? "Edit Report" : "Enter Result"}
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => confirm("Delete this record?") && onDelete(match.id)}
                 className="text-destructive focus:text-destructive"
               >
@@ -602,13 +619,13 @@ function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
               {/* DISPLAY TIME FOR UPCOMING MATCHES */}
               {match.time && (
                 <span className="flex items-center gap-1.5 text-xl font-bold text-foreground">
-                  <Clock className="w-3.5 h-3.5 text-primary" /> 
+                  <Clock className="w-3.5 h-3.5 text-primary" />
                   {formattedTime}
                 </span>
               )}
             </div>
           )}
-          
+
           <div className="flex flex-col sm:flex-row items-center gap-2 text-xs uppercase tracking-widest text-foreground font-bold">
             {isPlayed ? (
               <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-0.5 rounded text-primary">
