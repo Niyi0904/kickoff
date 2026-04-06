@@ -21,7 +21,7 @@ export default function OnboardingPage() {
   );
 }
 
-const INVITE_DEADLINE = new Date('2026-03-31T23:59:59').getTime();
+const INVITE_DEADLINE = new Date('2026-04-30T23:59:59').getTime();
 
 function OnboardingContent() {
   const { isAdmin, user } = useAppContext();

@@ -12,7 +12,7 @@ export function generateInviteCode(): string {
 /**
  * Create an invite for a new user
  */
-const INVITE_DEADLINE = new Date('2026-03-31T23:59:59').getTime();
+const INVITE_DEADLINE = new Date('2026-04-30T23:59:59').getTime();
 export async function createUserInvite(
   email: string,
   role: 'admin' | 'user',

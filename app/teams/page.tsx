@@ -44,12 +44,12 @@ const getTeamInitials = (name: string) => {
     .slice(0, 2);
 };
 
-const INVITE_DEADLINE = new Date('2026-03-31T23:59:59').getTime();
+const INVITE_DEADLINE = new Date('2026-04-30T23:59:59').getTime();
 
 function TeamsContent() {
   const { teams, addTeam, deleteTeam, updateTeam, getTeamPlayers, getTeamManager, setManager, isAdmin } = useAppContext();
   const router = useRouter(); // Added for navigation
-  
+
   const [open, setOpen] = useState(false);
   const [managerDialog, setManagerDialog] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", stadium: "", founded: "", primaryColor: "#3b82f6", logoFile: null as File | null });
@@ -64,25 +64,25 @@ function TeamsContent() {
 
 
   useEffect(() => {
-      const timer = setInterval(() => {
-        const now = Date.now();
-        const distance = INVITE_DEADLINE - now;
-  
-        if (distance < 0) {
-          setTimeLeft(null);
-          clearInterval(timer);
-        } else {
-          setTimeLeft({
-            days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-            hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-            minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-            seconds: Math.floor((distance % (1000 * 60)) / 1000),
-          });
-        }
-      }, 1000);
-  
-      return () => clearInterval(timer);
-    }, [INVITE_DEADLINE]);
+    const timer = setInterval(() => {
+      const now = Date.now();
+      const distance = INVITE_DEADLINE - now;
+
+      if (distance < 0) {
+        setTimeLeft(null);
+        clearInterval(timer);
+      } else {
+        setTimeLeft({
+          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((distance % (1000 * 60)) / 1000),
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [INVITE_DEADLINE]);
 
   const handleUpdateTeam = async () => {
     if (!editingTeam || !editingTeam.name.trim()) return;
@@ -125,8 +125,8 @@ function TeamsContent() {
 
   return (
     <div>
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }} 
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
@@ -233,7 +233,7 @@ function TeamsContent() {
               onClick={() => router.push(`/teams/${team.id}`)}
             >
               <div className="h-2" style={{ backgroundColor: team.primaryColor }} />
-              
+
               {/* Action Buttons - e.stopPropagation() prevents navigation when clicking buttons */}
               <div className="absolute top-4 right-2 flex gap-1 z-10" onClick={(e) => e.stopPropagation()}>
                 {isAdmin && (
@@ -267,7 +267,7 @@ function TeamsContent() {
                           <AlertDialogDescription>
                             {teamPlayers.length > 0 ? (
                               <>
-                                The team <strong>{team.name}</strong> currently has <strong>{teamPlayers.length}</strong> players. 
+                                The team <strong>{team.name}</strong> currently has <strong>{teamPlayers.length}</strong> players.
                                 You must remove or reassign all players before this team can be deleted.
                               </>
                             ) : (
@@ -296,8 +296,8 @@ function TeamsContent() {
 
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div 
-                    className="relative" 
+                  <div
+                    className="relative"
                     onClick={(e) => {
                       if (isAdmin) {
                         e.stopPropagation();
@@ -340,9 +340,9 @@ function TeamsContent() {
                 {isAdmin && (
                   <Dialog open={managerDialog === team.id} onOpenChange={(v) => setManagerDialog(v ? team.id : null)}>
                     <DialogTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         disabled={isDeadlinePassed}
                         className="w-full gap-2 relative z-10"
                         onClick={(e) => e.stopPropagation()}
@@ -385,19 +385,19 @@ function TeamsContent() {
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Team Name</label>
-                <Input value={editingTeam.name} onChange={(e) => setEditingTeam({...editingTeam, name: e.target.value})} className="bg-secondary border-border" />
+                <Input value={editingTeam.name} onChange={(e) => setEditingTeam({ ...editingTeam, name: e.target.value })} className="bg-secondary border-border" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Stadium</label>
-                <Input value={editingTeam.stadium} onChange={(e) => setEditingTeam({...editingTeam, stadium: e.target.value})} className="bg-secondary border-border" />
+                <Input value={editingTeam.stadium} onChange={(e) => setEditingTeam({ ...editingTeam, stadium: e.target.value })} className="bg-secondary border-border" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Year Founded</label>
-                <Input value={editingTeam.founded} onChange={(e) => setEditingTeam({...editingTeam, founded: e.target.value})} className="bg-secondary border-border" />
+                <Input value={editingTeam.founded} onChange={(e) => setEditingTeam({ ...editingTeam, founded: e.target.value })} className="bg-secondary border-border" />
               </div>
               <div className="flex items-center gap-3">
                 <label className="text-sm text-muted-foreground">Team Color</label>
-                <input type="color" value={editingTeam.primaryColor} onChange={(e) => setEditingTeam({...editingTeam, primaryColor: e.target.value})} className="w-10 h-10 rounded cursor-pointer border-0" />
+                <input type="color" value={editingTeam.primaryColor} onChange={(e) => setEditingTeam({ ...editingTeam, primaryColor: e.target.value })} className="w-10 h-10 rounded cursor-pointer border-0" />
               </div>
               <Button onClick={handleUpdateTeam} className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Updating..." : "Save Changes"}
@@ -407,10 +407,10 @@ function TeamsContent() {
         </DialogContent>
       </Dialog>
 
-      <TeamLogoUploadDialog 
-        team={selectedTeamForLogo} 
-        open={logoDialogOpen} 
-        onOpenChange={setLogoDialogOpen} 
+      <TeamLogoUploadDialog
+        team={selectedTeamForLogo}
+        open={logoDialogOpen}
+        onOpenChange={setLogoDialogOpen}
       />
     </div>
   );
