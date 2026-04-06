@@ -44,9 +44,9 @@ const getInitials = (name: string) => {
 };
 
 const positions = [
-  "⁠Goal Keeper (GK)", 
-  "Defender (DF)", 
-  "Midfielder (MF)", 
+  "⁠Goal Keeper (GK)",
+  "Defender (DF)",
+  "Midfielder (MF)",
   "Forward (FW)",
   "⁠⁠Central Defenders (CB)",
   "⁠⁠Right Back (RB)",
@@ -59,7 +59,7 @@ const positions = [
   "Central Midfielder (CM)"
 ]
 
-const INVITE_DEADLINE = new Date('2026-03-31T23:59:59').getTime();
+const INVITE_DEADLINE = new Date('2026-04-30T23:59:59').getTime();
 
 function PlayersContent() {
   const { teams, players, addPlayer, updatePlayer, deletePlayer, getPlayerStats, isAdmin } = useAppContext();
@@ -74,33 +74,33 @@ function PlayersContent() {
   const filtered = filterTeam === "all" ? players : players.filter((p) => p.teamId === filterTeam);
 
   const isDeadlinePassed = Date.now() > INVITE_DEADLINE;
-  
-  
+
+
   useEffect(() => {
-      const timer = setInterval(() => {
-        const now = Date.now();
-        const distance = INVITE_DEADLINE - now;
-  
-        if (distance < 0) {
-          setTimeLeft(null);
-          clearInterval(timer);
-        } else {
-          setTimeLeft({
-            days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-            hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-            minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-            seconds: Math.floor((distance % (1000 * 60)) / 1000),
-          });
-        }
-      }, 1000);
-  
-      return () => clearInterval(timer);
-    }, [INVITE_DEADLINE]);
+    const timer = setInterval(() => {
+      const now = Date.now();
+      const distance = INVITE_DEADLINE - now;
+
+      if (distance < 0) {
+        setTimeLeft(null);
+        clearInterval(timer);
+      } else {
+        setTimeLeft({
+          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((distance % (1000 * 60)) / 1000),
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [INVITE_DEADLINE]);
 
   const handleUpdate = async () => {
     if (!editingPlayer || !editingPlayer.name.trim()) return;
     setIsSubmitting(true);
-    
+
     await updatePlayer(editingPlayer.id, {
       name: editingPlayer.name,
       position: editingPlayer.position,
@@ -141,8 +141,8 @@ function PlayersContent() {
 
   return (
     <div>
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }} 
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
@@ -276,14 +276,14 @@ function PlayersContent() {
                   <div className="relative">
                     <Avatar className="w-12 h-12 border-2 border-secondary">
                       <AvatarImage src={player.photo || ""} alt={player.name} className="object-cover" />
-                      <AvatarFallback 
+                      <AvatarFallback
                         style={{ backgroundColor: team?.primaryColor || 'var(--secondary)' }}
                         className="font-display text-lg font-bold text-white"
                       >
                         {getInitials(player.name)}
                       </AvatarFallback>
                     </Avatar>
-                    
+
                     {/* The Number Badge */}
                     <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-background">
                       {player.number}
@@ -381,13 +381,13 @@ function PlayersContent() {
           </DialogHeader>
           {editingPlayer && (
             <div className="space-y-4 mt-4">
-              <Input 
-                placeholder="Player Name" 
-                value={editingPlayer.name} 
-                onChange={(e) => setEditingPlayer({ ...editingPlayer, name: e.target.value })} 
+              <Input
+                placeholder="Player Name"
+                value={editingPlayer.name}
+                onChange={(e) => setEditingPlayer({ ...editingPlayer, name: e.target.value })}
               />
-              <Select 
-                value={editingPlayer.position} 
+              <Select
+                value={editingPlayer.position}
                 onValueChange={(v) => setEditingPlayer({ ...editingPlayer, position: v })}
               >
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -397,13 +397,13 @@ function PlayersContent() {
                   ))}
                 </SelectContent>
               </Select>
-              <Input 
-                type="number" 
-                value={editingPlayer.number} 
-                onChange={(e) => setEditingPlayer({ ...editingPlayer, number: parseInt(e.target.value) || 0 })} 
+              <Input
+                type="number"
+                value={editingPlayer.number}
+                onChange={(e) => setEditingPlayer({ ...editingPlayer, number: parseInt(e.target.value) || 0 })}
               />
-              <Select 
-                value={editingPlayer.teamId} 
+              <Select
+                value={editingPlayer.teamId}
                 onValueChange={(v) => setEditingPlayer({ ...editingPlayer, teamId: v })}
               >
                 <SelectTrigger><SelectValue /></SelectTrigger>
