@@ -1,4 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+'use client';
+
+import { useCallback, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -13,8 +16,14 @@ import {
   orderBy,
   limit,
   serverTimestamp,
+  getDoc,
+  runTransaction,
 } from "firebase/firestore";
 import { useToast } from "@/app/hooks/use-toast";
+
+// ─────────────────────────────────────────────
+// Interfaces
+// ─────────────────────────────────────────────
 
 export interface Player {
   id: string;
@@ -77,84 +86,120 @@ export interface PlayerEvent {
   timestamp: any;
 }
 
+// ─────────────────────────────────────────────
+// Query Keys — single source of truth
+// ─────────────────────────────────────────────
+
+export const QUERY_KEYS = {
+  teams:       ['teams']       as const,
+  players:     ['players']     as const,
+  matches:     ['matches']     as const,
+  goals:       ['goals']       as const,
+  assists:     ['assists']     as const,
+  yellowCards: ['yellowCards'] as const,
+  redCards:    ['redCards']    as const,
+};
+
+// ─────────────────────────────────────────────
+// Fetchers — pure async functions, no React state
+// ─────────────────────────────────────────────
+
+async function fetchTeams(): Promise<Team[]> {
+  const snap = await getDocs(collection(db, "teams"));
+  return snap.docs.map((d) => {
+    const t = d.data();
+    return {
+      id: d.id,
+      name: t.name,
+      logo: t.logo ?? null,
+      primaryColor: t.primary_color ?? t.primaryColor ?? "",
+      founded: t.founded ?? "",
+      stadium: t.stadium ?? "",
+    };
+  });
+}
+
+async function fetchPlayers(): Promise<Player[]> {
+  const snap = await getDocs(collection(db, "players"));
+  return snap.docs.map((d) => {
+    const p = d.data();
+    return {
+      id: d.id,
+      name: p.name,
+      position: p.position,
+      number: p.number,
+      teamId: p.team_id ?? p.teamId,
+      isManager: p.is_manager ?? p.isManager ?? false,
+      photo: p.photo ?? null,
+    };
+  });
+}
+
+async function fetchMatches(): Promise<Match[]> {
+  const snap = await getDocs(query(collection(db, "matches"), orderBy("matchDay", "desc")));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Match));
+}
+
+async function fetchEvents(colName: string): Promise<PlayerEvent[]> {
+  const snap = await getDocs(collection(db, colName));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PlayerEvent));
+}
+
+// ─────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────
+
+/**
+ * Calculate points for home and away teams based on scores.
+ */
+function calculatePoints(match: Partial<Match>) {
+  if (match.status !== 'played') return { home: 0, away: 0 };
+  const h = match.homeScore ?? 0;
+  const a = match.awayScore ?? 0;
+
+  if (h > a) return { home: 3, away: 0 };
+  if (h < a) return { home: 0, away: 3 };
+  return { home: 1, away: 1 };
+}
+
+// ─────────────────────────────────────────────
+// Main Hook
+// ─────────────────────────────────────────────
+
 export function useAppData() {
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [goals, setGoals] = useState<PlayerEvent[]>([]);
-  const [assists, setAssists] = useState<PlayerEvent[]>([]);
-  const [yellowCards, setYellowCards] = useState<PlayerEvent[]>([]);
-  const [redCards, setRedCards] = useState<PlayerEvent[]>([]);
-
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [teamsSnap, playersSnap, matchesSnap, goalsSnap, assistsSnap, yellowsSnap, redsSnap] = await Promise.all([
-        getDocs(collection(db, "teams")),
-        getDocs(collection(db, "players")),
-        getDocs(query(collection(db, "matches"), orderBy("matchDay", "desc"))),
-        getDocs(collection(db, "goals")),
-        getDocs(collection(db, "assists")),
-        getDocs(collection(db, "yellow_cards")),
-        getDocs(collection(db, "red_cards")),
-      ]);
+  // ── Queries (each collection independent) ──────────────────────────────
+  const { data: teams = [], isLoading: teamsLoading } =
+    useQuery({ queryKey: QUERY_KEYS.teams, queryFn: fetchTeams, staleTime: 1000 * 60 * 5 });
 
-      if (teamsSnap) {
-        setTeams(teamsSnap.docs.map((d) => {
-          const t: any = d.data();
-          return {
-            id: d.id,
-            name: t.name,
-            logo: t.logo,
-            primaryColor: t.primary_color ?? t.primaryColor ?? "",
-            founded: t.founded ?? "",
-            stadium: t.stadium ?? "",
-          } as Team;
-        }));
-      }
+  const { data: players = [], isLoading: playersLoading } =
+    useQuery({ queryKey: QUERY_KEYS.players, queryFn: fetchPlayers, staleTime: 1000 * 60 * 5 });
 
-      if (playersSnap) {
-        setPlayers(playersSnap.docs.map((d) => {
-          const p: any = d.data();
-          return {
-            id: d.id,
-            name: p.name,
-            position: p.position,
-            number: p.number,
-            teamId: p.team_id ?? p.teamId,
-            isManager: p.is_manager ?? p.isManager ?? false,
-            photo: p.photo ?? null,
-          } as Player;
-        }));
-      }
+  const { data: matches = [], isLoading: matchesLoading } =
+    useQuery({ queryKey: QUERY_KEYS.matches, queryFn: fetchMatches, staleTime: 1000 * 60 * 2 });
 
-      if (matchesSnap) {
-        setMatches(matchesSnap.docs.map((d) => {
-          const m: any = d.data();
-          return {
-            id: d.id,
-            ...m
-          } as Match;
-        }));
-      }
+  const { data: goals = [] } =
+    useQuery({ queryKey: QUERY_KEYS.goals, queryFn: () => fetchEvents("goals"), staleTime: 1000 * 60 * 2 });
 
-      setGoals(goalsSnap.docs.map(d => ({ id: d.id, ...d.data() } as PlayerEvent)));
-      setAssists(assistsSnap.docs.map(d => ({ id: d.id, ...d.data() } as PlayerEvent)));
-      setYellowCards(yellowsSnap.docs.map(d => ({ id: d.id, ...d.data() } as PlayerEvent)));
-      setRedCards(redsSnap.docs.map(d => ({ id: d.id, ...d.data() } as PlayerEvent)));
+  const { data: assists = [] } =
+    useQuery({ queryKey: QUERY_KEYS.assists, queryFn: () => fetchEvents("assists"), staleTime: 1000 * 60 * 2 });
 
-    } catch (err) {
-      console.error("fetchData error", err);
-    }
-    setLoading(false);
-  }, []);
+  const { data: yellowCards = [] } =
+    useQuery({ queryKey: QUERY_KEYS.yellowCards, queryFn: () => fetchEvents("yellow_cards"), staleTime: 1000 * 60 * 2 });
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  const { data: redCards = [] } =
+    useQuery({ queryKey: QUERY_KEYS.redCards, queryFn: () => fetchEvents("red_cards"), staleTime: 1000 * 60 * 2 });
 
+  const loading = teamsLoading || playersLoading || matchesLoading;
+
+  // ── Invalidation helpers ───────────────────────────────────────────────
+  const invalidate = useCallback((...keys: (keyof typeof QUERY_KEYS)[]) => {
+    keys.forEach((k) => queryClient.invalidateQueries({ queryKey: QUERY_KEYS[k] }));
+  }, [queryClient]);
+
+  // ── Team mutations ─────────────────────────────────────────────────────
   const addTeam = async (team: Omit<Team, "id">) => {
     try {
       await addDoc(collection(db, "teams"), {
@@ -164,7 +209,7 @@ export function useAppData() {
         primary_color: team.primaryColor,
         logo: team.logo ?? null,
       });
-      await fetchData();
+      invalidate("teams");
       toast({ title: "Success", description: "Team added successfully" });
       return { error: null };
     } catch (error) {
@@ -175,14 +220,13 @@ export function useAppData() {
 
   const updateTeam = async (id: string, updates: Partial<Team>) => {
     try {
-      const teamRef = doc(db, "teams", id);
-      const dbUpdates: any = { ...updates };
+      const dbUpdates: Record<string, unknown> = { ...updates };
       if (updates.primaryColor) {
         dbUpdates.primary_color = updates.primaryColor;
         delete dbUpdates.primaryColor;
       }
-      await updateDoc(teamRef, dbUpdates);
-      await fetchData();
+      await updateDoc(doc(db, "teams", id), dbUpdates);
+      invalidate("teams");
       toast({ title: "Success", description: "Team updated successfully" });
       return { error: null };
     } catch (error) {
@@ -199,7 +243,7 @@ export function useAppData() {
     }
     try {
       await deleteDoc(doc(db, "teams", teamId));
-      await fetchData();
+      invalidate("teams");
       toast({ title: "Success", description: "Team deleted successfully" });
       return { error: null };
     } catch (error) {
@@ -208,6 +252,7 @@ export function useAppData() {
     }
   };
 
+  // ── Player mutations ───────────────────────────────────────────────────
   const addPlayer = async (player: Omit<Player, "id">) => {
     try {
       await addDoc(collection(db, "players"), {
@@ -218,7 +263,7 @@ export function useAppData() {
         is_manager: player.isManager,
         photo: player.photo ?? null,
       });
-      await fetchData();
+      invalidate("players");
       toast({ title: "Success", description: "Player added successfully" });
       return { error: null };
     } catch (error) {
@@ -229,18 +274,11 @@ export function useAppData() {
 
   const updatePlayer = async (id: string, updates: Partial<Player>) => {
     try {
-      const playerRef = doc(db, "players", id);
-      const dbUpdates: any = { ...updates };
-      if (updates.teamId) {
-        dbUpdates.team_id = updates.teamId;
-        delete dbUpdates.teamId;
-      }
-      if (updates.isManager !== undefined) {
-        dbUpdates.is_manager = updates.isManager;
-        delete dbUpdates.isManager;
-      }
-      await updateDoc(playerRef, dbUpdates);
-      await fetchData();
+      const dbUpdates: Record<string, unknown> = { ...updates };
+      if (updates.teamId)              { dbUpdates.team_id    = updates.teamId;    delete dbUpdates.teamId; }
+      if (updates.isManager !== undefined) { dbUpdates.is_manager = updates.isManager; delete dbUpdates.isManager; }
+      await updateDoc(doc(db, "players", id), dbUpdates);
+      invalidate("players");
       toast({ title: "Success", description: "Player updated successfully" });
       return { error: null };
     } catch (error) {
@@ -251,9 +289,8 @@ export function useAppData() {
 
   const deletePlayer = async (id: string) => {
     try {
-      const playerRef = doc(db, "players", id);
-      await deleteDoc(playerRef);
-      await fetchData();
+      await deleteDoc(doc(db, "players", id));
+      invalidate("players");
       toast({ title: "Success", description: "Player deleted successfully" });
       return { error: null };
     } catch (error) {
@@ -268,87 +305,71 @@ export function useAppData() {
       const snap = await getDocs(q);
       const batch = writeBatch(db);
       snap.docs.forEach((d) => batch.update(d.ref, { is_manager: false }));
+      batch.update(doc(db, "players", playerId), { is_manager: true });
       await batch.commit();
-
-      const playerDocRef = doc(db, "players", playerId);
-      await updateDoc(playerDocRef, { is_manager: true });
-      await fetchData();
+      invalidate("players");
       toast({ title: "Success", description: "Manager assigned successfully" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to assign manager", variant: "destructive" });
     }
   };
 
-  const addRecord = async (record: Omit<MatchRecord, "id">) => {
-    try {
-      await addDoc(collection(db, "match_records"), {
-        player_id: record.playerId,
-        match_date: record.matchDate,
-        opponent: record.opponent,
-        goals: record.goals,
-        assists: record.assists,
-        yellow_cards: record.yellowCards,
-        red_cards: record.redCards,
-        minutes_played: record.minutesPlayed,
-      });
-      await fetchData();
-      toast({ title: "Success", description: "Record added successfully" });
-      return { error: null };
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to add record", variant: "destructive" });
-      return { error };
-    }
-  };
-
-  const updateRecord = async (id: string, updates: Partial<MatchRecord>) => {
-    const dbUpdates: Record<string, unknown> = {};
-    if (updates.goals !== undefined) dbUpdates.goals = updates.goals;
-    if (updates.assists !== undefined) dbUpdates.assists = updates.assists;
-    if (updates.yellowCards !== undefined) dbUpdates.yellow_cards = updates.yellowCards;
-    if (updates.redCards !== undefined) dbUpdates.red_cards = updates.redCards;
-    if (updates.minutesPlayed !== undefined) dbUpdates.minutes_played = updates.minutesPlayed;
-    try {
-      const recRef = doc(db, "match_records", id);
-      await updateDoc(recRef, dbUpdates as any);
-      await fetchData();
-      toast({ title: "Success", description: "Record updated" });
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to update record", variant: "destructive" });
-    }
-  };
-
-  const addMatch = async (matchData: any) => {
+  // ── Match mutations ────────────────────────────────────────────────────
+  const addMatch = async (matchData: Partial<Match> & { status: 'upcoming' | 'played' }) => {
     try {
       const matchesRef = collection(db, "matches");
-      let matchDay = matchData.matchDay;
-      if (!matchDay) {
-        const q = query(matchesRef, orderBy("matchDay", "desc"), limit(1));
-        const querySnapshot = await getDocs(q);
-        matchDay = !querySnapshot.empty ? querySnapshot.docs[0].data().matchDay + 1 : 1;
+
+      // If matchDay is explicitly provided, skip the auto-calculation entirely
+      if (matchData.matchDay) {
+        const docRef = await addDoc(matchesRef, {
+          ...matchData,
+          createdAt: serverTimestamp(),
+          homePoints: calculatePoints(matchData).home,
+          awayPoints: calculatePoints(matchData).away,
+        });
+        invalidate("matches");
+        toast({ title: "Success", description: `Match Day ${matchData.matchDay} added` });
+        return { id: docRef.id, matchDay: matchData.matchDay, error: null };
       }
 
-      let homePoints = 0;
-      let awayPoints = 0;
+      // Auto-calculate matchDay inside a transaction so no two
+      // simultaneous writes can ever produce the same matchDay number.
+      let newMatchDay = 1;
+      let newDocId    = "";
 
-      if (matchData.status === 'played') {
-        const h = matchData.homeScore || 0;
-        const a = matchData.awayScore || 0;
-        if (h > a) homePoints = 3;
-        else if (h < a) awayPoints = 3;
-        else { homePoints = 1; awayPoints = 1; }
-      } 
+      await runTransaction(db, async (transaction) => {
+        // Read the highest existing matchDay inside the transaction
+        const q    = query(matchesRef, orderBy("matchDay", "desc"), limit(1));
+        const snap = await getDocs(q); // getDocs is fine inside transaction for queries
+        newMatchDay = !snap.empty ? snap.docs[0].data().matchDay + 1 : 1;
 
-      const docRef = await addDoc(matchesRef, {
-        ...matchData,
-        matchDay,
-        homePoints,
-        awayPoints,
-        createdAt: serverTimestamp(),
+        // Write the new match document inside the same transaction
+        const newRef = doc(matchesRef);
+        newDocId     = newRef.id;
+
+        const homePoints = matchData.homeScore != null && matchData.awayScore != null
+          ? matchData.homeScore > matchData.awayScore ? 3
+          : matchData.homeScore === matchData.awayScore ? 1 : 0
+          : 0;
+
+        const awayPoints = matchData.homeScore != null && matchData.awayScore != null
+          ? matchData.awayScore > matchData.homeScore ? 3
+          : matchData.awayScore === matchData.homeScore ? 1 : 0
+          : 0;
+
+        transaction.set(newRef, {
+          ...matchData,
+          matchDay:    newMatchDay,
+          homePoints,
+          awayPoints,
+          createdAt:   serverTimestamp(),
+        });
       });
 
-      await fetchData(); 
-      toast({ title: "Success", description: `Match Day ${matchDay} added` });
-      return { id: docRef.id, matchDay, error: null };
+      invalidate("matches");
+      toast({ title: "Success", description: `Match Day ${newMatchDay} added` });
+      return { id: newDocId, matchDay: newMatchDay, error: null };
+
     } catch (error) {
       toast({ title: "Error", description: "Failed to add match", variant: "destructive" });
       return { error };
@@ -357,17 +378,16 @@ export function useAppData() {
 
   const updateMatch = async (matchId: string, updates: Partial<Match>) => {
     try {
-      const matchRef = doc(db, "matches", matchId);
-      const dbUpdates: any = { ...updates };
+      const dbUpdates: Record<string, unknown> = { ...updates };
       if (updates.homeScore !== undefined || updates.awayScore !== undefined) {
-        const h = updates.homeScore ?? matches.find(m => m.id === matchId)?.homeScore ?? 0;
-        const a = updates.awayScore ?? matches.find(m => m.id === matchId)?.awayScore ?? 0;
+        const current = matches.find((m) => m.id === matchId);
+        const h = updates.homeScore ?? current?.homeScore ?? 0;
+        const a = updates.awayScore ?? current?.awayScore ?? 0;
         dbUpdates.homePoints = h > a ? 3 : h === a ? 1 : 0;
         dbUpdates.awayPoints = a > h ? 3 : a === h ? 1 : 0;
       }
-
-      await updateDoc(matchRef, dbUpdates);
-      await fetchData();
+      await updateDoc(doc(db, "matches", matchId), dbUpdates);
+      invalidate("matches");
       toast({ title: "Success", description: "Match updated successfully" });
       return { error: null };
     } catch (error) {
@@ -380,14 +400,16 @@ export function useAppData() {
     try {
       const batch = writeBatch(db);
       batch.delete(doc(db, "matches", matchId));
-      const collectionsToClean = ["goals", "assists", "yellow_cards", "red_cards"];
-      for (const colName of collectionsToClean) {
-        const q = query(collection(db, colName), where("matchId", "==", matchId));
-        const snapshot = await getDocs(q);
-        snapshot.docs.forEach((d) => batch.delete(d.ref));
-      }
+
+      // Collect all event docs in parallel, then batch-delete
+      const eventCollections = ["goals", "assists", "yellow_cards", "red_cards"];
+      const snaps = await Promise.all(
+        eventCollections.map((col) => getDocs(query(collection(db, col), where("matchId", "==", matchId))))
+      );
+      snaps.forEach((snap) => snap.docs.forEach((d) => batch.delete(d.ref)));
+
       await batch.commit();
-      await fetchData();
+      invalidate("matches", "goals", "assists", "yellowCards", "redCards");
       toast({ title: "Success", description: "Match deleted" });
       return { error: null };
     } catch (error) {
@@ -396,32 +418,79 @@ export function useAppData() {
     }
   };
 
-  const recordMatchStats = async (matchId: string, matchDay: number, stats: {
-    goals: { playerId: string, teamId: string }[],
-    assists: { playerId: string, teamId: string }[],
-    yellows: { playerId: string, teamId: string }[],
-    reds: { playerId: string, teamId: string }[]
-  }) => {
+  // ── Batch fixture generation (replaces sequential loop in matches/page.tsx) ──
+  const addMatchesBatch = async (fixtures: (Partial<Match> & { status: 'upcoming' | 'played' })[]) => {
     try {
       const batch = writeBatch(db);
-      stats.goals.forEach(g => {
-        const ref = doc(collection(db, "goals"));
-        batch.set(ref, { ...g, matchId, matchDay, timestamp: serverTimestamp() });
-      });
-      stats.assists.forEach(a => {
-        const ref = doc(collection(db, "assists"));
-        batch.set(ref, { ...a, matchId, matchDay, timestamp: serverTimestamp() });
-      });
-      stats.yellows.forEach(y => {
-        const ref = doc(collection(db, "yellow_cards"));
-        batch.set(ref, { ...y, matchId, matchDay, timestamp: serverTimestamp() });
-      });
-      stats.reds.forEach(r => {
-        const ref = doc(collection(db, "red_cards"));
-        batch.set(ref, { ...r, matchId, matchDay, timestamp: serverTimestamp() });
+      fixtures.forEach((fixture) => {
+        const ref = doc(collection(db, "matches"));
+        batch.set(ref, { ...fixture, createdAt: serverTimestamp() });
       });
       await batch.commit();
-      await fetchData();
+      invalidate("matches");
+      toast({ title: "Success", description: `${fixtures.length} fixtures generated` });
+      return { error: null };
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to generate fixtures", variant: "destructive" });
+      return { error };
+    }
+  };
+
+  // ── Delete all matches in a batch ─────────────────────────────────────
+  const deleteAllMatches = async () => {
+    try {
+      const eventCollections = ["goals", "assists", "yellow_cards", "red_cards"];
+
+      // Collect all match refs + all event refs in parallel
+      const [matchSnap, ...eventSnaps] = await Promise.all([
+        getDocs(collection(db, "matches")),
+        ...eventCollections.map((col) => getDocs(collection(db, col))),
+      ]);
+
+      // Firestore batch limit is 500 — chunk if needed
+      const allRefs = [
+        ...matchSnap.docs.map((d) => d.ref),
+        ...eventSnaps.flatMap((snap) => snap.docs.map((d) => d.ref)),
+      ];
+
+      const BATCH_LIMIT = 490;
+      for (let i = 0; i < allRefs.length; i += BATCH_LIMIT) {
+        const batch = writeBatch(db);
+        allRefs.slice(i, i + BATCH_LIMIT).forEach((ref) => batch.delete(ref));
+        await batch.commit();
+      }
+
+      invalidate("matches", "goals", "assists", "yellowCards", "redCards");
+      toast({ title: "Success", description: "All match records cleared" });
+      return { error: null };
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to clear records", variant: "destructive" });
+      return { error };
+    }
+  };
+
+  // ── Record match stats ─────────────────────────────────────────────────
+  const recordMatchStats = async (
+    matchId: string,
+    matchDay: number,
+    stats: {
+      goals:   { playerId: string; teamId: string }[];
+      assists: { playerId: string; teamId: string }[];
+      yellows: { playerId: string; teamId: string }[];
+      reds:    { playerId: string; teamId: string }[];
+    }
+  ) => {
+    try {
+      const batch = writeBatch(db);
+      const ts = serverTimestamp();
+
+      stats.goals.forEach((g) =>   batch.set(doc(collection(db, "goals")),        { ...g, matchId, matchDay, timestamp: ts }));
+      stats.assists.forEach((a) =>  batch.set(doc(collection(db, "assists")),      { ...a, matchId, matchDay, timestamp: ts }));
+      stats.yellows.forEach((y) =>  batch.set(doc(collection(db, "yellow_cards")), { ...y, matchId, matchDay, timestamp: ts }));
+      stats.reds.forEach((r) =>     batch.set(doc(collection(db, "red_cards")),    { ...r, matchId, matchDay, timestamp: ts }));
+
+      await batch.commit();
+      invalidate("goals", "assists", "yellowCards", "redCards");
       toast({ title: "Success", description: "Match statistics recorded" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to record stats", variant: "destructive" });
@@ -430,82 +499,167 @@ export function useAppData() {
 
   const deleteMatchEvents = async (matchId: string) => {
     try {
+      const snaps = await Promise.all(
+        ["goals", "assists", "yellow_cards", "red_cards"].map((col) =>
+          getDocs(query(collection(db, col), where("matchId", "==", matchId)))
+        )
+      );
       const batch = writeBatch(db);
-      const collections = ["goals", "assists", "yellow_cards", "red_cards"];
-      for (const col of collections) {
-        const q = query(collection(db, col), where("matchId", "==", matchId));
-        const snap = await getDocs(q);
-        snap.docs.forEach(d => batch.delete(d.ref));
-      }
+      snaps.forEach((snap) => snap.docs.forEach((d) => batch.delete(d.ref)));
       await batch.commit();
+      invalidate("goals", "assists", "yellowCards", "redCards");
       toast({ title: "Success", description: "Match events cleared" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to clear events", variant: "destructive" });
     }
   };
-  
+
+  // ── Legacy addRecord / updateRecord (match_records collection) ────────
+  const addRecord = async (record: Omit<MatchRecord, "id">) => {
+    try {
+      await addDoc(collection(db, "match_records"), {
+        player_id:     record.playerId,
+        match_date:    record.matchDate,
+        opponent:      record.opponent,
+        goals:         record.goals,
+        assists:       record.assists,
+        yellow_cards:  record.yellowCards,
+        red_cards:     record.redCards,
+        minutes_played: record.minutesPlayed,
+      });
+      toast({ title: "Success", description: "Record added successfully" });
+      return { error: null };
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to add record", variant: "destructive" });
+      return { error };
+    }
+  };
+
+  const updateRecord = async (id: string, updates: Partial<MatchRecord>) => {
+    const dbUpdates: Record<string, unknown> = {};
+    if (updates.goals          !== undefined) dbUpdates.goals          = updates.goals;
+    if (updates.assists        !== undefined) dbUpdates.assists        = updates.assists;
+    if (updates.yellowCards    !== undefined) dbUpdates.yellow_cards   = updates.yellowCards;
+    if (updates.redCards       !== undefined) dbUpdates.red_cards      = updates.redCards;
+    if (updates.minutesPlayed  !== undefined) dbUpdates.minutes_played = updates.minutesPlayed;
+    try {
+      await updateDoc(doc(db, "match_records", id), dbUpdates);
+      toast({ title: "Success", description: "Record updated" });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to update record", variant: "destructive" });
+    }
+  };
+
+  // ─────────────────────────────────────────────
+  // Event index maps — built once per data change, O(1) lookups
+  // Instead of scanning the full goals/assists arrays for every
+  // player on every render, we pre-group events by playerId once.
+  // ─────────────────────────────────────────────
+
+  // Map<playerId, PlayerEvent[]>
+  const goalsByPlayer = useMemo(() => {
+    const map = new Map<string, PlayerEvent[]>();
+    goals.forEach((g) => {
+      if (!map.has(g.playerId)) map.set(g.playerId, []);
+      map.get(g.playerId)!.push(g);
+    });
+    return map;
+  }, [goals]);
+
+  const assistsByPlayer = useMemo(() => {
+    const map = new Map<string, PlayerEvent[]>();
+    assists.forEach((a) => {
+      if (!map.has(a.playerId)) map.set(a.playerId, []);
+      map.get(a.playerId)!.push(a);
+    });
+    return map;
+  }, [assists]);
+
+  const yellowsByPlayer = useMemo(() => {
+    const map = new Map<string, PlayerEvent[]>();
+    yellowCards.forEach((y) => {
+      if (!map.has(y.playerId)) map.set(y.playerId, []);
+      map.get(y.playerId)!.push(y);
+    });
+    return map;
+  }, [yellowCards]);
+
+  const redsByPlayer = useMemo(() => {
+    const map = new Map<string, PlayerEvent[]>();
+    redCards.forEach((r) => {
+      if (!map.has(r.playerId)) map.set(r.playerId, []);
+      map.get(r.playerId)!.push(r);
+    });
+    return map;
+  }, [redCards]);
+
+  // Map<matchId, Match> — O(1) match lookups instead of .find() per record
+  const matchesById = useMemo(() => {
+    const map = new Map<string, Match>();
+    matches.forEach((m) => map.set(m.id, m));
+    return map;
+  }, [matches]);
+
+  // Map<teamId, Team> — O(1) team lookups
+  const teamsById = useMemo(() => {
+    const map = new Map<string, Team>();
+    teams.forEach((t) => map.set(t.id, t));
+    return map;
+  }, [teams]);
+
+  // ─────────────────────────────────────────────
+  // Derived / computed helpers
+  // ─────────────────────────────────────────────
+
   const getTeamPlayers = (teamId: string) => players.filter((p) => p.teamId === teamId);
   const getTeamManager = (teamId: string) => players.find((p) => p.teamId === teamId && p.isManager);
 
-  const getPlayerRecords = (playerId: string): MatchRecord[] => {
+  // O(1) per call — reads from pre-indexed maps, no array scanning
+  const getPlayerStats = useCallback((playerId: string) => {
+    const playerGoals   = goalsByPlayer.get(playerId)   ?? [];
+    const playerAssists = assistsByPlayer.get(playerId) ?? [];
+    const playerYellows = yellowsByPlayer.get(playerId) ?? [];
+    const playerReds    = redsByPlayer.get(playerId)    ?? [];
+
     const matchIds = new Set([
-      ...goals.filter(g => g.playerId === playerId).map(g => g.matchId),
-      ...assists.filter(a => a.playerId === playerId).map(a => a.matchId),
-      ...yellowCards.filter(y => y.playerId === playerId).map(y => y.matchId),
-      ...redCards.filter(r => r.playerId === playerId).map(r => r.matchId)
+      ...playerGoals.map((g) => g.matchId),
+      ...playerAssists.map((a) => a.matchId),
+      ...playerYellows.map((y) => y.matchId),
+      ...playerReds.map((r) => r.matchId),
     ]);
 
-    return Array.from(matchIds).map(mId => {
-      const match = matches.find(m => m.id === mId);
-      if (!match) return null;
-      const playerTeamId = players.find(p => p.id === playerId)?.teamId;
-      const opponentId = match.homeTeamId === playerTeamId ? match.awayTeamId : match.homeTeamId;
-      const opponentName = teams.find(t => t.id === opponentId)?.name || "Unknown Opponent";
-      const rawDate = match.createdAt?.seconds 
-        ? new Date(match.createdAt.seconds * 1000).toISOString() 
-        : new Date().toISOString();
-
-      return {
-        id: `${playerId}_${mId}`,
-        playerId,
-        matchDate: rawDate, 
-        opponent: opponentName,
-        goals: goals.filter(g => g.playerId === playerId && g.matchId === mId).length,
-        assists: assists.filter(a => a.playerId === playerId && a.matchId === mId).length,
-        yellowCards: yellowCards.filter(y => y.playerId === playerId && y.matchId === mId).length,
-        redCards: redCards.filter(r => r.playerId === playerId && r.matchId === mId).length,
-        minutesPlayed: match.minutesPlayed || 90,
-      };
-    }).filter(Boolean) as MatchRecord[];
-  };
-
-  const getPlayerStats = (playerId: string) => {
     return {
-      goals: goals.filter(g => g.playerId === playerId).length,
-      assists: assists.filter(a => a.playerId === playerId).length,
-      yellowCards: yellowCards.filter(y => y.playerId === playerId).length,
-      redCards: redCards.filter(r => r.playerId === playerId).length,
-      matches: new Set([...goals, ...assists, ...yellowCards, ...redCards]
-        .filter(e => e.playerId === playerId)
-        .map(e => e.matchId)).size
+      goals:       playerGoals.length,
+      assists:     playerAssists.length,
+      yellowCards: playerYellows.length,
+      redCards:    playerReds.length,
+      matches:     matchIds.size,
     };
-  };
+  }, [goalsByPlayer, assistsByPlayer, yellowsByPlayer, redsByPlayer]);
 
-  const getTopScorers = () => {
-    return players
+  // Computed once when players or event maps change — not on every render
+  const topScorers = useMemo(() =>
+    players
       .map((p) => ({ player: p, stats: getPlayerStats(p.id) }))
       .sort((a, b) => b.stats.goals - a.stats.goals)
-      .slice(0, 10);
-  };
+      .slice(0, 10),
+    [players, getPlayerStats]
+  );
 
-  const getStandings = () => {
-    const table: Record<string, any> = {};
+  // Stable function reference — returns pre-memoised array
+  const getTopScorers = useCallback(() => topScorers, [topScorers]);
+
+  // Standings computed once when teams or matches change
+  const standings = useMemo(() => {
+    const table: Record<string, {
+      id: string; name: string; logo?: string | null; color: string;
+      played: number; won: number; drawn: number; lost: number;
+      gf: number; ga: number; gd: number; pts: number;
+    }> = {};
+
     teams.forEach((team) => {
       table[team.id] = {
-        id: team.id,
-        name: team.name,
-        logo: team.logo,
-        color: team.primaryColor,
+        id: team.id, name: team.name, logo: team.logo, color: team.primaryColor,
         played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, pts: 0,
       };
     });
@@ -514,31 +668,91 @@ export function useAppData() {
       if (match.status !== 'played') return;
       const home = table[match.homeTeamId];
       const away = table[match.awayTeamId];
-      if (home && away) {
-        home.played += 1; away.played += 1;
-        home.gf += match.homeScore; home.ga += match.awayScore;
-        away.gf += match.awayScore; away.ga += match.homeScore;
+      if (!home || !away) return;
 
-        if (match.homeScore > match.awayScore) {
-          home.won += 1; home.pts += 3; away.lost += 1;
-        } else if (match.homeScore < match.awayScore) {
-          away.won += 1; away.pts += 3; home.lost += 1;
-        } else {
-          home.drawn += 1; away.drawn += 1; home.pts += 1; away.pts += 1;
-        }
-      }
+      home.played++; away.played++;
+      home.gf += match.homeScore; home.ga += match.awayScore;
+      away.gf += match.awayScore; away.ga += match.homeScore;
+
+      if (match.homeScore > match.awayScore)      { home.won++; home.pts += 3; away.lost++; }
+      else if (match.homeScore < match.awayScore) { away.won++; away.pts += 3; home.lost++; }
+      else                                         { home.drawn++; away.drawn++; home.pts++; away.pts++; }
     });
 
     return Object.values(table)
-      .map((team: any) => ({ ...team, gd: team.gf - team.ga }))
+      .map((t) => ({ ...t, gd: t.gf - t.ga }))
       .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
-  };
+  }, [teams, matches]);
+
+  // Stable function reference — returns pre-memoised array
+  const getStandings = useCallback(() => standings, [standings]);
+
+  // getPlayerRecords uses the index maps for O(1) lookups per event
+  const getPlayerRecords = useCallback((playerId: string): MatchRecord[] => {
+    const playerGoals   = goalsByPlayer.get(playerId)   ?? [];
+    const playerAssists = assistsByPlayer.get(playerId) ?? [];
+    const playerYellows = yellowsByPlayer.get(playerId) ?? [];
+    const playerReds    = redsByPlayer.get(playerId)    ?? [];
+
+    const matchIds = new Set([
+      ...playerGoals.map((g) => g.matchId),
+      ...playerAssists.map((a) => a.matchId),
+      ...playerYellows.map((y) => y.matchId),
+      ...playerReds.map((r) => r.matchId),
+    ]);
+
+    return Array.from(matchIds).map((mId) => {
+      const match = matchesById.get(mId);
+      if (!match) return null;
+
+      const playerTeamId = players.find((p) => p.id === playerId)?.teamId;
+      const opponentId   = match.homeTeamId === playerTeamId ? match.awayTeamId : match.homeTeamId;
+      const opponentName = teamsById.get(opponentId)?.name ?? "Unknown Opponent";
+      const rawDate      = match.createdAt?.seconds
+        ? new Date(match.createdAt.seconds * 1000).toISOString()
+        : new Date().toISOString();
+
+      // Count events for this specific match using filtered arrays
+      const matchGoals   = playerGoals.filter((g) => g.matchId === mId).length;
+      const matchAssists = playerAssists.filter((a) => a.matchId === mId).length;
+      const matchYellows = playerYellows.filter((y) => y.matchId === mId).length;
+      const matchReds    = playerReds.filter((r) => r.matchId === mId).length;
+
+      return {
+        id:            `${playerId}_${mId}`,
+        playerId,
+        matchDate:     rawDate,
+        opponent:      opponentName,
+        goals:         matchGoals,
+        assists:       matchAssists,
+        yellowCards:   matchYellows,
+        redCards:      matchReds,
+        minutesPlayed: match.minutesPlayed || 90,
+      };
+    }).filter(Boolean) as MatchRecord[];
+  }, [goalsByPlayer, assistsByPlayer, yellowsByPlayer, redsByPlayer, matchesById, teamsById, players]);
 
   return {
-    teams, players, matches, loading, goals, assists, yellowCards, redCards, 
-    addTeam, updateTeam, deleteTeam, addPlayer, updatePlayer, deletePlayer, setManager, recordMatchStats,
-    addRecord, updateRecord, addMatch, updateMatch, deleteMatch, deleteMatchEvents,
-    getTeamPlayers, getStandings, getTeamManager, getPlayerRecords, getPlayerStats, getTopScorers,
-    refetch: fetchData,
+    // Data
+    teams, players, matches, loading,
+    goals, assists, yellowCards, redCards,
+    // Pre-computed (use these directly in components where possible)
+    standings, topScorers,
+    // Team
+    addTeam, updateTeam, deleteTeam,
+    // Player
+    addPlayer, updatePlayer, deletePlayer, setManager,
+    // Match
+    addMatch, addMatchesBatch, updateMatch, deleteMatch, deleteAllMatches,
+    recordMatchStats, deleteMatchEvents,
+    // Records (legacy)
+    addRecord, updateRecord,
+    // Computed helpers (for per-player/per-team lookups)
+    getTeamPlayers, getTeamManager,
+    getPlayerStats, getTopScorers, getStandings, getPlayerRecords,
+    // Manual refetch (escape hatch, rarely needed)
+    refetch: () => {
+      Object.values(QUERY_KEYS).forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
+    },
   };
 }

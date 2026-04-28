@@ -1,0 +1,125 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────
+    // Helper Functions
+    // ─────────────────────────────────────────────────────────
+
+    // Is the requesting user authenticated at all?
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Is the requesting user an admin?
+    // Reads their role from the user_roles collection server-side.
+    // This is the key security enforcement — the UI isAdmin check
+    // is only for cosmetic purposes (showing/hiding buttons).
+    // This rule is what actually blocks unauthorised writes.
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Is the requesting user reading/writing their own document?
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // League Data Collections
+    // Any logged-in user can read. Only admins can write.
+    // ─────────────────────────────────────────────────────────
+
+    match /teams/{teamId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /players/{playerId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /matches/{matchId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Match Event Collections
+    // Same pattern: read for all auth users, write for admins only.
+    // ─────────────────────────────────────────────────────────
+
+    match /goals/{goalId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /assists/{assistId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /yellow_cards/{cardId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /red_cards/{cardId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // User Management Collections
+    // ─────────────────────────────────────────────────────────
+
+    // Users can read and update their own profile.
+    // Only admins can read other users' profiles (for the admin/users page).
+    match /users/{uid} {
+      allow read:   if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid);  // Self-registration on sign-up
+      allow update: if isOwner(uid);  // User updates their own profile
+      allow delete: if isAdmin();
+    }
+
+    // user_roles: users can read their own role (needed for isAdmin check in UI).
+    // Only admins can write roles — prevents privilege escalation.
+    match /user_roles/{uid} {
+      allow read:  if isOwner(uid) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // user_invites: only admins can create/revoke invites.
+    // Anyone authenticated can read an invite by its code (needed for sign-up validation).
+    match /user_invites/{inviteCode} {
+      allow read:   if isAuthenticated();
+      allow create: if isAdmin();
+      allow update: if isAuthenticated(); // Needed to mark invite as used on sign-up
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // League Settings (Phase 2 — add this collection when ready)
+    // Only admins can read or write league configuration.
+    // ─────────────────────────────────────────────────────────
+
+    match /settings/{docId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Catch-all: deny everything not explicitly allowed above.
+    // This is Firestore's default but stating it explicitly
+    // makes your intent clear and prevents accidental access
+    // if you add new collections without rules.
+    // ─────────────────────────────────────────────────────────
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

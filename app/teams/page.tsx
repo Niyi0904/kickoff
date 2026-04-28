@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Plus, Users, Crown, Trash2, Upload, Mail, X } from "lucide-react";
 import { uploadProfileImage } from "@/lib/uploadImage";
@@ -26,6 +26,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeamLogoUploadDialog } from "@/components/TeamLogoUploadDialog";
 import { useRouter } from "next/navigation";
+import { useLeagueSettings } from "../hooks/use-leagueSettings";
+import { DeadlineBanner } from "@/components/deadlineBanner";
 
 export default function TeamsPage() {
   return (
@@ -44,8 +46,6 @@ const getTeamInitials = (name: string) => {
     .slice(0, 2);
 };
 
-const INVITE_DEADLINE = new Date('2026-04-30T23:59:59').getTime();
-
 function TeamsContent() {
   const { teams, addTeam, deleteTeam, updateTeam, getTeamPlayers, getTeamManager, setManager, isAdmin } = useAppContext();
   const router = useRouter(); // Added for navigation
@@ -55,34 +55,12 @@ function TeamsContent() {
   const [form, setForm] = useState({ name: "", stadium: "", founded: "", primaryColor: "#3b82f6", logoFile: null as File | null });
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
+  // const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
 
   const [logoDialogOpen, setLogoDialogOpen] = useState(false);
   const [selectedTeamForLogo, setSelectedTeamForLogo] = useState<Team | null>(null);
 
-  const isDeadlinePassed = Date.now() > INVITE_DEADLINE;
-
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = Date.now();
-      const distance = INVITE_DEADLINE - now;
-
-      if (distance < 0) {
-        setTimeLeft(null);
-        clearInterval(timer);
-      } else {
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [INVITE_DEADLINE]);
+  const { deadlineMs, isDeadlinePassed } = useLeagueSettings();
 
   const handleUpdateTeam = async () => {
     if (!editingTeam || !editingTeam.name.trim()) return;
@@ -130,51 +108,7 @@ function TeamsContent() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        {!isDeadlinePassed ? (
-          <div className="bg-amber-500/10 border border-amber-500/30 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-amber-500/20 rounded-xl">
-                <Mail className="w-6 h-6 text-amber-600 animate-pulse" />
-              </div>
-              <div>
-                <h3 className="text-amber-600 font-bold text-lg">Invitation Window Closing</h3>
-                <p className="text-amber-700/80 text-sm max-w-md">
-                  New league invites will be disabled on March 31st. Get your team registered before the clock runs out!
-                </p>
-              </div>
-            </div>
-
-            {/* THE COUNTDOWN CLOCK */}
-            {timeLeft && (
-              <div className="flex gap-2">
-                {[
-                  { label: 'Days', value: timeLeft.days },
-                  { label: 'Hrs', value: timeLeft.hours },
-                  { label: 'Min', value: timeLeft.minutes },
-                  { label: 'Sec', value: timeLeft.seconds },
-                ].map((unit) => (
-                  <div key={unit.label} className="flex flex-col items-center min-w-[60px] p-2 bg-amber-100/50 dark:bg-black/20 rounded-lg border border-amber-500/20">
-                    <span className="text-xl font-mono font-bold text-amber-900">
-                      {String(unit.value).padStart(2, '0')}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-tighter text-amber-800 font-bold">
-                      {unit.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="bg-destructive/10 border border-destructive/30 p-4 rounded-xl flex items-center gap-3">
-            <div className="p-2 bg-destructive/20 rounded-lg">
-              <X className="w-5 h-5 text-destructive" />
-            </div>
-            <p className="text-destructive font-bold text-sm">
-              Registration window closed on March 31, 2026.
-            </p>
-          </div>
-        )}
+        <DeadlineBanner deadlineMs={deadlineMs} isDeadlinePassed={isDeadlinePassed} />
       </motion.div>
 
       <div className="flex items-center justify-between mb-8">

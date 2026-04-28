@@ -32,6 +32,10 @@ import { DeleteLoadingOverlay } from "@/components/DeleteLoadingOverlay";
 import { GenerateFixturesDialog } from "@/components/GenerateFixturesDialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+import { generateFixtures, formatTime12h } from '@/lib/fixtures';
+import { useLeagueSettings } from "../hooks/use-leagueSettings";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+
 export default function MatchRecordsPage() {
   return (
     <ProtectedRoute>
@@ -40,81 +44,10 @@ export default function MatchRecordsPage() {
   );
 }
 
-const getNextTuesdays = (count: number, fromDate?: string) => {
-  const dates = [];
-  let d = fromDate ? new Date(fromDate) : new Date();
-
-  // Find the first Tuesday from d
-  // If fromDate is a Tuesday, we want the *next* one, so we add 7
-  d.setDate(d.getDate() + ((7 - d.getDay() + 2) % 7 || 7));
-
-  for (let i = 0; i < count; i++) {
-    dates.push(new Date(d).toISOString().split('T')[0]);
-    d.setDate(d.getDate() + 7);
-  }
-  return dates;
-};
-
-const shuffle = (array: any[]) => {
-  const newArr = [...array];
-  for (let i = newArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-  }
-  return newArr;
-};
-
-const generateFixtures = (teams: any[], weekCount: number, startWeek: number = 1, startDate?: string) => {
-  const fixtures = [];
-  const teamList = [...teams];
-  if (teamList.length % 2 !== 0) teamList.push({ id: 'bye', name: 'BYE' });
-
-  const numTeams = teamList.length;
-  const tuesdays = getNextTuesdays(weekCount, startDate);
-  const timeSlots = ["8:00", "10:00", "12:00", "14:00"];
-
-  for (let weekIndex = 0; weekIndex < weekCount; weekIndex++) {
-    const currentTuesday = tuesdays[weekIndex];
-    const shuffledTimes = shuffle(timeSlots);
-    let matchInWeekCounter = 0;
-
-    for (let i = 0; i < numTeams / 2; i++) {
-      let home = teamList[i];
-      let away = teamList[numTeams - 1 - i];
-
-      if (weekIndex % 2 === 1) [home, away] = [away, home];
-
-      if (home.id !== 'bye' && away.id !== 'bye') {
-        fixtures.push({
-          homeTeamId: home.id,
-          awayTeamId: away.id,
-          homeScore: 0,         // Matches your state
-          awayScore: 0,         // Matches your state
-          homeAssists: 0,
-          awayAssists: 0,
-          homeYellows: 0,
-          awayYellows: 0,
-          homeReds: 0,
-          awayReds: 0,
-          minutesPlayed: 90,
-          matchDay: startWeek + weekIndex,
-          scheduledDate: currentTuesday, 
-          time: shuffledTimes[matchInWeekCounter % shuffledTimes.length],
-          league: "Seasonal League",
-          status: "upcoming"    // Generator sets to upcoming, not played
-        });
-        matchInWeekCounter++;
-      }
-    }
-    teamList.splice(1, 0, teamList.pop()!);
-  }
-  return fixtures;
-};
-
-
 
 function MatchRecordsContent() {
-  const { matches, teams, isAdmin, deleteMatch, addMatch } = useAppContext();
+  const { matches, teams, isAdmin, deleteMatch, addMatchesBatch, deleteAllMatches } = useAppContext();
+  const { matchDay, defaultTime, seasonName } = useLeagueSettings();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [matchToEdit, setMatchToEdit] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -123,42 +56,38 @@ function MatchRecordsContent() {
   const [isGenDialogOpen, setIsGenDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  const [weekToDelete, setWeekToDelete] = useState<string | null>(null);
+
   const exportRef = useRef<HTMLDivElement>(null);
 
   const handleAutoGenerate = async (weekCount: number) => {
     if (teams.length < 2) return alert("Add more teams first!");
 
-    // Find the last match week and date to continue from
-    const lastWeek = matches.length > 0 
-      ? Math.max(...matches.map(m => m.matchDay || 0)) 
+    const lastWeek = matches.length > 0
+      ? Math.max(...matches.map(m => m.matchDay || 0))
       : 0;
-    
-    // Sort matches by date to find the latest date
-    const lastMatchInstance = matches.length > 0
-      ? [...matches].sort((a, b) => {
-          const dateA = new Date(a.scheduledDate || 0).getTime();
-          const dateB = new Date(b.scheduledDate || 0).getTime();
-          return dateB - dateA;
-        })[0]
-      : null;
-    const lastDate = lastMatchInstance?.scheduledDate;
 
-    const confirmGen = confirm(`Generate ${weekCount} weeks of Tuesday fixtures? This will add them to your records.`);
-    if (!confirmGen) return;
+    const lastMatchInstance = matches.length > 0
+      ? [...matches].sort((a, b) =>
+        new Date(b.scheduledDate || 0).getTime() - new Date(a.scheduledDate || 0).getTime()
+      )[0]
+      : null;
 
     setIsGenerating(true);
-    const newFixtures = generateFixtures(teams, weekCount, lastWeek + 1, lastDate);
-
     try {
-      // Loop through and save each
-      for (const fixture of newFixtures) {
-        await addMatch(fixture);
-      }
-      alert("Successfully generated 5 weeks of fixtures!");
-      setFilter('upcoming'); // Switch filter to see new matches
+      const newFixtures = generateFixtures(
+        teams,
+        weekCount,
+        lastWeek + 1,
+        matchDay,       // ← from useLeagueSettings, was hardcoded "Tuesday"
+        defaultTime,    // ← from useLeagueSettings, was hardcoded "10:00"
+        lastMatchInstance?.scheduledDate,
+        seasonName,     // ← from useLeagueSettings, was hardcoded "Seasonal League"
+      );
+      await addMatchesBatch(newFixtures as any);
+      setFilter('upcoming');
     } catch (error) {
       console.error(error);
-      alert("Failed to save some fixtures.");
     } finally {
       setIsGenerating(false);
     }
@@ -166,53 +95,36 @@ function MatchRecordsContent() {
 
   const handleDeleteAllWeeks = async () => {
     if (matches.length === 0) {
-      setIsDeleteDialogOpen(false)
-      return alert("No matches to delete!");
+      setIsDeleteDialogOpen(false);
+      return;
     }
 
-    const confirmDelete = confirm(
-      "DANGER: This will delete EVERY match fixture in the database. This action cannot be undone. Proceed?"
-    );
-
-    if (!confirmDelete) return;
-
-    setIsDeleting(true); // Triggers your Red Overlay
+    setIsDeleting(true);
     try {
-      // Delete every single match in the records
-      for (const match of matches) {
-        await deleteMatch(match.id);
-      }
-      alert("All match records have been cleared.");
+      // ✅ One batched operation instead of looping deleteMatch() per match
+      await deleteAllMatches();
     } catch (error) {
       console.error("Failed to clear database:", error);
-      alert("An error occurred while deleting some records.");
     } finally {
       setIsDeleting(false);
-      setIsDeleteDialogOpen(false)
+      setIsDeleteDialogOpen(false);
     }
   };
 
-  const handleDeleteMatchWeek = async (day: string) => {
-    const matchesInWeek = groupedMatches[day];
+  const handleDeleteMatchWeek = async () => {
+    if (!weekToDelete) return;
+    const matchesInWeek = groupedMatches[weekToDelete];
 
-    const confirmDelete = confirm(
-      `Are you sure you want to delete all ${matchesInWeek.length} fixtures for Match Week ${day}?`
-    );
-
-    if (!confirmDelete) return;
-
-    setIsDeleting(true); // START OVERLAY
+    setIsDeleting(true);
     try {
-      // Delete all matches in this week
       for (const match of matchesInWeek) {
         await deleteMatch(match.id);
       }
-      alert(`Match Week ${day} cleared.`);
     } catch (error) {
       console.error("Failed to delete week:", error);
-      alert("Some matches could not be deleted.");
     } finally {
-      setIsDeleting(false); // STOP OVERLAY
+      setIsDeleting(false);
+      setWeekToDelete(null);
     }
   };
 
@@ -444,7 +356,7 @@ function MatchRecordsContent() {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteMatchWeek(day);
+                              setWeekToDelete(day); // opens ConfirmDialog below
                             }}
                             className="h-8 w-8 p-0 hover:text-destructive border-destructive/20 hover:bg-destructive/10 hover:border-destructive text-destructive transition-colors"
                           >
@@ -508,25 +420,36 @@ function MatchRecordsContent() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={weekToDelete !== null}
+        onOpenChange={(open) => !open && setWeekToDelete(null)}
+        title={`Delete Match Week ${weekToDelete}?`}
+        description={
+          <>
+            This will permanently delete all{" "}
+            <span className="font-semibold text-foreground">
+              {weekToDelete ? groupedMatches[weekToDelete]?.length : 0} fixtures
+            </span>{" "}
+            in Match Week {weekToDelete}. Goals, assists, and cards for these
+            matches will also be removed. This cannot be undone.
+          </>
+        }
+        confirmLabel="Delete Week"
+        onConfirm={handleDeleteMatchWeek}
+        loading={isDeleting}
+      />
     </div>
   );
 }
-
-const formatTime12h = (timeStr: string) => {
-  if (!timeStr) return "";
-  // Check if it's already in a format like "14:30"
-  const [hours, minutes] = timeStr.split(':');
-  const h = parseInt(hours);
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  const hours12 = h % 12 || 12;
-  return `${hours12}:${minutes} ${ampm}`;
-};
 
 function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
   const homeTeam = teams.find((t: any) => t.id === match.homeTeamId);
   const awayTeam = teams.find((t: any) => t.id === match.awayTeamId);
   const isPlayed = match.status === 'played';
   const formattedTime = useMemo(() => formatTime12h(match.time), [match.time]);
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
 
   return (
@@ -553,7 +476,7 @@ function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
                 <Edit2 className="w-4 h-4 mr-2" /> {isPlayed ? "Edit Report" : "Enter Result"}
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => confirm("Delete this record?") && onDelete(match.id)}
+                onClick={() => setDeleteOpen(true)}
                 className="text-destructive focus:text-destructive"
               >
                 <Trash2 className="w-4 h-4 mr-2" /> Delete
@@ -576,33 +499,6 @@ function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
             </AvatarFallback>
           </Avatar>
         </div>
-
-        {/* Scoreboard or VS Badge */}
-        {/* <div className="flex flex-col items-center gap-3">
-          {isPlayed ? (
-            <div className="flex items-center gap-5 bg-secondary/40 px-6 py-2.5 rounded-2xl border border-border/50">
-              <span className="text-3xl font-black tabular-nums tracking-tight">{match.homeScore}</span>
-              <span className="text-muted-foreground/50 font-light text-2xl">:</span>
-              <span className="text-3xl font-black tabular-nums tracking-tight">{match.awayScore}</span>
-            </div>
-          ) : (
-            <div className="px-6 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-black uppercase tracking-[0.2em]">
-              Scheduled
-            </div>
-          )}
-          
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
-            {isPlayed ? (
-              <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-0.5 rounded text-primary">
-                <Clock className="w-3 h-3" /> {match.minutesPlayed}'
-              </span>
-            ) : (
-              <span className="text-primary">Match Day {match.matchDay}</span>
-            )}
-            <span className="opacity-30">•</span>
-            <span>{match.league || "Seasonal League"}</span>
-          </div>
-        </div> */}
 
         <div className="flex flex-col items-center gap-3">
           {isPlayed ? (
@@ -668,6 +564,31 @@ function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Delete this match?"
+        description={
+          <>
+            Match Day {match.matchDay} —{" "}
+            <span className="font-semibold text-foreground">
+              {homeTeam?.name ?? "Home"}
+            </span>{" "}
+            vs{" "}
+            <span className="font-semibold text-foreground">
+              {awayTeam?.name ?? "Away"}
+            </span>{" "}
+            will be permanently deleted along with all goals, assists,
+            and cards recorded for this match.
+          </>
+        }
+        confirmLabel="Delete Match"
+        onConfirm={() => {
+          onDelete(match.id);
+          setDeleteOpen(false);
+        }}
+      />
     </motion.div>
   );
 }
