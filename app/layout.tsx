@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { Toaster } from "@/components/Toaster";
-import { AppDataProvider } from "./context/AppDataContext";
-import Sidebar from "@/components/Sidebar";
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { QueryProvider } from "./context/QueryProvider";
-
+import { RootLayoutClient } from "./RootLayoutClient";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,17 +36,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <AppDataProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sidebar>
-                {children}
-                <SpeedInsights />
-              </Sidebar>
-            </TooltipProvider>
-          </AppDataProvider>
-        </QueryProvider>
+        <RootLayoutClient>
+          {children}
+        </RootLayoutClient>
       </body>
     </html>
   );
