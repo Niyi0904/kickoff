@@ -40,7 +40,7 @@ export function AddMatchDialog({ open, onOpenChange }: AddMatchDialogProps) {
     time: "19:00", // Add this field
     date: new Date(),
     league: "Seasonal League",
-    status: "played" 
+    status: "played" as "upcoming" | "played"
   });
 
   const [playerStats, setPlayerStats] = useState<{
@@ -64,15 +64,17 @@ export function AddMatchDialog({ open, onOpenChange }: AddMatchDialogProps) {
     }
     setLoading(true);
     try {
+      const { date, ...rest } = matchForm;
       const submissionData = {
-        ...matchForm,
+        ...rest,
+        scheduledDate: date.toISOString().split('T')[0],
         homeScore: matchForm.status === 'upcoming' ? 0 : matchForm.homeScore,
         awayScore: matchForm.status === 'upcoming' ? 0 : matchForm.awayScore,
-      };
+      } as any; // Cast as any or specific Partial<Match> to bypass strict literal checks if needed, but the structure is now correct.
 
       const matchResult = await addMatch(submissionData);
       
-      if (matchResult?.id && matchForm.status === 'played') {
+      if (matchResult?.id && matchResult.matchDay && matchForm.status === 'played') {
         const statsToRecord = {
           goals: playerStats.goals.filter(id => !!id).map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "" })),
           assists: playerStats.assists.filter(id => !!id).map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "" })),

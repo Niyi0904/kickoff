@@ -1,29 +1,70 @@
 'use client';
 
-import { createContext, useContext, ReactNode } from "react";
-import { useAppData } from "../hooks/useAppData";
-import { useAuth } from "../hooks/useAuth";
+/**
+ * AppDataContext.tsx
+ *
+ * Backward-compatible composition layer.
+ * Internally uses AuthContext + DataContext as two separate providers
+ * so their lifecycles are fully decoupled:
+ *   - Auth token refreshes (every ~1hr) don't re-render data subscribers
+ *   - Firestore data updates don't re-render auth-only components
+ *
+ * All existing pages continue using useAppContext() with zero changes
+ * to their destructuring calls — the returned shape is identical to before.
+ *
+ * As you refactor individual pages over time, you can switch them to use
+ * useAuthContext() or useDataContext() directly for even more precision:
+ *
+ *   // Before (works fine, slightly over-subscribes):
+ *   const { isAdmin, signOut } = useAppContext();
+ *
+ *   // After (only re-renders on auth changes, never on data changes):
+ *   const { isAdmin, signOut } = useAuthContext();
+ */
 
-type AppDataContextType = ReturnType<typeof useAppData> & {
-  isAdmin: boolean;
-  user: ReturnType<typeof useAuth>["user"];
-  signOut: ReturnType<typeof useAuth>["signOut"];
-};
+import { ReactNode } from "react";
+import { AuthProvider, useAuthContext } from "./AuthContext";
+import { DataProvider, useDataContext } from "./DataContext";
 
-const AppDataContext = createContext<AppDataContextType | null>(null);
+// Re-export for direct use in new components
+export { useAuthContext } from "./AuthContext";
+export { useDataContext } from "./DataContext";
 
+// ─────────────────────────────────────────────
+// Composed provider
+// AuthProvider is outer — auth state is available
+// everywhere including inside DataProvider if needed.
+// ─────────────────────────────────────────────
 export function AppDataProvider({ children }: { children: ReactNode }) {
-  const data = useAppData();
-  const { user, isAdmin, signOut } = useAuth();
   return (
-    <AppDataContext.Provider value={{ ...data, isAdmin, user, signOut }}>
-      {children}
-    </AppDataContext.Provider>
+    <AuthProvider>
+      <DataProvider>
+        {children}
+      </DataProvider>
+    </AuthProvider>
   );
 }
 
+// ─────────────────────────────────────────────
+// useAppContext — backward-compatible merged hook.
+// Returns the same shape as the old single context
+// so all existing consumers work without any changes.
+// ─────────────────────────────────────────────
 export function useAppContext() {
-  const ctx = useContext(AppDataContext);
-  if (!ctx) throw new Error("useAppContext must be used within AppDataProvider");
-  return ctx;
+  const auth = useAuthContext();
+  const data = useDataContext();
+
+  return {
+    // ── From AuthContext ──────────────────────
+    user: auth.user,
+    isAdmin: auth.isAdmin,
+    authLoading: auth.loading, // renamed to avoid clash with data.loading
+    signIn: auth.signIn,
+    signUp: auth.signUp,
+    signOut: auth.signOut,
+    // ── From DataContext ──────────────────────
+    // data.loading stays as `loading` — used by pages for
+    // skeleton states while Firestore collections are fetching
+    ...data,
+  };
 }

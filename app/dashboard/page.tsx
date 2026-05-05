@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { 
-  Shield, Users, Target, AlertTriangle, 
+import {
+  Shield, Users, Target, AlertTriangle,
   Trophy, TrendingUp, Star, Activity,
   Calendar, Award
 } from "lucide-react";
@@ -11,6 +11,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format, parseISO } from "date-fns";
 import Link from "next/link";
+import { useLeagueSettings } from "../hooks/use-leagueSettings";
 
 interface StatCardProps {
   label: string;
@@ -59,14 +60,17 @@ export default function Dashboard() {
   );
 }
 
+
+
 function DashboardContent() {
-  const { teams, players, goals, assists, yellowCards, redCards, getTopScorers, matches } = useAppContext();
+  const { seasonName } = useLeagueSettings();
+
+  const { teams, players, goals, assists, yellowCards, redCards, topScorers, matches } = useAppContext();
 
   const playedMatches = matches.filter(m => m.status === 'played');
   const upcomingMatches = matches.filter(m => m.status === 'upcoming');
-  
+
   // Advanced Stat Calculations
-  const topScorers = getTopScorers();
   const totalGoals = goals.length
   const totalAssists = assists.length
 
@@ -76,23 +80,23 @@ function DashboardContent() {
     ...redCards.map(r => ({ ...r, type: 'red' })),
     ...assists.map(a => ({ ...a, type: 'assist' }))
   ]
-  .sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0))
-  .slice(0, 5); // Take the 5 most recent events
-  
+    .sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0))
+    .slice(0, 5); // Take the 5 most recent events
+
   // Calculate average goals per match
   const avgGoals = playedMatches.length > 0 ? (totalGoals / playedMatches.length).toFixed(1) : 0;
 
   return (
     <div className="max-w-7xl mx-auto pb-12">
-      <motion.div 
-        initial={{ opacity: 0, x: -20 }} 
-        animate={{ opacity: 1, x: 0 }} 
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
         className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4"
       >
         <div>
           <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Season Dashboard</h1>
           <p className="text-muted-foreground mt-1 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-primary" /> Live statistics for the 2026/27 League
+            <Activity className="w-4 h-4 text-primary" /> Live statistics for the {seasonName} League
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -134,15 +138,14 @@ function DashboardContent() {
             {topScorers.slice(0, 5).map((entry, i) => {
               const team = teams.find((t) => t.id === entry.player.teamId);
               return (
-                <Link 
+                <Link
                   href={`/players/${entry.player.id}`}
                   key={entry.player.id}
                   className="flex items-center gap-4 p-4 rounded-xl bg-secondary/30 hover:bg-secondary/60 transition-all border border-transparent hover:border-primary/20 group"
                 >
                   <div className="relative">
-                    <span className={`absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black z-10 shadow-lg ${
-                      i === 0 ? "bg-yellow-500 text-black" : i === 1 ? "bg-slate-300 text-black" : "bg-orange-400 text-black"
-                    }`}>
+                    <span className={`absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black z-10 shadow-lg ${i === 0 ? "bg-yellow-500 text-black" : i === 1 ? "bg-slate-300 text-black" : "bg-orange-400 text-black"
+                      }`}>
                       {i + 1}
                     </span>
                     <Avatar className="w-12 h-12 rounded-lg border-2 border-background shadow-md">
@@ -150,7 +153,7 @@ function DashboardContent() {
                       <AvatarFallback className="bg-primary text-white font-bold">{entry.player.name[0]}</AvatarFallback>
                     </Avatar>
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <p className="font-black text-sm uppercase tracking-tight group-hover:text-primary transition-colors">{entry.player.name}</p>
                     <p className="text-xs text-muted-foreground font-medium">{team?.name || "Independent"}</p>
@@ -183,14 +186,13 @@ function DashboardContent() {
               {recentActivity.map((event: any) => {
                 const player = players.find(p => p.id === event.playerId);
                 const team = teams.find(t => t.id === event.teamId);
-                
+
                 return (
                   <div key={event.id} className="relative pl-4 border-l-2 border-primary/20 py-1">
-                    <div className={`absolute -left-[5px] top-2 w-2 h-2 rounded-full ${
-                      event.type === 'goal' ? 'bg-primary' : 
-                      event.type === 'yellow' ? 'bg-yellow-500' : 
-                      event.type === 'red' ? 'bg-red-600' : 'bg-accent'
-                    }`} />
+                    <div className={`absolute -left-[5px] top-2 w-2 h-2 rounded-full ${event.type === 'goal' ? 'bg-primary' :
+                      event.type === 'yellow' ? 'bg-yellow-500' :
+                        event.type === 'red' ? 'bg-red-600' : 'bg-accent'
+                      }`} />
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-bold text-sm leading-none">{player?.name || "Unknown"}</p>
@@ -198,11 +200,10 @@ function DashboardContent() {
                           {team?.name}
                         </p>
                       </div>
-                      <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase ${
-                        event.type === 'goal' ? 'bg-primary/10 text-primary' : 
-                        event.type === 'yellow' ? 'bg-yellow-500/10 text-yellow-600' : 
-                        'bg-secondary text-muted-foreground'
-                      }`}>
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase ${event.type === 'goal' ? 'bg-primary/10 text-primary' :
+                        event.type === 'yellow' ? 'bg-yellow-500/10 text-yellow-600' :
+                          'bg-secondary text-muted-foreground'
+                        }`}>
                         {event.type}
                       </span>
                     </div>
@@ -217,11 +218,11 @@ function DashboardContent() {
 
           {/* Playtime Card */}
           <motion.div className="bg-primary p-6 rounded-2xl text-primary-foreground relative overflow-hidden">
-             {/* ... Total minutes calculation ... */}
-             <Award className="absolute -right-4 -bottom-4 w-24 h-24 opacity-20" />
-             <p className="text-3xl font-black mt-2">
-               {playedMatches.reduce((s, m) => s + (Number(m.minutesPlayed) || 0), 0)} <span className="text-sm font-bold opacity-80">MINS</span>
-             </p>
+            {/* ... Total minutes calculation ... */}
+            <Award className="absolute -right-4 -bottom-4 w-24 h-24 opacity-20" />
+            <p className="text-3xl font-black mt-2">
+              {playedMatches.reduce((s, m) => s + (Number(m.minutesPlayed) || 0), 0)} <span className="text-sm font-bold opacity-80">MINS</span>
+            </p>
           </motion.div>
         </div>
       </div>

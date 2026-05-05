@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   TrendingUp,
+  Settings,
 } from "lucide-react";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ const navItems = [
 
 const adminNavItems = [
   { path: "/admin/onboarding", label: "User Management", icon: Users },
+  { path: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
@@ -58,11 +60,10 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.path}
                 href={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                  isActive
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
                     ? "bg-primary/15 text-primary glow-green"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {item.label}
@@ -81,11 +82,10 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   <Link
                     key={item.path}
                     href={item.path}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                      isActive
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
                         ? "bg-primary/15 text-primary glow-green"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
+                      }`}
                   >
                     <Icon className="w-4 h-4" />
                     {item.label}
@@ -140,11 +140,10 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   key={item.path}
                   href={item.path}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                    isActive
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
                       ? "bg-primary/15 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.label}
@@ -164,11 +163,10 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                       key={item.path}
                       href={item.path}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                        isActive
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
                           ? "bg-primary/15 text-primary"
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                      }`}
+                        }`}
                     >
                       <Icon className="w-4 h-4" />
                       {item.label}
