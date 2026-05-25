@@ -17,6 +17,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { useEvaluateSuspensions } from '@/app/hooks/useSuspensions';
+
 
 interface AddMatchDialogProps {
   open: boolean;
@@ -52,6 +54,9 @@ export function AddMatchDialog({ open, onOpenChange }: AddMatchDialogProps) {
   const homePlayers = useMemo(() => players.filter(p => p.teamId === matchForm.homeTeamId), [matchForm.homeTeamId, players]);
   const awayPlayers = useMemo(() => players.filter(p => p.teamId === matchForm.awayTeamId), [matchForm.awayTeamId, players]);
 
+  const evaluateSuspensions = useEvaluateSuspensions();
+
+
   const handleNextStep = () => {
     if (!matchForm.homeTeamId || !matchForm.awayTeamId) return alert("Select teams first");
     if (matchForm.homeTeamId === matchForm.awayTeamId) return alert("Teams must be different");
@@ -82,12 +87,22 @@ export function AddMatchDialog({ open, onOpenChange }: AddMatchDialogProps) {
           reds: playerStats.reds.filter(id => !!id).map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "" })),
         };
         await recordMatchStats(matchResult.id, matchResult.matchDay, statsToRecord);
+        
+        await evaluateSuspensions.mutateAsync({
+          matchId:   matchResult.id,
+          playerIds: {
+            yellows: playerStats.yellows.filter(id => !!id),
+            reds:    playerStats.reds.filter(id => !!id),
+          },
+        });
       }
       
       onOpenChange(false);
       resetForm();
     } catch (e) { console.error(e); } finally { setLoading(false); }
   };
+
+  
 
   const resetForm = () => {
     setStep(1);

@@ -28,6 +28,8 @@ import {
 import { useLeagueSettings } from "../hooks/use-leagueSettings";
 import { DeadlineBanner } from "@/components/deadlineBanner";
 import { getInitials } from "@/lib/utils";
+import { SuspensionBadge } from '@/components/SuspensionBadge';
+
 
 
 export default function Players() {
@@ -224,6 +226,8 @@ function PlayersContent() {
                     Manager
                   </span>
                 )}
+                <SuspensionBadge playerId={player.id} variant="compact" />
+
                 {isAdmin && (
                   <>
                     {/* Edit Button */}

@@ -17,6 +17,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { useEvaluateSuspensions } from '@/app/hooks/useSuspensions';
+
 
 interface EditMatchDialogProps {
   match: any;
@@ -36,6 +38,9 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
     yellows: [] as string[],
     reds: [] as string[]
   });
+
+  const evaluateSuspensions = useEvaluateSuspensions();
+
 
   // Sync internal state when match prop changes
   useEffect(() => {
@@ -131,6 +136,14 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
           reds: playerStats.reds.slice(0, matchForm.homeReds + matchForm.awayReds).filter(id => !!id).map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "" })),
         };
         await recordMatchStats(match.id, matchForm.matchDay, statsToRecord);
+
+        await evaluateSuspensions.mutateAsync({
+          matchId:   match.id,
+          playerIds: {
+            yellows: playerStats.yellows.slice(0, matchForm.homeYellows + matchForm.awayYellows).filter(id => !!id),
+            reds:    playerStats.reds.slice(0, matchForm.homeReds + matchForm.awayReds).filter(id => !!id),
+          },
+        });
       }
 
       onOpenChange(false);

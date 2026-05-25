@@ -73,6 +73,15 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────────────────
+    // Suspension Logics
+    // ─────────────────────────────────────────────────────────
+
+    match /suspensions/{suspensionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
     // User Management Collections
     // ─────────────────────────────────────────────────────────
 

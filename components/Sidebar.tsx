@@ -14,6 +14,7 @@ import {
   X,
   TrendingUp,
   Settings,
+  ShieldAlert
 } from "lucide-react";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const navItems = [
 const adminNavItems = [
   { path: "/admin/onboarding", label: "User Management", icon: Users },
   { path: "/admin/settings", label: "Settings", icon: Settings },
+  { path: "/admin/suspensions",  label: "Suspensions", icon: ShieldAlert },
 ];
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
