@@ -82,6 +82,17 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────────────────
+    // PLAYER PROFILE AUTH LINKING
+    // ─────────────────────────────────────────────────────────
+
+    match /link_requests/{requestId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
     // User Management Collections
     // ─────────────────────────────────────────────────────────
 

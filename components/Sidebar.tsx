@@ -14,11 +14,15 @@ import {
   X,
   TrendingUp,
   Settings,
-  ShieldAlert
+  ShieldAlert,
+  User,
+  UserCheck 
 } from "lucide-react";
+import { useMyLinkedPlayer } from '@/app/hooks/usePlayerLinking';
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Button } from "@/components/ui/button";
 import { UserProfileDropdown } from "./UserProfileDropdown";
+import { usePendingLinkRequests } from '@/app/hooks/usePlayerLinking';
 
 const navItems = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -31,14 +35,21 @@ const navItems = [
 
 const adminNavItems = [
   { path: "/admin/onboarding", label: "User Management", icon: Users },
+  { path: "/admin/users", label: "All Users", icon: Users },
   { path: "/admin/settings", label: "Settings", icon: Settings },
   { path: "/admin/suspensions",  label: "Suspensions", icon: ShieldAlert },
+  { path: "/admin/link-requests", label: "Profile Requests",  icon: UserCheck  }
 ];
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { signOut, user, isAdmin } = useAppContext();
+
+  const { data: pending = [] } = usePendingLinkRequests();
+
+  const { data: linkedPlayer } = useMyLinkedPlayer();
+
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -73,6 +84,19 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             );
           })}
 
+          {linkedPlayer && (
+            <Link
+                href="/my-profile"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${pathname === "/my-profile"
+                    ? "bg-primary/15 text-primary glow-green"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  }`}
+              >
+                <User className="w-4 h-4" />
+                My Profile
+              </Link>
+          )}
+
           {isAdmin && (
             <>
               <div className="my-4 border-t border-border" />
@@ -94,6 +118,12 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
+
+              {pending.length > 0 && (
+                <span className="inline-block text-[10px] uppercase tracking-wider bg-accent/15 text-accent px-2 py-0.5 rounded-full font-semibold">
+                  {pending.length} Pending Requests
+                </span>
+              )}
             </>
           )}
         </nav>

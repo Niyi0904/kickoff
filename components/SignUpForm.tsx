@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useToast } from "@/app/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { getInvite, markInviteAsUsed, setUserRole } from "@/lib/admin";
+import { getInvite, completeRegistration } from "@/lib/admin";
+
 
 function getFirebaseErrorMessage(code: string): string {
   const errorMessages: Record<string, string> = {
@@ -96,10 +97,8 @@ export function SignUpForm({ onSuccess, onSwitchToLogin, initialInviteCode }: Si
         const errorMessage = getFirebaseErrorMessage(errorCode);
         toast({ title: "Signup failed", description: errorMessage, variant: "destructive" });
       } else {
-        // Mark invite as used and set the role
         if (userId) {
-          await markInviteAsUsed(inviteCode, userId);
-          await setUserRole(userId, roleFromInvite);
+          await completeRegistration(inviteCode, userId);
         }
 
         toast({ title: "Success", description: "Account created successfully" });

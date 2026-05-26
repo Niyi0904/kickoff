@@ -33,6 +33,7 @@ export interface Player {
   teamId: string;
   isManager: boolean;
   photo?: string | null;
+  linkedUserId?: string | null
 }
 
 export interface Team {
@@ -131,6 +132,7 @@ async function fetchPlayers(): Promise<Player[]> {
       teamId: p.team_id ?? p.teamId,
       isManager: p.is_manager ?? p.isManager ?? false,
       photo: p.photo ?? null,
+      linkedUserId: p.linkedUserId ?? null
     };
   });
 }

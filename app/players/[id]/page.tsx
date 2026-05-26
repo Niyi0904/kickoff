@@ -15,6 +15,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, RadarChart, PolarGrid, Pola
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, parseISO } from "date-fns";
 import { SuspensionBadge } from '@/components/SuspensionBadge';
+import { ClaimProfileButton } from '@/components/ClaimProfileButton';
+
 
 
 const performanceChartConfig: ChartConfig = {
@@ -106,6 +108,13 @@ export default function PlayerProfile() {
             </p>
           </motion.div>
         </div>
+
+        <ClaimProfileButton
+          playerId={player.id}
+          playerName={player.name}
+          teamName={team?.name ?? ''}
+          linkedUserId={player.linkedUserId ?? null}
+        />
       </div>
 
       {/* Stats Grid - 2 cols on mobile, 3 on tablet, flex on desktop */}

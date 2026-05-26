@@ -1,192 +1,205 @@
-import { doc, setDoc, getDoc, updateDoc, collection, getDocs, query, where, deleteDoc } from 'firebase/firestore';
-import { db } from './firebase';
-import { serverTimestamp } from 'firebase/firestore';
+// lib/admin.ts
+// Updated invite system with player linking support.
 
-/**
- * Generate a random invite code
- */
+import {
+  doc, setDoc, getDoc, updateDoc, collection,
+  getDocs, query, where, deleteDoc, serverTimestamp, writeBatch,
+} from 'firebase/firestore';
+import { db } from './firebase';
+
 export function generateInviteCode(): string {
   return Math.random().toString(36).substr(2, 9).toUpperCase();
 }
 
-/**
- * Create an invite for a new user
- */
-const INVITE_DEADLINE = new Date('2026-04-30T23:59:59').getTime();
-export async function createUserInvite(
-  email: string,
-  role: 'admin' | 'user',
-  createdByAdminId: string
-): Promise<{ inviteCode: string; error: null } | { error: any }> {
-  if (Date.now() > INVITE_DEADLINE) {
-    return { 
-      error: { 
-        code: 'INVITES_CLOSED', 
-        message: 'Registration period has ended. No new invites can be created.' 
-      } 
-    };
-  }
+async function getInviteDeadlineMs(): Promise<number> {
   try {
-    // Check if a pending invite already exists for this email
-    const invitesQuery = query(
-      collection(db, 'user_invites'),
-      where('email', '==', email),
-      where('used', '==', false)
+    const snap = await getDoc(doc(db, 'settings', 'league'));
+    if (snap.exists() && snap.data().inviteDeadline) {
+      return new Date(snap.data().inviteDeadline).getTime();
+    }
+  } catch (err) {
+    console.error('Could not read invite deadline:', err);
+  }
+  return new Date('2099-12-31T23:59:59').getTime();
+}
+
+export type InvitePlayerMode = 'none' | 'link_existing' | 'create_new';
+
+export interface NewPlayerData {
+  name: string; position: string; number: number; teamId: string;
+}
+
+export interface CreateInviteOptions {
+  email: string;
+  role: 'admin' | 'user';
+  createdByAdminId: string;
+  playerMode: InvitePlayerMode;
+  playerId?: string;
+  newPlayer?: NewPlayerData;
+}
+
+export async function createUserInvite(
+  options: CreateInviteOptions
+): Promise<{ inviteCode: string; error: null } | { error: any }> {
+  const { email, role, createdByAdminId, playerMode, playerId, newPlayer } = options;
+
+  const deadlineMs = await getInviteDeadlineMs();
+  if (Date.now() > deadlineMs) {
+    return { error: { code: 'INVITES_CLOSED', message: 'Registration period has ended.' } };
+  }
+
+  try {
+    const existingSnap = await getDocs(
+      query(collection(db, 'user_invites'), where('email', '==', email), where('used', '==', false))
     );
-    const invitesSnap = await getDocs(invitesQuery);
-    if (!invitesSnap.empty) {
-      return { error: { code: 'ALREADY_INVITED', message: 'There is already a pending invite for this email.' } };
+    if (!existingSnap.empty) {
+      return { error: { code: 'ALREADY_INVITED', message: 'A pending invite already exists for this email.' } };
     }
 
-    // Check if a user is already registered with this email
-    const usersQuery = query(collection(db, 'users'), where('email', '==', email));
-    const usersSnap = await getDocs(usersQuery);
+    const usersSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
     if (!usersSnap.empty) {
       return { error: { code: 'ALREADY_REGISTERED', message: 'A user with this email is already registered.' } };
     }
 
+    const batch = writeBatch(db);
     const inviteCode = generateInviteCode();
-    await setDoc(doc(db, 'user_invites', inviteCode), {
-      email,
-      role,
-      createdByAdminId,
+    let linkedPlayerId: string | null = null;
+
+    if (playerMode === 'link_existing' && playerId) {
+      const playerSnap = await getDoc(doc(db, 'players', playerId));
+      if (playerSnap.exists() && playerSnap.data()?.linkedUserId) {
+        return { error: { code: 'PLAYER_ALREADY_LINKED', message: 'This player profile is already linked to another account.' } };
+      }
+      linkedPlayerId = playerId;
+    }
+
+    if (playerMode === 'create_new' && newPlayer) {
+      const newPlayerRef = doc(collection(db, 'players'));
+      batch.set(newPlayerRef, {
+        name: newPlayer.name, position: newPlayer.position,
+        number: newPlayer.number, team_id: newPlayer.teamId,
+        is_manager: false, photo: null, linkedUserId: null,
+        createdAt: serverTimestamp(),
+      });
+      linkedPlayerId = newPlayerRef.id;
+    }
+
+    batch.set(doc(db, 'user_invites', inviteCode), {
+      email, role, createdByAdminId,
       createdAt: serverTimestamp(),
-      used: false,
-      usedBy: null,
-      usedAt: null,
+      used: false, usedBy: null, usedAt: null,
+      playerMode, linkedPlayerId,
     });
+
+    await batch.commit();
     return { inviteCode, error: null };
   } catch (error) {
-    console.error('Error creating invite', error);
     return { error };
   }
 }
 
-/**
- * Get an invite by code (verify it exists and not used)
- */
+export async function completeRegistration(inviteCode: string, userId: string): Promise<void> {
+  const inviteSnap = await getDoc(doc(db, 'user_invites', inviteCode));
+  if (!inviteSnap.exists()) return;
+  const invite = inviteSnap.data();
+  const batch = writeBatch(db);
+
+  batch.update(doc(db, 'user_invites', inviteCode), {
+    used: true, usedBy: userId, usedAt: serverTimestamp(),
+  });
+  batch.set(doc(db, 'user_roles', userId), { role: invite.role ?? 'user', updatedAt: serverTimestamp() });
+
+  if (invite.linkedPlayerId) {
+    batch.update(doc(db, 'players', invite.linkedPlayerId), { linkedUserId: userId });
+    const linkReqRef = doc(collection(db, 'link_requests'));
+    batch.set(linkReqRef, {
+      userId, playerId: invite.linkedPlayerId,
+      userEmail: invite.email, userName: '', playerName: '', teamName: '',
+      status: 'approved', createdAt: serverTimestamp(),
+      reviewedAt: serverTimestamp(), reviewedBy: invite.createdByAdminId,
+      rejectNote: null, autoLinked: true,
+    });
+  }
+
+  await batch.commit();
+}
+
+export async function linkExistingUserToPlayer(
+  userId: string, playerId: string, adminUid: string,
+): Promise<{ error: null } | { error: any }> {
+  try {
+    const playerSnap = await getDoc(doc(db, 'players', playerId));
+    if (!playerSnap.exists()) return { error: { message: 'Player not found.' } };
+    if (playerSnap.data()?.linkedUserId) return { error: { message: 'This player is already linked to another account.' } };
+
+    const batch = writeBatch(db);
+    batch.update(doc(db, 'players', playerId), { linkedUserId: userId });
+    const linkReqRef = doc(collection(db, 'link_requests'));
+    batch.set(linkReqRef, {
+      userId, playerId, status: 'approved',
+      createdAt: serverTimestamp(), reviewedAt: serverTimestamp(),
+      reviewedBy: adminUid, autoLinked: false, adminForced: true,
+    });
+    await batch.commit();
+    return { error: null };
+  } catch (error) { return { error }; }
+}
+
 export async function getInvite(inviteCode: string): Promise<any | null> {
   try {
-    const inviteDoc = await getDoc(doc(db, 'user_invites', inviteCode));
-    if (inviteDoc.exists() && !inviteDoc.data().used) {
-      return inviteDoc.data();
-    }
+    const snap = await getDoc(doc(db, 'user_invites', inviteCode));
+    if (snap.exists() && !snap.data().used) return snap.data();
     return null;
-  } catch (error) {
-    console.error('Error getting invite', error);
-    return null;
-  }
+  } catch { return null; }
 }
 
-/**
- * Mark invite as used
- */
 export async function markInviteAsUsed(inviteCode: string, userId: string): Promise<void> {
-  try {
-    await updateDoc(doc(db, 'user_invites', inviteCode), {
-      used: true,
-      usedBy: userId,
-      usedAt: serverTimestamp(),
-    });
-  } catch (error) {
-    console.error('Error marking invite as used', error);
-    throw error;
-  }
+  await updateDoc(doc(db, 'user_invites', inviteCode), { used: true, usedBy: userId, usedAt: serverTimestamp() });
 }
 
-/**
- * Get all pending invites (not used yet)
- */
 export async function getPendingInvites(): Promise<any[]> {
-  try {
-    const q = query(collection(db, 'user_invites'), where('used', '==', false));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  } catch (error) {
-    console.error('Error getting pending invites', error);
-    return [];
-  }
+  const snap = await getDocs(query(collection(db, 'user_invites'), where('used', '==', false)));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * Find a pending invite by email
- */
 export async function findPendingInviteByEmail(email: string): Promise<any | null> {
-  try {
-    const q = query(collection(db, 'user_invites'), where('email', '==', email), where('used', '==', false));
-    const snap = await getDocs(q);
-    if (snap.empty) return null;
-    const d = snap.docs[0];
-    return { id: d.id, ...d.data() };
-  } catch (error) {
-    console.error('Error finding pending invite by email', error);
-    return null;
-  }
+  const snap = await getDocs(query(collection(db, 'user_invites'), where('email', '==', email), where('used', '==', false)));
+  if (snap.empty) return null;
+  return { id: snap.docs[0].id, ...snap.docs[0].data() };
 }
 
-/**
- * Check whether a user is already registered with this email
- */
 export async function isUserRegistered(email: string): Promise<boolean> {
-  try {
-    const q = query(collection(db, 'users'), where('email', '==', email));
-    const snap = await getDocs(q);
-    return !snap.empty;
-  } catch (error) {
-    console.error('Error checking registered user', error);
-    return false;
-  }
+  const snap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
+  return !snap.empty;
 }
 
-/**
- * Set user role (admin or user)
- */
 export async function setUserRole(userId: string, role: 'admin' | 'user'): Promise<void> {
-  try {
-    await setDoc(doc(db, 'user_roles', userId), {
-      role,
-      updatedAt: serverTimestamp(),
-    }, { merge: true });
-  } catch (error) {
-    console.error('Error setting user role', error);
-    throw error;
-  }
+  await setDoc(doc(db, 'user_roles', userId), { role, updatedAt: serverTimestamp() }, { merge: true });
 }
 
-/**
- * Get all users with their roles (for admin management)
- */
 export async function getAllUsersWithRoles(): Promise<any[]> {
-  try {
-    const userRolesSnap = await getDocs(collection(db, 'user_roles'));
-    const usersSnap = await getDocs(collection(db, 'users'));
-
-    // Combine user info with roles
-    return usersSnap.docs.map((userDoc) => {
-      const userData = userDoc.data();
-      const roleData = userRolesSnap.docs.find((d) => d.id === userDoc.id)?.data();
-      return {
-        userId: userDoc.id,
-        email: userData.email,
-        displayName: userData.displayName,
-        role: roleData?.role ?? 'user',
-      };
-    });
-  } catch (error) {
-    console.error('Error getting users with roles', error);
-    return [];
-  }
+  const [rolesSnap, usersSnap, linkSnap] = await Promise.all([
+    getDocs(collection(db, 'user_roles')),
+    getDocs(collection(db, 'users')),
+    getDocs(query(collection(db, 'link_requests'), where('status', '==', 'approved'))),
+  ]);
+  return usersSnap.docs.map(d => {
+    const userData = d.data();
+    const roleData = rolesSnap.docs.find(r => r.id === d.id)?.data();
+    const linkData = linkSnap.docs.find(l => l.data().userId === d.id)?.data();
+    return {
+      userId: d.id,
+      email: userData.email,
+      displayName: userData.displayName,
+      role: roleData?.role ?? 'user',
+      createdAt: userData.createdAt ?? null,
+      linkedPlayerId: linkData?.playerId ?? null,
+      linkedPlayerName: linkData?.playerName ?? null,
+    };
+  });
 }
 
-/**
- * Delete (revoke) an invite by its code
- */
 export async function deleteUserInvite(inviteCode: string): Promise<{ success: true } | { error: any }> {
-  try {
-    await deleteDoc(doc(db, 'user_invites', inviteCode));
-    return { success: true };
-  } catch (error) {
-    console.error('Error deleting invite', error);
-    return { error };
-  }
+  try { await deleteDoc(doc(db, 'user_invites', inviteCode)); return { success: true }; }
+  catch (error) { return { error }; }
 }
