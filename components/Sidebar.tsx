@@ -56,7 +56,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-sidebar p-6 fixed inset-y-0 left-0 z-30">
+      <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-sidebar p-6 fixed inset-y-0 left-0 z-30 overflow-y-auto">
         <div className="flex items-center gap-3 mb-10">
           <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
             <Trophy className="w-5 h-5 text-primary-foreground" />
@@ -174,7 +174,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <motion.div initial={{ opacity: 0, x: -200 }} animate={{ opacity: 1, x: 0 }} className="lg:hidden fixed inset-0 z-30 bg-background/95 backdrop-blur-md pt-16 pb-20">
+        <motion.div initial={{ opacity: 0, x: -200 }} animate={{ opacity: 1, x: 0 }} className="lg:hidden fixed inset-0 z-30 bg-background/95 backdrop-blur-md pt-16 pb-20 overflow-y-auto">
           <nav className="flex flex-col gap-1 p-4">
             {navItems.map((item) => {
               const isActive = pathname === item.path;

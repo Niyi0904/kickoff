@@ -59,7 +59,9 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
       // 2. Sync the Match Form
       setMatchForm({ 
         ...match, 
-        date: parsedDate 
+        date: parsedDate,
+        report: match.report || "",
+        keyMoments: match.keyMoments || ""
       });
 
       // 3. Helper function to sort events by team (Home first, then Away)
@@ -181,7 +183,7 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
         <DialogHeader className="p-6 pb-2 shrink-0 border-b">
           <div className="flex items-center justify-between pr-8">
             <DialogTitle className="text-xl font-bold">
-              {step === 1 ? "Update Match" : `Events: ${homeTeam?.name} vs ${awayTeam?.name}`}
+              {step === 1 ? "Update Match" : step === 2 ? `Events: ${homeTeam?.name} vs ${awayTeam?.name}` : "Match Report & Commentary"}
             </DialogTitle>
             
             {step === 1 && (
@@ -280,7 +282,7 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
                     </div>
                   </div>
                 </div>
-              ) : (
+              ) : step === 2 ? (
                 <div className="space-y-12">
                   {/* PLAYER ATTENDANCE */}
                   <div className="space-y-4">
@@ -438,25 +440,62 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
                     </div>
                   </div>
                 </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black uppercase tracking-wider text-muted-foreground">Narrative Match Report</label>
+                    <textarea
+                      placeholder="Write a brief summary of how the match went. Who dominated? What were the turning points?"
+                      className="w-full min-h-[220px] p-4 rounded-xl border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-y"
+                      value={matchForm.report || ""}
+                      onChange={(e) => setMatchForm({...matchForm, report: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                      <span>Timeline Commentary / Key Moments</span>
+                      <span className="text-[10px] text-muted-foreground font-normal normal-case">One moment per line. Start with a minute (e.g. 15' - Penalty score).</span>
+                    </label>
+                    <textarea
+                      placeholder="E.g.&#10;5' - Early chance for home team.&#10;45' - Great shot saved by the keeper!&#10;82' - Yellow card for delay of game."
+                      className="w-full min-h-[150px] p-4 rounded-xl border border-border bg-card text-foreground font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-y"
+                      value={matchForm.keyMoments || ""}
+                      onChange={(e) => setMatchForm({...matchForm, keyMoments: e.target.value})}
+                    />
+                  </div>
+                </div>
               )}
             </div>
           </ScrollArea>
         </div>
 
         <div className="p-6 border-t bg-secondary/5 flex items-center justify-between gap-4 shrink-0">
-          <div className="w-[100px]">{step === 2 && <Button variant="outline" onClick={() => setStep(1)} className="h-12 w-full">Back</Button>}</div>
+          <div className="w-[100px]">
+            {step > 1 && (
+              <Button 
+                variant="outline" 
+                onClick={() => setStep(prev => prev - 1)} 
+                className="h-12 w-full"
+              >
+                Back
+              </Button>
+            )}
+          </div>
           <div className="flex-1">
             {matchForm.status === 'upcoming' ? (
               <Button className="w-full h-12 text-md font-bold bg-blue-600" onClick={handleUpdate} disabled={loading}>{loading ? "Saving..." : "Update Fixture"}</Button>
             ) : step === 1 ? (
               <Button className="w-full h-12 text-md font-bold" onClick={() => setStep(2)}>Sync Player Events <ChevronRight className="ml-2 w-4 h-4"/></Button>
+            ) : step === 2 ? (
+              <Button className="w-full h-12 text-md font-bold bg-indigo-600 text-white" onClick={() => setStep(3)}>Match Report & Commentary <ChevronRight className="ml-2 w-4 h-4"/></Button>
             ) : (
               <Button className="w-full h-12 text-md font-bold bg-green-600 shadow-lg" onClick={handleUpdate} disabled={loading}>{loading ? "Saving..." : "Finalize Changes"}</Button>
             )}
           </div>
         </div>
       </DialogContent>
-    </Dialog>
+      </Dialog>
   );
 }
 
