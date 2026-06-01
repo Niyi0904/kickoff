@@ -75,22 +75,22 @@ service cloud.firestore {
     }
 
     match /assists/{assistId} {
-      allow read:  if isAuthenticated();
+      allow read:  if true;
       allow write: if isLeagueManager();
     }
 
     match /yellow_cards/{cardId} {
-      allow read:  if isAuthenticated();
+      allow read:  if true;
       allow write: if isLeagueManager();
     }
 
     match /red_cards/{cardId} {
-      allow read:  if isAuthenticated();
+      allow read:  if true;
       allow write: if isLeagueManager();
     }
 
     match /match_attendance/{attendanceId} {
-      allow read:  if isAuthenticated();
+      allow read:  if true;
       allow write: if isLeagueManager();
     }
 

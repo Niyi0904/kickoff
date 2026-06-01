@@ -77,6 +77,8 @@ export interface Match {
   time?: string;
   status: 'upcoming' | 'played';
   scheduledDate?: string;
+  report?: string;
+  keyMoments?: string;
 }
 
 export interface PlayerEvent {

@@ -10,6 +10,7 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { AddMatchDialog } from "@/components/matches/addMatchDialog";
 import { EditMatchDialog } from "@/components/matches/editMatchDialog";
+import { MatchDetailsDialog } from "@/components/matches/matchDetailsDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,6 +52,8 @@ function MatchRecordsContent() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [matchToEdit, setMatchToEdit] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState<any>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isGenDialogOpen, setIsGenDialogOpen] = useState(false);
@@ -376,6 +379,10 @@ function MatchRecordsContent() {
                             isAdmin={isAdmin}
                             onEdit={(m: Match) => { setMatchToEdit(m); setIsEditDialogOpen(true); }}
                             onDelete={deleteMatch}
+                            onViewDetails={(m: Match) => {
+                              setSelectedMatch(m);
+                              setIsDetailsOpen(true);
+                            }}
                           />
                         ))}
                       </div>
@@ -421,6 +428,15 @@ function MatchRecordsContent() {
         </DialogContent>
       </Dialog>
 
+      <MatchDetailsDialog
+        match={selectedMatch}
+        open={isDetailsOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelectedMatch(null);
+          setIsDetailsOpen(open);
+        }}
+      />
+
       <ConfirmDialog
         open={weekToDelete !== null}
         onOpenChange={(open) => !open && setWeekToDelete(null)}
@@ -443,7 +459,7 @@ function MatchRecordsContent() {
   );
 }
 
-function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
+function MatchCard({ match, teams, isAdmin, onEdit, onDelete, onViewDetails }: any) {
   const homeTeam = teams.find((t: any) => t.id === match.homeTeamId);
   const awayTeam = teams.find((t: any) => t.id === match.awayTeamId);
   const isPlayed = match.status === 'played';
@@ -564,6 +580,12 @@ function MatchCard({ match, teams, isAdmin, onEdit, onDelete }: any) {
           </div>
         </div>
       )}
+
+      <div className="mt-6 flex justify-end">
+        <Button variant="outline" size="sm" onClick={() => onViewDetails(match)}>
+          View Details
+        </Button>
+      </div>
 
       <ConfirmDialog
         open={deleteOpen}
