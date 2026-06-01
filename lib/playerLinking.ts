@@ -129,6 +129,10 @@ export async function approveLinkRequest(
   userId:     string,
   adminUid:   string,
 ): Promise<void> {
+  const playerSnap = await getDoc(doc(db, 'players', playerId));
+  const playerData = playerSnap.exists() ? playerSnap.data() : null;
+  const teamId = playerData?.team_id ?? playerData?.teamId ?? null;
+
   const batch = writeBatch(db);
 
   // Update request status
@@ -142,6 +146,13 @@ export async function approveLinkRequest(
   batch.update(doc(db, 'players', playerId), {
     linkedUserId: userId,
   });
+
+  // Update user roles document with linked playerId and teamId
+  batch.set(doc(db, 'user_roles', userId), {
+    playerId: playerId,
+    teamId: teamId,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
 
   await batch.commit();
 }
@@ -178,10 +189,22 @@ export async function getLinkedPlayer(userId: string): Promise<{ id: string; [ke
 // Unlink a player from a user (admin action)
 // ─────────────────────────────────────────────
 export async function unlinkPlayer(playerId: string): Promise<void> {
+  const playerSnap = await getDoc(doc(db, 'players', playerId));
+  const linkedUserId = playerSnap.exists() ? playerSnap.data()?.linkedUserId : null;
+
   const batch = writeBatch(db);
   
   // Set player's linkedUserId to null
   batch.update(doc(db, 'players', playerId), { linkedUserId: null });
+
+  if (linkedUserId) {
+    // Remove playerId and teamId from user_roles
+    batch.update(doc(db, 'user_roles', linkedUserId), {
+      playerId: null,
+      teamId: null,
+      updatedAt: serverTimestamp()
+    });
+  }
 
   // Find any link requests for this playerId and delete them
   const q = query(collection(db, 'link_requests'), where('playerId', '==', playerId));

@@ -3,21 +3,22 @@
 import { useAppContext } from "@/app/context/AppDataContext";
 import { useState, useMemo, useEffect } from "react";
 import { format, isValid } from "date-fns";
-import { Calendar as CalendarIcon, CheckCircle2, ChevronRight, History } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronRight, History, UserCheck } from "lucide-react";
+import type { MatchAttendance, Player } from "@/app/hooks/useAppData";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { SelectTrigger, SelectValue, SelectContent, SelectItem, Select } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useEvaluateSuspensions } from '@/app/hooks/useSuspensions';
+import { Checkbox } from "@/components/ui/checkbox";
 
 
 interface EditMatchDialogProps {
@@ -27,7 +28,7 @@ interface EditMatchDialogProps {
 }
 
 export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogProps) {
-  const { teams, players, goals, assists, yellowCards, redCards, updateMatch, recordMatchStats, deleteMatchEvents } = useAppContext();
+  const { teams, players, goals, assists, yellowCards, redCards, attendance, updateMatch, recordMatchStats, deleteMatchEvents } = useAppContext();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -38,6 +39,7 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
     yellows: [] as string[],
     reds: [] as string[]
   });
+  const [presentPlayerIds, setPresentPlayerIds] = useState<string[]>([]);
 
   const evaluateSuspensions = useEvaluateSuspensions();
 
@@ -85,9 +87,15 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
         reds: syncEventStats(redCards),
       });
 
+      setPresentPlayerIds(
+        attendance
+          .filter((a: MatchAttendance) => a.matchId === match.id && a.present)
+          .map((a: MatchAttendance) => a.playerId)
+      );
+
       setStep(1);
     }
-  }, [match, open, goals, assists, yellowCards, redCards]);
+  }, [match, open, goals, assists, yellowCards, redCards, attendance]);
 
   const homeTeam = useMemo(() => teams.find(t => t.id === matchForm.homeTeamId), [matchForm.homeTeamId, teams]);
   const awayTeam = useMemo(() => teams.find(t => t.id === matchForm.awayTeamId), [matchForm.awayTeamId, teams]);
@@ -99,6 +107,22 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
       const newList = [...prev[type]];
       newList[index] = value;
       return { ...prev, [type]: newList };
+    });
+  };
+
+  const toggleAttendance = (playerId: string, checked: boolean) => {
+    setPresentPlayerIds(prev => (
+      checked
+        ? Array.from(new Set([...prev, playerId]))
+        : prev.filter(id => id !== playerId)
+    ));
+  };
+
+  const setTeamAttendance = (teamPlayers: Player[], present: boolean) => {
+    const teamPlayerIds = teamPlayers.map((p) => p.id);
+    setPresentPlayerIds(prev => {
+      const withoutTeam = prev.filter(id => !teamPlayerIds.includes(id));
+      return present ? [...withoutTeam, ...teamPlayerIds] : withoutTeam;
     });
   };
 
@@ -134,6 +158,7 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
           assists: playerStats.assists.slice(0, matchForm.homeAssists + matchForm.awayAssists).filter(id => !!id).map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "" })),
           yellows: playerStats.yellows.slice(0, matchForm.homeYellows + matchForm.awayYellows).filter(id => !!id).map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "" })),
           reds: playerStats.reds.slice(0, matchForm.homeReds + matchForm.awayReds).filter(id => !!id).map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "" })),
+          attendance: presentPlayerIds.map(pid => ({ playerId: pid, teamId: players.find(p => p.id === pid)?.teamId || "", present: true })),
         };
         await recordMatchStats(match.id, matchForm.matchDay, statsToRecord);
 
@@ -257,6 +282,37 @@ export function EditMatchDialog({ match, open, onOpenChange }: EditMatchDialogPr
                 </div>
               ) : (
                 <div className="space-y-12">
+                  {/* PLAYER ATTENDANCE */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="font-bold text-sm uppercase flex items-center gap-2">
+                        <UserCheck className="w-4 h-4 text-green-600" /> Player Attendance
+                      </h3>
+                      <span className="text-[10px] font-black uppercase text-muted-foreground">
+                        {presentPlayerIds.length} present
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <AttendanceTeamList
+                        teamName={homeTeam?.name}
+                        players={homePlayers}
+                        presentPlayerIds={presentPlayerIds}
+                        onToggle={toggleAttendance}
+                        onSelectAll={(present: boolean) => setTeamAttendance(homePlayers, present)}
+                      />
+                      <AttendanceTeamList
+                        teamName={awayTeam?.name}
+                        players={awayPlayers}
+                        presentPlayerIds={presentPlayerIds}
+                        onToggle={toggleAttendance}
+                        onSelectAll={(present: boolean) => setTeamAttendance(awayPlayers, present)}
+                      />
+                    </div>
+                  </div>
+
+                  <Separator />
+
                   {/* CONSISTENT EVENT CATEGORIES */}
                   {/* 1. GOALS */}
                   <div className="space-y-4">
@@ -446,5 +502,69 @@ function SearchablePlayerSelect({ value, onChange, players, placeholder }: any) 
         </Command>
       </PopoverContent>
     </Popover>
+  );
+}
+
+interface AttendanceTeamListProps {
+  teamName?: string;
+  players: Player[];
+  presentPlayerIds: string[];
+  onToggle: (playerId: string, checked: boolean) => void;
+  onSelectAll: (present: boolean) => void;
+}
+
+function AttendanceTeamList({ teamName, players, presentPlayerIds, onToggle, onSelectAll }: AttendanceTeamListProps) {
+  return (
+    <div className="rounded-2xl border bg-secondary/10 p-4 space-y-3">
+      <div className="flex items-center justify-between gap-3 border-b pb-3">
+        <p className="text-[10px] font-black uppercase tracking-widest">{teamName}</p>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-[10px] font-black uppercase"
+            onClick={() => onSelectAll(true)}
+          >
+            All
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-[10px] font-black uppercase text-muted-foreground"
+            onClick={() => onSelectAll(false)}
+          >
+            Clear
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-2 max-h-64 overflow-y-auto pr-1">
+        {players.length === 0 ? (
+          <p className="text-xs text-muted-foreground py-4 text-center">No players in this team.</p>
+        ) : (
+          players.map((player) => {
+            const checked = presentPlayerIds.includes(player.id);
+            return (
+              <label
+                key={player.id}
+                className={cn(
+                  "flex items-center gap-3 rounded-xl border px-3 py-2 text-sm transition-colors cursor-pointer",
+                  checked ? "bg-green-600/10 border-green-600/30" : "bg-background border-border hover:bg-secondary/40"
+                )}
+              >
+                <Checkbox
+                  checked={checked}
+                  onCheckedChange={(value) => onToggle(player.id, value === true)}
+                />
+                <span className="font-semibold leading-tight">{player.name}</span>
+                <span className="ml-auto text-[10px] font-black text-muted-foreground">#{player.number}</span>
+              </label>
+            );
+          })
+        )}
+      </div>
+    </div>
   );
 }

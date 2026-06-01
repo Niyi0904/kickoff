@@ -57,6 +57,12 @@ export function useAppContext() {
   return {
     // ── From AuthContext ──────────────────────
     user: auth.user,
+    role: auth.role,
+    isLeagueManager: auth.isLeagueManager,
+    isTeamManager: auth.isTeamManager,
+    isPlayer: auth.isPlayer,
+    teamId: auth.teamId,
+    playerId: auth.playerId,
     isAdmin: auth.isAdmin,
     authLoading: auth.loading, // renamed to avoid clash with data.loading
     signIn: auth.signIn,

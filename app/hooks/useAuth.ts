@@ -17,46 +17,62 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 // ─────────────────────────────────────────────
-// Secure admin check
+// Secure role check
 //
-// We do NOT use the isAdmin boolean from client
+// We do NOT use the roles boolean from client
 // state as the source of truth for writes —
 // Firestore Security Rules handle that server-side.
 //
 // This function's job is purely to control UI
-// visibility (show/hide admin buttons). It reads
+// visibility (show/hide buttons). It reads
 // user_roles/{uid} directly, same collection the
 // Security Rules check, so it stays in sync.
 //
-// Failures default to false — a Firestore error
-// never accidentally grants admin access.
+// Failures default to 'player' — a Firestore error
+// never accidentally grants access.
 // ─────────────────────────────────────────────
-async function checkIsAdmin(uid: string): Promise<boolean> {
+interface UserRoleInfo {
+  role: 'league_manager' | 'team_manager' | 'player' | 'admin' | 'user' | null;
+  teamId?: string | null;
+  playerId?: string | null;
+}
+
+async function getUserRoleInfo(uid: string): Promise<UserRoleInfo> {
   try {
     // Force a fresh token to ensure the auth session is valid
     // before making the role check. This prevents stale sessions
-    // from retaining admin state after a password change or revocation.
+    // from retaining state after a password change or revocation.
     await auth.currentUser?.getIdToken(/* forceRefresh */ true);
 
     const roleSnap = await getDoc(doc(db, "user_roles", uid));
-    if (!roleSnap.exists()) return false;
-    return roleSnap.data()?.role === "admin";
+    if (!roleSnap.exists()) return { role: 'player' };
+    const data = roleSnap.data();
+    return {
+      role: data?.role ?? 'player',
+      teamId: data?.teamId ?? null,
+      playerId: data?.playerId ?? null,
+    };
   } catch (error) {
-    // Deliberately fail closed — never grant admin on error
-    console.error("Admin check failed:", error);
-    return false;
+    // Deliberately fail closed — never grant admin/manager on error
+    console.error("Fetch user role info failed:", error);
+    return { role: 'player' };
   }
 }
 
 export function useAuth() {
-  const [user,    setUser]    = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [user,      setUser]      = useState<User | null>(null);
+  const [role,      setRole]      = useState<'league_manager' | 'team_manager' | 'player' | 'admin' | 'user' | null>(null);
+  const [teamId,    setTeamId]    = useState<string | null>(null);
+  const [playerId,  setPlayerId]  = useState<string | null>(null);
+  const [loading,   setLoading]   = useState(true);
 
-  // Track the current user's uid in a ref so the async admin
+  const isLeagueManager = role === 'league_manager' || role === 'admin';
+  const isTeamManager = role === 'team_manager';
+  const isPlayer = role === 'player' || role === 'user';
+  const isAdmin = isLeagueManager; // Backward compatibility
+
+  // Track the current user's uid in a ref so the async role
   // check can bail out if the user logs out while it's in flight.
-  // Without this, a slow Firestore read could set isAdmin: true
-  // on a session that no longer exists.
   const currentUidRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -65,21 +81,24 @@ export function useAuth() {
       currentUidRef.current = currentUser?.uid ?? null;
 
       if (currentUser) {
-        // isAdmin defaults to false while the async check runs.
-        // Users see non-admin UI momentarily, never admin UI incorrectly.
-        setIsAdmin(false);
+        // Defaults while async check runs
+        setRole(null);
+        setTeamId(null);
+        setPlayerId(null);
 
-        const adminStatus = await checkIsAdmin(currentUser.uid);
+        const info = await getUserRoleInfo(currentUser.uid);
 
         // Only apply the result if this user is still the active session.
-        // Guards against the race condition: user logs out while
-        // checkIsAdmin is awaiting the Firestore read.
         if (currentUidRef.current === currentUser.uid) {
-          setIsAdmin(adminStatus);
+          setRole(info.role);
+          setTeamId(info.teamId ?? null);
+          setPlayerId(info.playerId ?? null);
         }
       } else {
-        // Signed out — always clear admin state immediately
-        setIsAdmin(false);
+        // Signed out — always clear state immediately
+        setRole(null);
+        setTeamId(null);
+        setPlayerId(null);
       }
 
       setLoading(false);
@@ -143,9 +162,10 @@ export function useAuth() {
   // ── Sign out ───────────────────────────────────────────────────────────
   const signOut = async () => {
     try {
-      // Clear admin state immediately on sign out — don't wait for
-      // onAuthStateChanged to fire, which could have a small delay
-      setIsAdmin(false);
+      // Clear role state immediately on sign out
+      setRole(null);
+      setTeamId(null);
+      setPlayerId(null);
       currentUidRef.current = null;
       await firebaseSignOut(auth);
     } catch (error: any) {
@@ -153,5 +173,18 @@ export function useAuth() {
     }
   };
 
-  return { user, isAdmin, loading, signIn, signUp, signOut };
+  return {
+    user,
+    role,
+    isLeagueManager,
+    isTeamManager,
+    isPlayer,
+    teamId,
+    playerId,
+    isAdmin,
+    loading,
+    signIn,
+    signUp,
+    signOut
+  };
 }

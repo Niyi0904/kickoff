@@ -31,7 +31,7 @@ export interface NewPlayerData {
 
 export interface CreateInviteOptions {
   email: string;
-  role: 'admin' | 'user';
+  role: 'league_manager' | 'team_manager' | 'player';
   createdByAdminId: string;
   playerMode: InvitePlayerMode;
   playerId?: string;
@@ -107,7 +107,22 @@ export async function completeRegistration(inviteCode: string, userId: string): 
   batch.update(doc(db, 'user_invites', inviteCode), {
     used: true, usedBy: userId, usedAt: serverTimestamp(),
   });
-  batch.set(doc(db, 'user_roles', userId), { role: invite.role ?? 'user', updatedAt: serverTimestamp() });
+
+  let teamId: string | null = null;
+  if (invite.linkedPlayerId) {
+    const playerSnap = await getDoc(doc(db, 'players', invite.linkedPlayerId));
+    if (playerSnap.exists()) {
+      const playerData = playerSnap.data();
+      teamId = playerData?.team_id ?? playerData?.teamId ?? null;
+    }
+  }
+
+  batch.set(doc(db, 'user_roles', userId), {
+    role: invite.role ?? 'player',
+    playerId: invite.linkedPlayerId ?? null,
+    teamId: teamId,
+    updatedAt: serverTimestamp()
+  });
 
   if (invite.linkedPlayerId) {
     batch.update(doc(db, 'players', invite.linkedPlayerId), { linkedUserId: userId });
@@ -132,8 +147,18 @@ export async function linkExistingUserToPlayer(
     if (!playerSnap.exists()) return { error: { message: 'Player not found.' } };
     if (playerSnap.data()?.linkedUserId) return { error: { message: 'This player is already linked to another account.' } };
 
+    const teamId = playerSnap.data()?.team_id ?? playerSnap.data()?.teamId ?? null;
+
     const batch = writeBatch(db);
     batch.update(doc(db, 'players', playerId), { linkedUserId: userId });
+    
+    // Also update user roles with playerId and teamId
+    batch.set(doc(db, 'user_roles', userId), {
+      playerId: playerId,
+      teamId: teamId,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
     const linkReqRef = doc(collection(db, 'link_requests'));
     batch.set(linkReqRef, {
       userId, playerId, status: 'approved',
@@ -173,7 +198,7 @@ export async function isUserRegistered(email: string): Promise<boolean> {
   return !snap.empty;
 }
 
-export async function setUserRole(userId: string, role: 'admin' | 'user'): Promise<void> {
+export async function setUserRole(userId: string, role: 'league_manager' | 'team_manager' | 'player'): Promise<void> {
   await setDoc(doc(db, 'user_roles', userId), { role, updatedAt: serverTimestamp() }, { merge: true });
 }
 
@@ -183,6 +208,9 @@ export async function getAllUsersWithRoles(): Promise<any[]> {
     getDocs(collection(db, 'users')),
     getDocs(query(collection(db, 'link_requests'), where('status', '==', 'approved'))),
   ]);
+  console.log('Fetched user roles:', rolesSnap.docs);
+  console.log('Fetched users:', usersSnap.docs);
+  console.log('Fetched link requests:', linkSnap.docs);
   return usersSnap.docs.map(d => {
     const userData = d.data();
     const roleData = rolesSnap.docs.find(r => r.id === d.id)?.data();
@@ -191,7 +219,7 @@ export async function getAllUsersWithRoles(): Promise<any[]> {
       userId: d.id,
       email: userData.email,
       displayName: userData.displayName,
-      role: roleData?.role ?? 'user',
+      role: roleData?.role ?? 'player',
       createdAt: userData.createdAt ?? null,
       linkedPlayerId: linkData?.playerId ?? null,
       linkedPlayerName: linkData?.playerName ?? null,
@@ -202,4 +230,60 @@ export async function getAllUsersWithRoles(): Promise<any[]> {
 export async function deleteUserInvite(inviteCode: string): Promise<{ success: true } | { error: any }> {
   try { await deleteDoc(doc(db, 'user_invites', inviteCode)); return { success: true }; }
   catch (error) { return { error }; }
+}
+
+export async function runRoleMigration(): Promise<{ success: boolean; count: number; error?: any }> {
+  try {
+    const rolesSnap = await getDocs(collection(db, 'user_roles'));
+    const playersSnap = await getDocs(collection(db, 'players'));
+    const batch = writeBatch(db);
+    let count = 0;
+
+    const players = playersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    for (const roleDoc of rolesSnap.docs) {
+      const userId = roleDoc.id;
+      const data = roleDoc.data();
+      const currentRole = data.role;
+      let newRole = currentRole;
+      let playerId = data.playerId ?? null;
+      let teamId = data.teamId ?? null;
+
+      // Find if this user is linked to a player profile
+      const linkedPlayer: any = players.find((p: any) => p.linkedUserId === userId);
+      if (linkedPlayer) {
+        playerId = linkedPlayer.id;
+        teamId = linkedPlayer.team_id ?? linkedPlayer.teamId ?? null;
+      }
+
+      if (currentRole === 'admin') {
+        newRole = 'league_manager';
+      } else if (currentRole === 'user' || currentRole === 'player' || !currentRole) {
+        if (linkedPlayer && (linkedPlayer.is_manager === true || linkedPlayer.isManager === true)) {
+          newRole = 'team_manager';
+        } else {
+          newRole = 'player';
+        }
+      }
+
+      // Update if role, teamId, or playerId changes (so we backfill all missing teamIds/playerIds)
+      if (newRole !== currentRole || data.playerId !== playerId || data.teamId !== teamId) {
+        batch.set(doc(db, 'user_roles', userId), {
+          role: newRole,
+          playerId,
+          teamId,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      await batch.commit();
+    }
+    return { success: true, count };
+  } catch (error) {
+    console.error('Role migration error:', error);
+    return { success: false, count: 0, error };
+  }
 }

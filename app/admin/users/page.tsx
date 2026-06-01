@@ -38,7 +38,9 @@ function UsersContent() {
 
   const fetchUsers = async () => {
     try {
+      console.log('Fetching users with roles...');
       const usersData = await getAllUsersWithRoles();
+      console.log('Fetched users:', usersData);
       setUsers(usersData);
     } catch (err) {
       toast({ title: 'Error', description: 'Failed to load users', variant: 'destructive' });
@@ -58,7 +60,7 @@ function UsersContent() {
     );
   }
 
-  const handleChangeRole = async (userId: string, newRole: 'admin' | 'user') => {
+  const handleChangeRole = async (userId: string, newRole: 'league_manager' | 'team_manager' | 'player') => {
     setChangingRoleUserId(userId);
     try {
       await setUserRole(userId, newRole);
@@ -134,15 +136,16 @@ function UsersContent() {
                     <td className="py-4">
                       <Select
                         value={user.role}
-                        onValueChange={(newRole) => handleChangeRole(user.userId, newRole as 'admin' | 'user')}
+                        onValueChange={(newRole) => handleChangeRole(user.userId, newRole as 'league_manager' | 'team_manager' | 'player')}
                         disabled={changingRoleUserId === user.userId}
                       >
-                        <SelectTrigger className="w-20 bg-secondary border-border text-xs">
+                        <SelectTrigger className="w-40 bg-secondary border-border text-xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="league_manager">League Manager</SelectItem>
+                          <SelectItem value="team_manager">Team Manager</SelectItem>
+                          <SelectItem value="player">Player</SelectItem>
                         </SelectContent>
                       </Select>
                     </td>

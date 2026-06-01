@@ -76,7 +76,7 @@ function OnboardingContent() {
 
   // ── Existing invite state ──────────────────────────────────
   const [inviteEmail,       setInviteEmail]       = useState('');
-  const [inviteRole,        setInviteRole]         = useState<'admin' | 'user'>('user');
+  const [inviteRole,        setInviteRole]         = useState<'league_manager' | 'team_manager' | 'player'>('player');
   const [sendEmail,         setSendEmail]          = useState(true);
   const [isSubmitting,      setIsSubmitting]       = useState(false);
   const [openInviteDialog,  setOpenInviteDialog]   = useState(false);
@@ -126,7 +126,7 @@ function OnboardingContent() {
 
   // ── Reset form ─────────────────────────────────────────────
   const resetInviteForm = () => {
-    setInviteEmail(''); setInviteRole('user'); setSendEmail(true);
+    setInviteEmail(''); setInviteRole('player'); setSendEmail(true);
     setPlayerMode('none'); setSelectedPlayerId('');
     setNewPlayer({ name: '', position: POSITIONS[0], number: 0, teamId: '' });
     setEmailStatus(null);
@@ -243,7 +243,7 @@ function OnboardingContent() {
     } finally { setIsSubmitting(false); }
   };
 
-  const handleChangeRole = async (userId: string, newRole: 'admin' | 'user') => {
+  const handleChangeRole = async (userId: string, newRole: 'league_manager' | 'team_manager' | 'player') => {
     setChangingRoleUserId(userId);
     try {
       await setUserRole(userId, newRole);
@@ -336,11 +336,12 @@ function OnboardingContent() {
               {/* ── Role — same as before ─────────────────────── */}
               <div>
                 <label className="text-sm text-muted-foreground block mb-2">Role</label>
-                <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as 'admin' | 'user')}>
+                <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as 'league_manager' | 'team_manager' | 'player')}>
                   <SelectTrigger className="bg-secondary border-border"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="league_manager">League Manager</SelectItem>
+                    <SelectItem value="team_manager">Team Manager</SelectItem>
+                    <SelectItem value="player">Player</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -565,13 +566,14 @@ function OnboardingContent() {
                     {/* ── Role dropdown — same as before ─────────── */}
                     <Select
                       value={usr.role}
-                      onValueChange={(newRole) => handleChangeRole(usr.userId, newRole as 'admin' | 'user')}
+                      onValueChange={(newRole) => handleChangeRole(usr.userId, newRole as 'league_manager' | 'team_manager' | 'player')}
                       disabled={changingRoleUserId === usr.userId}
                     >
-                      <SelectTrigger className="w-24 bg-secondary border-border text-xs"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="w-32 bg-secondary border-border text-xs"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="league_manager">League Manager</SelectItem>
+                        <SelectItem value="team_manager">Team Manager</SelectItem>
+                        <SelectItem value="player">Player</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

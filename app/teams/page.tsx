@@ -47,7 +47,7 @@ const getTeamInitials = (name: string) => {
 };
 
 function TeamsContent() {
-  const { teams, addTeam, deleteTeam, updateTeam, getTeamPlayers, getTeamManager, setManager, isAdmin } = useAppContext();
+  const { teams, addTeam, deleteTeam, updateTeam, getTeamPlayers, getTeamManager, setManager, isAdmin, isTeamManager, teamId } = useAppContext();
   const router = useRouter(); // Added for navigation
 
   const [open, setOpen] = useState(false);
@@ -157,6 +157,7 @@ function TeamsContent() {
         {teams.map((team, i) => {
           const teamPlayers = getTeamPlayers(team.id);
           const manager = getTeamManager(team.id);
+          const canEditTeam = isAdmin || (isTeamManager && teamId === team.id);
           return (
             <motion.div
               key={team.id}
@@ -170,61 +171,61 @@ function TeamsContent() {
 
               {/* Action Buttons - e.stopPropagation() prevents navigation when clicking buttons */}
               <div className="absolute top-4 right-2 flex gap-1 z-10" onClick={(e) => e.stopPropagation()}>
-                {isAdmin && (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      disabled={isDeadlinePassed}
-                      className="h-8 w-8 text-muted-foreground hover:text-primary bg-background/50 backdrop-blur-sm"
-                      onClick={() => setEditingTeam(team)}
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
+                {canEditTeam && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={isDeadlinePassed}
+                    className="h-8 w-8 text-muted-foreground hover:text-primary bg-background/50 backdrop-blur-sm"
+                    onClick={() => setEditingTeam(team)}
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </Button>
+                )}
 
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          disabled={isDeadlinePassed}
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive bg-background/50 backdrop-blur-sm"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            {teamPlayers.length > 0 ? "Cannot Delete Team" : "Are you absolutely sure?"}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {teamPlayers.length > 0 ? (
-                              <>
-                                The team <strong>{team.name}</strong> currently has <strong>{teamPlayers.length}</strong> players.
-                                You must remove or reassign all players before this team can be deleted.
-                              </>
-                            ) : (
-                              <>
-                                This will permanently delete <strong>{team.name}</strong> and all associated data.
-                              </>
-                            )}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Close</AlertDialogCancel>
-                          {teamPlayers.length === 0 && (
-                            <AlertDialogAction
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              onClick={async () => await deleteTeam(team.id)}
-                            >
-                              Delete Team
-                            </AlertDialogAction>
+                {isAdmin && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={isDeadlinePassed}
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive bg-background/50 backdrop-blur-sm"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          {teamPlayers.length > 0 ? "Cannot Delete Team" : "Are you absolutely sure?"}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {teamPlayers.length > 0 ? (
+                            <>
+                              The team <strong>{team.name}</strong> currently has <strong>{teamPlayers.length}</strong> players.
+                              You must remove or reassign all players before this team can be deleted.
+                            </>
+                          ) : (
+                            <>
+                              This will permanently delete <strong>{team.name}</strong> and all associated data.
+                            </>
                           )}
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Close</AlertDialogCancel>
+                        {teamPlayers.length === 0 && (
+                          <AlertDialogAction
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            onClick={async () => await deleteTeam(team.id)}
+                          >
+                            Delete Team
+                          </AlertDialogAction>
+                        )}
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 )}
               </div>
 
@@ -233,7 +234,7 @@ function TeamsContent() {
                   <div
                     className="relative"
                     onClick={(e) => {
-                      if (isAdmin) {
+                      if (canEditTeam) {
                         e.stopPropagation();
                         setSelectedTeamForLogo(team);
                         setLogoDialogOpen(true);
@@ -246,7 +247,7 @@ function TeamsContent() {
                         {getTeamInitials(team.name)}
                       </AvatarFallback>
                     </Avatar>
-                    {isAdmin && (
+                    {canEditTeam && (
                       <div className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full border-2 border-background">
                         <Upload className="w-2.5 h-2.5" />
                       </div>

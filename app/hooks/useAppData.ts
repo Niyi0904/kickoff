@@ -48,6 +48,7 @@ export interface Team {
 export interface MatchRecord {
   id: string;
   playerId: string;
+  matchId?: string;
   matchDate: string;
   opponent: string;
   goals: number;
@@ -87,6 +88,16 @@ export interface PlayerEvent {
   timestamp: any;
 }
 
+export interface MatchAttendance {
+  id: string;
+  playerId: string;
+  matchId: string;
+  matchDay: number;
+  teamId: string;
+  present: boolean;
+  timestamp: any;
+}
+
 // ─────────────────────────────────────────────
 // Query Keys — single source of truth
 // ─────────────────────────────────────────────
@@ -99,6 +110,7 @@ export const QUERY_KEYS = {
   assists:     ['assists']     as const,
   yellowCards: ['yellowCards'] as const,
   redCards:    ['redCards']    as const,
+  attendance:  ['attendance']  as const,
 };
 
 // ─────────────────────────────────────────────
@@ -147,6 +159,11 @@ async function fetchEvents(colName: string): Promise<PlayerEvent[]> {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PlayerEvent));
 }
 
+async function fetchAttendance(): Promise<MatchAttendance[]> {
+  const snap = await getDocs(collection(db, "match_attendance"));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as MatchAttendance));
+}
+
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
@@ -193,6 +210,9 @@ export function useAppData() {
 
   const { data: redCards = [] } =
     useQuery({ queryKey: QUERY_KEYS.redCards, queryFn: () => fetchEvents("red_cards"), staleTime: 1000 * 60 * 2 });
+
+  const { data: attendance = [] } =
+    useQuery({ queryKey: QUERY_KEYS.attendance, queryFn: fetchAttendance, staleTime: 1000 * 60 * 2 });
 
   const loading = teamsLoading || playersLoading || matchesLoading;
 
@@ -404,14 +424,14 @@ export function useAppData() {
       batch.delete(doc(db, "matches", matchId));
 
       // Collect all event docs in parallel, then batch-delete
-      const eventCollections = ["goals", "assists", "yellow_cards", "red_cards"];
+      const eventCollections = ["goals", "assists", "yellow_cards", "red_cards", "match_attendance"];
       const snaps = await Promise.all(
         eventCollections.map((col) => getDocs(query(collection(db, col), where("matchId", "==", matchId))))
       );
       snaps.forEach((snap) => snap.docs.forEach((d) => batch.delete(d.ref)));
 
       await batch.commit();
-      invalidate("matches", "goals", "assists", "yellowCards", "redCards");
+      invalidate("matches", "goals", "assists", "yellowCards", "redCards", "attendance");
       toast({ title: "Success", description: "Match deleted" });
       return { error: null };
     } catch (error) {
@@ -441,7 +461,7 @@ export function useAppData() {
   // ── Delete all matches in a batch ─────────────────────────────────────
   const deleteAllMatches = async () => {
     try {
-      const eventCollections = ["goals", "assists", "yellow_cards", "red_cards"];
+      const eventCollections = ["goals", "assists", "yellow_cards", "red_cards", "match_attendance"];
 
       // Collect all match refs + all event refs in parallel
       const [matchSnap, ...eventSnaps] = await Promise.all([
@@ -462,7 +482,7 @@ export function useAppData() {
         await batch.commit();
       }
 
-      invalidate("matches", "goals", "assists", "yellowCards", "redCards");
+      invalidate("matches", "goals", "assists", "yellowCards", "redCards", "attendance");
       toast({ title: "Success", description: "All match records cleared" });
       return { error: null };
     } catch (error) {
@@ -480,6 +500,7 @@ export function useAppData() {
       assists: { playerId: string; teamId: string }[];
       yellows: { playerId: string; teamId: string }[];
       reds:    { playerId: string; teamId: string }[];
+      attendance?: { playerId: string; teamId: string; present: boolean }[];
     }
   ) => {
     try {
@@ -490,9 +511,10 @@ export function useAppData() {
       stats.assists.forEach((a) =>  batch.set(doc(collection(db, "assists")),      { ...a, matchId, matchDay, timestamp: ts }));
       stats.yellows.forEach((y) =>  batch.set(doc(collection(db, "yellow_cards")), { ...y, matchId, matchDay, timestamp: ts }));
       stats.reds.forEach((r) =>     batch.set(doc(collection(db, "red_cards")),    { ...r, matchId, matchDay, timestamp: ts }));
+      stats.attendance?.forEach((a) => batch.set(doc(collection(db, "match_attendance")), { ...a, matchId, matchDay, timestamp: ts }));
 
       await batch.commit();
-      invalidate("goals", "assists", "yellowCards", "redCards");
+      invalidate("goals", "assists", "yellowCards", "redCards", "attendance");
       toast({ title: "Success", description: "Match statistics recorded" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to record stats", variant: "destructive" });
@@ -502,14 +524,14 @@ export function useAppData() {
   const deleteMatchEvents = async (matchId: string) => {
     try {
       const snaps = await Promise.all(
-        ["goals", "assists", "yellow_cards", "red_cards"].map((col) =>
+        ["goals", "assists", "yellow_cards", "red_cards", "match_attendance"].map((col) =>
           getDocs(query(collection(db, col), where("matchId", "==", matchId)))
         )
       );
       const batch = writeBatch(db);
       snaps.forEach((snap) => snap.docs.forEach((d) => batch.delete(d.ref)));
       await batch.commit();
-      invalidate("goals", "assists", "yellowCards", "redCards");
+      invalidate("goals", "assists", "yellowCards", "redCards", "attendance");
       toast({ title: "Success", description: "Match events cleared" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to clear events", variant: "destructive" });
@@ -595,6 +617,16 @@ export function useAppData() {
     return map;
   }, [redCards]);
 
+  const attendanceByPlayer = useMemo(() => {
+    const map = new Map<string, MatchAttendance[]>();
+    attendance.forEach((a) => {
+      if (!a.present) return;
+      if (!map.has(a.playerId)) map.set(a.playerId, []);
+      map.get(a.playerId)!.push(a);
+    });
+    return map;
+  }, [attendance]);
+
   // Map<matchId, Match> — O(1) match lookups instead of .find() per record
   const matchesById = useMemo(() => {
     const map = new Map<string, Match>();
@@ -622,8 +654,10 @@ export function useAppData() {
     const playerAssists = assistsByPlayer.get(playerId) ?? [];
     const playerYellows = yellowsByPlayer.get(playerId) ?? [];
     const playerReds    = redsByPlayer.get(playerId)    ?? [];
+    const playerAttendance = attendanceByPlayer.get(playerId) ?? [];
 
     const matchIds = new Set([
+      ...playerAttendance.map((a) => a.matchId),
       ...playerGoals.map((g) => g.matchId),
       ...playerAssists.map((a) => a.matchId),
       ...playerYellows.map((y) => y.matchId),
@@ -637,7 +671,7 @@ export function useAppData() {
       redCards:    playerReds.length,
       matches:     matchIds.size,
     };
-  }, [goalsByPlayer, assistsByPlayer, yellowsByPlayer, redsByPlayer]);
+  }, [goalsByPlayer, assistsByPlayer, yellowsByPlayer, redsByPlayer, attendanceByPlayer]);
 
   // Computed once when players or event maps change — not on every render
   const topScorers = useMemo(() =>
@@ -695,8 +729,10 @@ export function useAppData() {
     const playerAssists = assistsByPlayer.get(playerId) ?? [];
     const playerYellows = yellowsByPlayer.get(playerId) ?? [];
     const playerReds    = redsByPlayer.get(playerId)    ?? [];
+    const playerAttendance = attendanceByPlayer.get(playerId) ?? [];
 
     const matchIds = new Set([
+      ...playerAttendance.map((a) => a.matchId),
       ...playerGoals.map((g) => g.matchId),
       ...playerAssists.map((a) => a.matchId),
       ...playerYellows.map((y) => y.matchId),
@@ -723,6 +759,7 @@ export function useAppData() {
       return {
         id:            `${playerId}_${mId}`,
         playerId,
+        matchId:       mId,
         matchDate:     rawDate,
         opponent:      opponentName,
         goals:         matchGoals,
@@ -732,12 +769,12 @@ export function useAppData() {
         minutesPlayed: match.minutesPlayed || 90,
       };
     }).filter(Boolean) as MatchRecord[];
-  }, [goalsByPlayer, assistsByPlayer, yellowsByPlayer, redsByPlayer, matchesById, teamsById, players]);
+  }, [goalsByPlayer, assistsByPlayer, yellowsByPlayer, redsByPlayer, attendanceByPlayer, matchesById, teamsById, players]);
 
   return {
     // Data
     teams, players, matches, loading,
-    goals, assists, yellowCards, redCards,
+    goals, assists, yellowCards, redCards, attendance,
     // Pre-computed (use these directly in components where possible)
     standings, topScorers,
     // Team

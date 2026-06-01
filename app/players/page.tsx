@@ -57,7 +57,7 @@ const positions = [
 ]
 
 function PlayersContent() {
-  const { teams, players, addPlayer, updatePlayer, deletePlayer, getPlayerStats, isAdmin } = useAppContext();
+  const { teams, players, addPlayer, updatePlayer, deletePlayer, getPlayerStats, isAdmin, isTeamManager, teamId } = useAppContext();
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -67,6 +67,14 @@ function PlayersContent() {
   const filtered = filterTeam === "all" ? players : players.filter((p) => p.teamId === filterTeam);
 
   const { deadlineMs, isDeadlinePassed } = useLeagueSettings();
+
+  const canAddPlayer = isAdmin || isTeamManager;
+
+  useEffect(() => {
+    if (isTeamManager && teamId) {
+      setForm((f) => ({ ...f, teamId }));
+    }
+  }, [isTeamManager, teamId]);
 
   const handleUpdate = async () => {
     if (!editingPlayer || !editingPlayer.name.trim()) return;
@@ -105,7 +113,7 @@ function PlayersContent() {
       photo: photoUrl ?? null,
     });
 
-    setForm({ name: "", position: "Forward", number: 0, teamId: "", photoFile: null });
+    setForm({ name: "", position: "Forward", number: 0, teamId: isTeamManager && teamId ? teamId : "", photoFile: null });
     setOpen(false);
     setIsSubmitting(false);
   };
@@ -136,7 +144,7 @@ function PlayersContent() {
               ))}
             </SelectContent>
           </Select>
-          {isAdmin && (
+          {canAddPlayer && (
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button className="gap-2" disabled={isDeadlinePassed}>
@@ -158,14 +166,22 @@ function PlayersContent() {
                     </SelectContent>
                   </Select>
                   <Input type="number" placeholder="Jersey Number" value={form.number || ""} onChange={(e) => setForm({ ...form, number: parseInt(e.target.value) || 0 })} className="bg-secondary border-border" />
-                  <Select value={form.teamId} onValueChange={(v) => setForm({ ...form, teamId: v })}>
-                    <SelectTrigger className="bg-secondary border-border"><SelectValue placeholder="Select Team" /></SelectTrigger>
-                    <SelectContent>
-                      {teams.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  
+                  {isTeamManager ? (
+                    <div className="p-3 bg-secondary text-muted-foreground rounded-lg text-sm font-semibold border border-border">
+                      Team: {teams.find(t => t.id === teamId)?.name || "Your Team"}
+                    </div>
+                  ) : (
+                    <Select value={form.teamId} onValueChange={(v) => setForm({ ...form, teamId: v })}>
+                      <SelectTrigger className="bg-secondary border-border"><SelectValue placeholder="Select Team" /></SelectTrigger>
+                      <SelectContent>
+                        {teams.map((t) => (
+                          <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  
                   <div>
                     <label className="text-sm text-muted-foreground block mb-2">Player Photo (optional)</label>
                     <input
@@ -189,6 +205,7 @@ function PlayersContent() {
         {filtered.map((player, i) => {
           const team = teams.find((t) => t.id === player.teamId);
           const stats = getPlayerStats(player.id);
+          const canManageThisPlayer = isAdmin || (isTeamManager && teamId === player.teamId);
           return (
             <motion.div
               key={player.id}
@@ -228,7 +245,7 @@ function PlayersContent() {
                 )}
                 <SuspensionBadge playerId={player.id} variant="compact" />
 
-                {isAdmin && (
+                {canManageThisPlayer && (
                   <>
                     {/* Edit Button */}
                     <Button
@@ -331,17 +348,25 @@ function PlayersContent() {
                 value={editingPlayer.number}
                 onChange={(e) => setEditingPlayer({ ...editingPlayer, number: parseInt(e.target.value) || 0 })}
               />
-              <Select
-                value={editingPlayer.teamId}
-                onValueChange={(v) => setEditingPlayer({ ...editingPlayer, teamId: v })}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {teams.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              
+              {isTeamManager ? (
+                <div className="p-3 bg-secondary text-muted-foreground rounded-lg text-sm font-semibold border border-border">
+                  Team: {teams.find(t => t.id === editingPlayer.teamId)?.name || "Your Team"}
+                </div>
+              ) : (
+                <Select
+                  value={editingPlayer.teamId}
+                  onValueChange={(v) => setEditingPlayer({ ...editingPlayer, teamId: v })}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {teams.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              
               <Button onClick={handleUpdate} className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>

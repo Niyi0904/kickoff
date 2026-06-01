@@ -12,14 +12,21 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Is the requesting user an admin?
-    // Reads their role from the user_roles collection server-side.
-    // This is the key security enforcement — the UI isAdmin check
-    // is only for cosmetic purposes (showing/hiding buttons).
-    // This rule is what actually blocks unauthorised writes.
-    function isAdmin() {
-      return isAuthenticated() &&
-        get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data.role == 'admin';
+    // Read the user's role from the user_roles collection
+    function getUserRole() {
+      return get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data.role;
+    }
+
+    // Is the requesting user a league manager (or legacy admin)?
+    function isLeagueManager() {
+      return isAuthenticated() && (getUserRole() == 'league_manager' || getUserRole() == 'admin');
+    }
+
+    // Is the requesting user a team manager of a specific team?
+    function isTeamManagerOf(teamId) {
+      return isAuthenticated() && 
+        getUserRole() == 'team_manager' && 
+        get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data.teamId == teamId;
     }
 
     // Is the requesting user reading/writing their own document?
@@ -29,56 +36,71 @@ service cloud.firestore {
 
     // ─────────────────────────────────────────────────────────
     // League Data Collections
-    // Any logged-in user can read. Only admins can write.
     // ─────────────────────────────────────────────────────────
 
     match /teams/{teamId} {
-      allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow read:  if true;
+      // Team managers can edit their own team details
+      allow write: if isLeagueManager() || isTeamManagerOf(teamId);
     }
 
     match /players/{playerId} {
-      allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow read:  if true;
+      // Team managers can add/edit/delete players for their own team
+      allow create: if isLeagueManager() || 
+                    isTeamManagerOf(request.resource.data.team_id) || 
+                    isTeamManagerOf(request.resource.data.teamId);
+      allow update: if isLeagueManager() || 
+                    ((isTeamManagerOf(resource.data.team_id) || isTeamManagerOf(resource.data.teamId)) && 
+                     (isTeamManagerOf(request.resource.data.team_id) || isTeamManagerOf(request.resource.data.teamId)));
+      allow delete: if isLeagueManager() || 
+                    isTeamManagerOf(resource.data.team_id) || 
+                    isTeamManagerOf(resource.data.teamId);
+      allow list: if isLeagueManager();
     }
 
     match /matches/{matchId} {
-      allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow read:  if true;
+      allow write: if isLeagueManager(); // Team managers cannot modify matches
     }
 
     // ─────────────────────────────────────────────────────────
     // Match Event Collections
-    // Same pattern: read for all auth users, write for admins only.
+    // Only league managers can alter match events
     // ─────────────────────────────────────────────────────────
 
     match /goals/{goalId} {
-      allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow read:  if true;
+      allow write: if isLeagueManager();
     }
 
     match /assists/{assistId} {
       allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow write: if isLeagueManager();
     }
 
     match /yellow_cards/{cardId} {
       allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow write: if isLeagueManager();
     }
 
     match /red_cards/{cardId} {
       allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow write: if isLeagueManager();
+    }
+
+    match /match_attendance/{attendanceId} {
+      allow read:  if isAuthenticated();
+      allow write: if isLeagueManager();
     }
 
     // ─────────────────────────────────────────────────────────
-    // Suspension Logics
+    // Suspension Logics (League Manager Only)
     // ─────────────────────────────────────────────────────────
 
     match /suspensions/{suspensionId} {
       allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow write: if isLeagueManager();
     }
 
     // ─────────────────────────────────────────────────────────
@@ -88,8 +110,8 @@ service cloud.firestore {
     match /link_requests/{requestId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
+      allow update: if isLeagueManager();
+      allow delete: if isLeagueManager();
     }
 
     // ─────────────────────────────────────────────────────────
@@ -97,45 +119,37 @@ service cloud.firestore {
     // ─────────────────────────────────────────────────────────
 
     // Users can read and update their own profile.
-    // Only admins can read other users' profiles (for the admin/users page).
     match /users/{uid} {
-      allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isOwner(uid);  // Self-registration on sign-up
-      allow update: if isOwner(uid);  // User updates their own profile
-      allow delete: if isAdmin();
+      allow read:   if isOwner(uid) || isLeagueManager();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid);
+      allow delete: if isLeagueManager();
+      allow list: if isLeagueManager();
     }
 
-    // user_roles: users can read their own role (needed for isAdmin check in UI).
-    // Only admins can write roles — prevents privilege escalation.
+    // user_roles: users can read their own role. League managers can read/write all.
     match /user_roles/{uid} {
-      allow read:  if isOwner(uid) || isAdmin();
-      allow write: if isAdmin();
+      allow read:  if isOwner(uid) || isLeagueManager();
+      allow write: if isLeagueManager();
+      allow list: if isLeagueManager();
     }
 
-    // user_invites: only admins can create/revoke invites.
-    // Anyone authenticated can read an invite by its code (needed for sign-up validation).
+    // user_invites
     match /user_invites/{inviteCode} {
       allow read:   if isAuthenticated();
-      allow create: if isAdmin();
-      allow update: if isAuthenticated(); // Needed to mark invite as used on sign-up
-      allow delete: if isAdmin();
+      allow create: if isLeagueManager();
+      allow update: if isAuthenticated();
+      allow delete: if isLeagueManager();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // League Settings (Phase 2 — add this collection when ready)
-    // Only admins can read or write league configuration.
-    // ─────────────────────────────────────────────────────────
-
+    // League Settings
     match /settings/{docId} {
-      allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow read:  if true;
+      allow write: if isLeagueManager();
     }
 
     // ─────────────────────────────────────────────────────────
-    // Catch-all: deny everything not explicitly allowed above.
-    // This is Firestore's default but stating it explicitly
-    // makes your intent clear and prevents accidental access
-    // if you add new collections without rules.
+    // Catch-all
     // ─────────────────────────────────────────────────────────
 
     match /{document=**} {
