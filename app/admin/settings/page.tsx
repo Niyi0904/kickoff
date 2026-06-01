@@ -18,6 +18,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/app/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { runRoleMigration } from '@/lib/admin';
 
 export default function SettingsPage() {
     return (
@@ -137,6 +138,7 @@ function SettingsContent() {
 
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
     const [hasChanges, setHasChanges] = useState(false);
+    const [migrating, setMigrating] = useState(false);
 
     // ── Populate form when settings load from Firestore ───────────────────
     useEffect(() => {
@@ -158,6 +160,23 @@ function SettingsContent() {
     }, [settings]);
 
     const markChanged = () => setHasChanges(true);
+
+    // ── Run role migration ─────────────────────────────────────────────────
+    const handleMigration = async () => {
+        setMigrating(true);
+        try {
+            const result = await runRoleMigration();
+            if (result.success) {
+                toast({ title: 'Migration Complete', description: `Updated ${result.count} user role(s) to new schema.` });
+            } else {
+                toast({ title: 'Migration Failed', description: String(result.error), variant: 'destructive' });
+            }
+        } catch (err: any) {
+            toast({ title: 'Migration Error', description: err.message, variant: 'destructive' });
+        } finally {
+            setMigrating(false);
+        }
+    };
 
     // ── Save to Firestore ──────────────────────────────────────────────────
     const handleSave = async () => {
@@ -467,6 +486,29 @@ function SettingsContent() {
                             Red cards always trigger an immediate 1-match ban.
                         </p>
                     </div>
+                </SettingRow>
+            </SettingsSection>
+
+            {/* ── Section 6: Data Migration ─────────────────────────────── */}
+            <SettingsSection
+                icon={RefreshCw}
+                title="Data Migration"
+                description="One-time migration to update old role values (admin/user) to new schema (league_manager/team_manager/player)"
+                delay={0.3}
+            >
+                <SettingRow
+                    label="Migrate Roles"
+                    hint="Converts old 'admin' → league_manager, 'user' → player (or team_manager if is_manager). Safe to run multiple times."
+                >
+                    <Button
+                        onClick={handleMigration}
+                        disabled={migrating}
+                        variant="outline"
+                        className="gap-2"
+                    >
+                        <RefreshCw className={cn('w-4 h-4', migrating && 'animate-spin')} />
+                        {migrating ? 'Migrating...' : 'Run Role Migration'}
+                    </Button>
                 </SettingRow>
             </SettingsSection>
 

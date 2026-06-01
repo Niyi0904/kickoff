@@ -14,6 +14,10 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, parseISO } from "date-fns";
+import { SuspensionBadge } from '@/components/SuspensionBadge';
+import { ClaimProfileButton } from '@/components/ClaimProfileButton';
+
+
 
 const performanceChartConfig: ChartConfig = {
   goals: { label: "Goals", color: "hsl(var(--primary))" },
@@ -98,9 +102,19 @@ export default function PlayerProfile() {
               {player.isManager && (
                 <span className="ml-1 text-[10px] sm:text-xs font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded text-primary">Manager</span>
               )}
+
+              <SuspensionBadge playerId={player.id} variant="full" className="mb-6" />
+
             </p>
           </motion.div>
         </div>
+
+        <ClaimProfileButton
+          playerId={player.id}
+          playerName={player.name}
+          teamName={team?.name ?? ''}
+          linkedUserId={player.linkedUserId ?? null}
+        />
       </div>
 
       {/* Stats Grid - 2 cols on mobile, 3 on tablet, flex on desktop */}

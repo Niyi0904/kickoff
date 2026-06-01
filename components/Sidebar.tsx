@@ -14,10 +14,15 @@ import {
   X,
   TrendingUp,
   Settings,
+  ShieldAlert,
+  User,
+  UserCheck,
+  Globe2
 } from "lucide-react";
+import { useMyLinkedPlayer } from '@/app/hooks/usePlayerLinking';
 import { useAppContext } from "@/app/context/AppDataContext";
-import { Button } from "@/components/ui/button";
 import { UserProfileDropdown } from "./UserProfileDropdown";
+import { usePendingLinkRequests } from '@/app/hooks/usePlayerLinking';
 
 const navItems = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -26,17 +31,27 @@ const navItems = [
   { path: "/stats", label: "Stats", icon: TrendingUp },
   { path: "/standings", label: "Standings", icon: Trophy },
   { path: "/matches", label: "Matches", icon: ClipboardList },
+  { path: "/public-league", label: "Public Page", icon: Globe2 },
 ];
 
 const adminNavItems = [
   { path: "/admin/onboarding", label: "User Management", icon: Users },
+  { path: "/admin/users", label: "All Users", icon: Users },
   { path: "/admin/settings", label: "Settings", icon: Settings },
+  { path: "/admin/suspensions",  label: "Suspensions", icon: ShieldAlert },
+  { path: "/admin/link-requests", label: "Profile Requests",  icon: UserCheck  }
 ];
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { signOut, user, isAdmin } = useAppContext();
+  const { signOut, user, isLeagueManager, isTeamManager, isPlayer } = useAppContext();
+
+  const { data: pending = [] } = usePendingLinkRequests();
+
+  const { data: linkedPlayer } = useMyLinkedPlayer();
+
+  const showAdminMenu = isLeagueManager;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -71,7 +86,20 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             );
           })}
 
-          {isAdmin && (
+          {linkedPlayer && (
+            <Link
+                href="/my-profile"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${pathname === "/my-profile"
+                    ? "bg-primary/15 text-primary glow-green"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  }`}
+              >
+                <User className="w-4 h-4" />
+                My Profile
+              </Link>
+          )}
+
+          {showAdminMenu && (
             <>
               <div className="my-4 border-t border-border" />
               <p className="text-xs text-muted-foreground font-semibold px-4 py-2 uppercase tracking-wider">Admin</p>
@@ -92,14 +120,30 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
+
+              {pending.length > 0 && (
+                <span className="inline-block text-[10px] uppercase tracking-wider bg-accent/15 text-accent px-2 py-0.5 rounded-full font-semibold">
+                  {pending.length} Pending Requests
+                </span>
+              )}
             </>
           )}
         </nav>
 
-        <div className="mt-auto pt-6 border-t border-border space-y-3">
-          {isAdmin && (
-            <span className="inline-block text-[10px] uppercase tracking-wider bg-accent/15 text-accent px-2 py-0.5 rounded-full font-semibold">
-              Admin
+        <div className="mt-auto pt-6 border-t border-border space-y-3 flex flex-col">
+          {isLeagueManager && (
+            <span className="inline-block self-start text-[10px] uppercase tracking-wider bg-accent/15 text-accent px-2 py-0.5 rounded-full font-semibold">
+              League Manager
+            </span>
+          )}
+          {isTeamManager && (
+            <span className="inline-block self-start text-[10px] uppercase tracking-wider bg-primary/15 text-primary px-2 py-0.5 rounded-full font-semibold">
+              Team Manager
+            </span>
+          )}
+          {isPlayer && (
+            <span className="inline-block self-start text-[10px] uppercase tracking-wider bg-secondary text-muted-foreground px-2 py-0.5 rounded-full font-semibold">
+              Player
             </span>
           )}
           <div className="flex items-center justify-between">
@@ -151,7 +195,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               );
             })}
 
-            {isAdmin && (
+            {showAdminMenu && (
               <>
                 <div className="my-4 border-t border-border" />
                 <p className="text-xs text-muted-foreground font-semibold px-4 py-2 uppercase tracking-wider">Admin</p>
@@ -193,6 +237,21 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 size="sm"
               />
             </div>
+            {isLeagueManager && (
+              <span className="inline-block text-[10px] uppercase tracking-wider bg-accent/15 text-accent px-2 py-0.5 rounded-full font-semibold">
+                League Manager
+              </span>
+            )}
+            {isTeamManager && (
+              <span className="inline-block text-[10px] uppercase tracking-wider bg-primary/15 text-primary px-2 py-0.5 rounded-full font-semibold">
+                Team Manager
+              </span>
+            )}
+            {isPlayer && (
+              <span className="inline-block text-[10px] uppercase tracking-wider bg-secondary text-muted-foreground px-2 py-0.5 rounded-full font-semibold">
+                Player
+              </span>
+            )}
           </div>
         </motion.div>
       )}
