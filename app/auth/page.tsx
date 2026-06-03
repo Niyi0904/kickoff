@@ -1,23 +1,23 @@
 'use client';
 
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
 import { SignInForm } from "@/components/SignInForm";
 import { SignUpForm } from "@/components/SignUpForm";
 
-function AuthContent() {
-  const [isLogin, setIsLogin] = useState(true);
-  const searchParams = useSearchParams();
-  const inviteCode = searchParams.get('inviteCode');
+function getSafeRedirect(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+  return value;
+}
 
-  // If invite code is in URL, switch to signup automatically
-  useEffect(() => {
-    if (inviteCode) {
-      setIsLogin(false);
-    }
-  }, [inviteCode]);
+function AuthContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const inviteCode = searchParams.get('inviteCode');
+  const redirectTo = getSafeRedirect(searchParams.get("redirect"));
+  const [isLogin, setIsLogin] = useState(!inviteCode);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -41,9 +41,9 @@ function AuthContent() {
         </h2>
 
         {isLogin ? (
-          <SignInForm onSwitchToSignUp={() => setIsLogin(false)} />
+          <SignInForm onSuccess={() => router.push(redirectTo)} onSwitchToSignUp={() => setIsLogin(false)} />
         ) : (
-          <SignUpForm onSwitchToLogin={() => setIsLogin(true)} initialInviteCode={inviteCode || undefined} />
+          <SignUpForm onSuccess={() => router.push(redirectTo)} onSwitchToLogin={() => setIsLogin(true)} initialInviteCode={inviteCode || undefined} />
         )}
       </motion.div>
     </div>

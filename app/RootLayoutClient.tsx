@@ -14,9 +14,9 @@ export function RootLayoutClient({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isPublicLeaguePage = pathname?.startsWith("/public-league");
+  const isPublicRoute = pathname === "/" || pathname?.startsWith("/public-league") || pathname?.startsWith("/auth");
 
-  if (isPublicLeaguePage) {
+  if (isPublicRoute) {
     return (
       <QueryProvider>
         <TooltipProvider>
