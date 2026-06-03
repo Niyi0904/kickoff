@@ -25,13 +25,13 @@ import { UserProfileDropdown } from "./UserProfileDropdown";
 import { usePendingLinkRequests } from '@/app/hooks/usePlayerLinking';
 
 const navItems = [
-  { path: "/", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/teams", label: "Teams", icon: Shield },
   { path: "/players", label: "Players", icon: Users },
   { path: "/stats", label: "Stats", icon: TrendingUp },
   { path: "/standings", label: "Standings", icon: Trophy },
   { path: "/matches", label: "Matches", icon: ClipboardList },
-  { path: "/public-league", label: "Public Page", icon: Globe2 },
+  { path: "/", label: "Public Home", icon: Globe2 },
 ];
 
 const adminNavItems = [
