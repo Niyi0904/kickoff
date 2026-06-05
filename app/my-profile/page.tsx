@@ -93,7 +93,7 @@ function MyProfileContent() {
   const records    = fullPlayer ? getPlayerRecords(fullPlayer.id) : [];
 
   return (
-    <div className="space-y-8 pb-20 max-w-3xl">
+    <div className="space-y-8 pb-20 max-w-3xl px-4 min-w-0">
 
       {/* ── Profile header ─────────────────────────────────── */}
       <motion.div

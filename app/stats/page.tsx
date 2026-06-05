@@ -65,7 +65,7 @@ export default function StatsPage() {
   };
   
   return (
-    <div className="max-w-5xl mx-auto px-4 pb-20">
+    <div className="max-w-5xl mx-auto px-4 pb-20 min-w-0">
       {/* Header & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>

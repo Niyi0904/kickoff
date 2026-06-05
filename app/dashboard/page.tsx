@@ -87,7 +87,7 @@ function DashboardContent() {
   const avgGoals = playedMatches.length > 0 ? (totalGoals / playedMatches.length).toFixed(1) : 0;
 
   return (
-    <div className="max-w-7xl mx-auto pb-12">
+    <div className="max-w-7xl mx-auto pb-12 px-4 min-w-0">
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
