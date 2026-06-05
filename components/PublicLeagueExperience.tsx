@@ -453,7 +453,7 @@ export function PublicLeagueExperience() {
   };
 
   return (
-    <main className="min-h-screen bg-[#07130f] text-white">
+    <main className="min-h-screen bg-[#07130f] text-white overflow-x-hidden">
       <PublicHeader
         navItems={navItems}
         profileHref={profileHref}
@@ -462,7 +462,7 @@ export function PublicLeagueExperience() {
         setMobileOpen={setMobileOpen}
       />
 
-      <section id="home" className="relative min-h-[88vh] overflow-hidden pt-20">
+      <section id="home" className="relative min-h-[88vh] overflow-hidden pt-20 min-w-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=1800&q=80"
@@ -474,7 +474,7 @@ export function PublicLeagueExperience() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,18,13,0.96),rgba(3,18,13,0.62),rgba(3,18,13,0.82))]" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#07130f] to-transparent" />
 
-        <div className="relative mx-auto flex min-h-[calc(88vh-5rem)] max-w-7xl flex-col justify-center px-4 pb-12 pt-10 sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex min-h-[calc(88vh-5rem)] max-w-7xl flex-col justify-center px-4 pb-12 pt-10 sm:px-6 lg:px-8 min-w-0">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -532,14 +532,14 @@ export function PublicLeagueExperience() {
         teamsById={teamsById}
       />
 
-      <section id="leagues" className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="leagues" className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8 min-w-0 overflow-hidden">
+        <div className="mx-auto max-w-7xl min-w-0">
           <SectionHeader
             eyebrow="League Overview"
             title="A complete public season hub"
             text="Every public section is powered by live league data so visitors can understand the competition before signing in."
           />
-          <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr] min-w-0">
             <LeagueCard settings={settings} teams={teams} players={players} matches={matches} goals={goals} />
             <ActivityPanel
               activityFeed={activityFeed}
@@ -551,24 +551,24 @@ export function PublicLeagueExperience() {
         </div>
       </section>
 
-      <section id="fixtures" className="bg-[#f4f7f1] px-4 py-16 text-[#102018] sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="fixtures" className="bg-[#f4f7f1] px-4 py-16 text-[#102018] sm:px-6 lg:px-8 min-w-0 overflow-hidden">
+        <div className="mx-auto max-w-7xl min-w-0">
           <SectionHeader
             eyebrow="Fixtures"
             title="Upcoming matches and recent results"
             text="Match cards highlight kickoff context, team identity, venue details, and the latest scorelines."
             light
           />
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2 min-w-0">
             <FixtureColumn title="Next Fixtures" icon={CalendarClock} matches={upcomingMatches.slice(0, 4)} teamsById={teamsById} empty="No upcoming fixtures yet." />
             <FixtureColumn title="Recent Results" icon={Play} matches={playedMatches.slice(0, 4)} teamsById={teamsById} empty="Completed matches will appear here." />
           </div>
         </div>
       </section>
 
-      <section id="standings" className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.35fr_0.65fr]">
-          <div>
+      <section id="standings" className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8 min-w-0 overflow-hidden">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.35fr_0.65fr] min-w-0">
+          <div className="min-w-0">
             <SectionHeader
               eyebrow="Standings Preview"
               title="The title race at a glance"
@@ -576,7 +576,7 @@ export function PublicLeagueExperience() {
             />
             <StandingsTable standings={standings.slice(0, 8)} />
           </div>
-          <div id="statistics" className="space-y-4">
+          <div id="statistics" className="space-y-4 min-w-0">
             <SectionHeader
               eyebrow="Statistics"
               title="Top performers"
@@ -587,15 +587,15 @@ export function PublicLeagueExperience() {
         </div>
       </section>
 
-      <section id="teams" className="bg-[#f4f7f1] px-4 py-16 text-[#102018] sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="teams" className="bg-[#f4f7f1] px-4 py-16 text-[#102018] sm:px-6 lg:px-8 min-w-0 overflow-hidden">
+        <div className="mx-auto max-w-7xl min-w-0">
           <SectionHeader
             eyebrow="Featured Teams"
             title="Clubs with form, identity, and momentum"
             text="Team cards combine branding, squad size, points, recent form, and season performance."
             light
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 min-w-0">
             {featuredTeams.length > 0 ? (
               featuredTeams.map((team) => <TeamFeatureCard key={team.id} row={team} />)
             ) : (
@@ -605,8 +605,8 @@ export function PublicLeagueExperience() {
         </div>
       </section>
 
-      <section id="players" className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="players" className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8 min-w-0 overflow-hidden">
+        <div className="mx-auto max-w-7xl min-w-0">
           <SectionHeader
             eyebrow="Player Spotlight"
             title="Golden boot race and playmakers"
@@ -616,15 +616,15 @@ export function PublicLeagueExperience() {
         </div>
       </section>
 
-      <section id="about" className="bg-[#f4f7f1] px-4 py-16 text-[#102018] sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="about" className="bg-[#f4f7f1] px-4 py-16 text-[#102018] sm:px-6 lg:px-8 min-w-0 overflow-hidden">
+        <div className="mx-auto max-w-7xl min-w-0">
           <SectionHeader
             eyebrow="Platform Features"
             title="Built for organizers, teams, players, and supporters"
             text="Public discovery and protected operations work together so the league feels credible before login and powerful after it."
             light
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 min-w-0">
             {platformFeatures.map((feature) => (
               <FeatureCard key={feature.title} feature={feature} />
             ))}
@@ -632,28 +632,28 @@ export function PublicLeagueExperience() {
         </div>
       </section>
 
-      <section className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
+      <section className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8 min-w-0 overflow-hidden">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr] min-w-0">
+          <div className="min-w-0">
             <SectionHeader
               eyebrow="Community"
               title="A public face for the whole league"
               text="The experience supports visitors, clubs, players, organizers, and partners with a professional view of the competition."
             />
-            <div className="grid gap-4">
+            <div className="grid gap-4 min-w-0">
               {testimonials.map((item) => (
                 <TestimonialCard key={item.name} item={item} />
               ))}
             </div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <SectionHeader
               eyebrow="FAQ"
               title="Clear answers before sign in"
               text="Public browsing stays separate from protected account actions."
             />
-            <div className="grid gap-3">
+            <div className="grid gap-3 min-w-0">
               {faqs.map((faq) => (
                 <FaqCard key={faq.question} faq={faq} />
               ))}
@@ -1031,54 +1031,96 @@ function StandingsTable({ standings }: { standings: StandingRow[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-md border border-white/10 bg-white/[0.05]">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[720px] border-collapse text-left">
-          <thead>
-            <tr className="border-b border-white/10 bg-white/[0.06] text-sm font-bold text-white/50">
-              <th className="w-12 px-4 py-4 text-center">#</th>
-              <th className="px-4 py-4">Team</th>
-              <th className="px-2 py-4 text-center">P</th>
-              <th className="px-2 py-4 text-center">W</th>
-              <th className="px-2 py-4 text-center">D</th>
-              <th className="px-2 py-4 text-center">L</th>
-              <th className="px-2 py-4 text-center">GD</th>
-              <th className="px-4 py-4">Form</th>
-              <th className="px-4 py-4 text-center text-[#51d884]">PTS</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/8">
-            {standings.map((team, index) => (
-              <tr key={team.id} className="transition hover:bg-white/[0.04]">
-                <td className="px-4 py-4 text-center font-black text-white/45">{index + 1}</td>
-                <td className="px-4 py-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9 rounded-md border border-white/10">
-                      <AvatarImage src={team.logo ?? undefined} />
-                      <AvatarFallback style={{ backgroundColor: team.color }} className="text-xs font-bold text-white">
-                        {teamInitials(team.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-black text-white">{team.name}</span>
-                  </div>
-                </td>
-                <td className="px-2 py-4 text-center font-semibold text-white/78">{team.played}</td>
-                <td className="px-2 py-4 text-center text-white/54">{team.won}</td>
-                <td className="px-2 py-4 text-center text-white/54">{team.drawn}</td>
-                <td className="px-2 py-4 text-center text-white/54">{team.lost}</td>
-                <td className="px-2 py-4 text-center font-mono text-sm text-white">{team.gd > 0 ? `+${team.gd}` : team.gd}</td>
-                <td className="px-4 py-4">
-                  <FormDots form={team.form} />
-                </td>
-                <td className="px-4 py-4 text-center">
-                  <span className="rounded-md bg-[#26c267]/18 px-3 py-1 text-sm font-black text-[#51d884]">{team.pts}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <>
+      {/* Mobile: Card List */}
+      <div className="md:hidden space-y-2">
+        {standings.map((team, index) => (
+          <div key={team.id} className="min-w-0 rounded-md border border-white/10 bg-white/[0.05] p-4 transition hover:bg-white/[0.08]">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="min-w-0 flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center font-black text-sm text-white/45 shrink-0">{index + 1}</span>
+                <div className="min-w-0 flex items-center gap-2">
+                  <Avatar className="h-8 w-8 rounded-md border border-white/10 shrink-0">
+                    <AvatarImage src={team.logo ?? undefined} />
+                    <AvatarFallback style={{ backgroundColor: team.color }} className="text-xs font-bold text-white">
+                      {teamInitials(team.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-bold text-white truncate">{team.name}</span>
+                </div>
+              </div>
+              <div className="rounded-md bg-[#26c267]/18 px-3 py-1 text-center shrink-0">
+                <span className="text-sm font-black text-[#51d884]">{team.pts}</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs mb-2">
+              <div className="bg-white/5 rounded p-2 text-center">
+                <p className="text-white/45 text-[10px] mb-1">Record</p>
+                <p className="font-bold text-white">{team.played}P {team.won}W {team.drawn}D {team.lost}L</p>
+              </div>
+              <div className="bg-white/5 rounded p-2 text-center">
+                <p className="text-white/45 text-[10px] mb-1">Goals</p>
+                <p className="font-bold text-white">{team.gf}F {team.ga}A ({team.gd > 0 ? '+' : ''}{team.gd})</p>
+              </div>
+              <div className="bg-white/5 rounded p-2 text-center">
+                <p className="text-white/45 text-[10px] mb-1">Form</p>
+                <FormDots form={team.form.slice(0, 3)} />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
+
+      {/* Desktop: Table */}
+      <div className="hidden md:block min-w-0 overflow-hidden rounded-md border border-white/10 bg-white/[0.05]">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-white/10 bg-white/[0.06] text-sm font-bold text-white/50">
+                <th className="w-12 px-4 py-4 text-center">#</th>
+                <th className="px-4 py-4">Team</th>
+                <th className="px-2 py-4 text-center">P</th>
+                <th className="px-2 py-4 text-center">W</th>
+                <th className="px-2 py-4 text-center">D</th>
+                <th className="px-2 py-4 text-center">L</th>
+                <th className="px-2 py-4 text-center">GD</th>
+                <th className="px-4 py-4">Form</th>
+                <th className="px-4 py-4 text-center text-[#51d884]">PTS</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/8">
+              {standings.map((team, index) => (
+                <tr key={team.id} className="transition hover:bg-white/[0.04]">
+                  <td className="px-4 py-4 text-center font-black text-white/45">{index + 1}</td>
+                  <td className="px-4 py-4">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Avatar className="h-9 w-9 rounded-md border border-white/10 shrink-0">
+                        <AvatarImage src={team.logo ?? undefined} />
+                        <AvatarFallback style={{ backgroundColor: team.color }} className="text-xs font-bold text-white">
+                          {teamInitials(team.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="font-black text-white truncate">{team.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-2 py-4 text-center font-semibold text-white/78">{team.played}</td>
+                  <td className="px-2 py-4 text-center text-white/54">{team.won}</td>
+                  <td className="px-2 py-4 text-center text-white/54">{team.drawn}</td>
+                  <td className="px-2 py-4 text-center text-white/54">{team.lost}</td>
+                  <td className="px-2 py-4 text-center font-mono text-sm text-white">{team.gd > 0 ? `+${team.gd}` : team.gd}</td>
+                  <td className="px-4 py-4">
+                    <FormDots form={team.form} />
+                  </td>
+                  <td className="px-4 py-4 text-center">
+                    <span className="rounded-md bg-[#26c267]/18 px-3 py-1 text-sm font-black text-[#51d884]">{team.pts}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   );
 }
 

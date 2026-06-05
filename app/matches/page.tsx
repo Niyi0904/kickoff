@@ -191,7 +191,7 @@ function MatchRecordsContent() {
   const matchDays = Object.keys(groupedMatches).sort((a, b) => Number(b) - Number(a));
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-10 pb-20 px-4 min-w-0">
       <AnimatePresence>
         {isGenerating && (
           <motion.div

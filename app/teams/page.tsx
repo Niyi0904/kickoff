@@ -102,7 +102,7 @@ function TeamsContent() {
   };
 
   return (
-    <div>
+    <div className="px-4 min-w-0">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
