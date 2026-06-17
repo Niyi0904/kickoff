@@ -13,6 +13,7 @@ import { usePlayers, useTeams } from '../../hooks/useAppData';
 import { LoadingView } from '../../components/LoadingView';
 import { EmptyState } from '../../components/EmptyState';
 import type { AppStackParamList } from '../../navigation/types';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
 
 const PlayersScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
@@ -92,31 +93,32 @@ const PlayersScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5', padding: 16 },
+  container: { flex: 1, backgroundColor: BACKGROUND_COLOR, padding: 16 },
   search: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#eee',
+    color: TEXT_COLOR,
   },
   filters: { marginBottom: 12, maxHeight: 40 },
   chip: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 16,
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     marginRight: 8,
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  chipActive: { backgroundColor: '#d30707', borderColor: '#d30707' },
-  chipText: { fontSize: 12, fontWeight: '600', color: '#333' },
+  chipActive: { backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR },
+  chipText: { fontSize: 12, fontWeight: '600', color: TEXT_COLOR },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -125,14 +127,14 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 8,
-    backgroundColor: '#d30707',
+    backgroundColor: PRIMARY_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
-  numberText: { color: '#fff', fontWeight: 'bold' },
+  numberText: { color: TEXT_COLOR, fontWeight: 'bold' },
   info: { flex: 1 },
-  name: { fontSize: 15, fontWeight: '600' },
+  name: { fontSize: 15, fontWeight: '600', color: TEXT_COLOR },
   meta: { fontSize: 12, color: '#888', marginTop: 2 },
   chevron: { fontSize: 22, color: '#ccc' },
 });

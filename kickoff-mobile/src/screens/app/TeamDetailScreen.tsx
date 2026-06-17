@@ -11,6 +11,7 @@ import {
 import { LoadingView } from '../../components/LoadingView';
 import { EmptyState } from '../../components/EmptyState';
 import type { AppStackParamList } from '../../navigation/types';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
 
 const TeamDetailScreen = () => {
   const route = useRoute<RouteProp<AppStackParamList, 'TeamDetail'>>();
@@ -99,44 +100,44 @@ const TeamDetailScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5', padding: 16 },
+  container: { flex: 1, backgroundColor: BACKGROUND_COLOR, padding: 16 },
   header: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     padding: 16,
     borderRadius: 8,
     borderLeftWidth: 6,
     marginBottom: 16,
   },
-  teamName: { fontSize: 22, fontWeight: 'bold' },
+  teamName: { fontSize: 22, fontWeight: 'bold', color: TEXT_COLOR },
   sub: { color: '#666', marginTop: 4 },
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   statBox: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
   },
-  statVal: { fontSize: 20, fontWeight: 'bold', color: '#d30707' },
+  statVal: { fontSize: 20, fontWeight: 'bold', color: PRIMARY_COLOR },
   statLabel: { fontSize: 10, color: '#888', marginTop: 4, textTransform: 'uppercase' },
   managerCard: {
-    backgroundColor: '#fff8e1',
+    backgroundColor: CARD_BACKGROUND,
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
-  sectionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 8, color: '#333' },
-  managerName: { fontSize: 16, fontWeight: '600' },
+  sectionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 8, color: TEXT_COLOR },
+  managerName: { fontSize: 16, fontWeight: '600', color: TEXT_COLOR },
   playerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     padding: 12,
     borderRadius: 8,
     marginBottom: 6,
   },
-  playerNum: { width: 40, fontWeight: 'bold', color: '#d30707' },
-  playerName: { flex: 1, fontWeight: '600' },
+  playerNum: { width: 40, fontWeight: 'bold', color: PRIMARY_COLOR },
+  playerName: { flex: 1, fontWeight: '600', color: TEXT_COLOR },
   playerPos: { fontSize: 11, color: '#888' },
 });
 

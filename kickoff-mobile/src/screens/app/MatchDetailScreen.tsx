@@ -5,6 +5,7 @@ import { useMatch, useTeams, usePlayers, useMatchEvents } from '../../hooks/useA
 import { LoadingView } from '../../components/LoadingView';
 import { EmptyState } from '../../components/EmptyState';
 import type { AppStackParamList } from '../../navigation/types';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
 
 const MatchDetailScreen = () => {
   const route = useRoute<RouteProp<AppStackParamList, 'MatchDetail'>>();
@@ -79,15 +80,15 @@ const MatchDetailScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5', padding: 16 },
+  container: { flex: 1, backgroundColor: BACKGROUND_COLOR, padding: 16 },
   scoreCard: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     padding: 20,
     borderRadius: 8,
     marginBottom: 16,
     alignItems: 'center',
   },
-  matchDay: { fontSize: 12, color: '#d30707', fontWeight: '700' },
+  matchDay: { fontSize: 12, color: PRIMARY_COLOR, fontWeight: '700' },
   date: { fontSize: 12, color: '#888', marginTop: 4 },
   scoreRow: {
     flexDirection: 'row',
@@ -95,17 +96,17 @@ const styles = StyleSheet.create({
     marginTop: 16,
     gap: 12,
   },
-  team: { flex: 1, fontSize: 14, fontWeight: '600', textAlign: 'center' },
-  score: { fontSize: 28, fontWeight: 'bold', color: '#d30707' },
+  team: { flex: 1, fontSize: 14, fontWeight: '600', textAlign: 'center', color: TEXT_COLOR },
+  score: { fontSize: 28, fontWeight: 'bold', color: PRIMARY_COLOR },
   status: { marginTop: 8, fontSize: 12, color: '#888' },
   section: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
   },
-  sectionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 8 },
-  body: { color: '#444', lineHeight: 20 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 8, color: TEXT_COLOR },
+  body: { color: TEXT_COLOR, lineHeight: 20 },
   empty: { color: '#888', fontSize: 13 },
   eventRow: {
     flexDirection: 'row',
@@ -114,8 +115,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  eventType: { fontWeight: '600', color: '#d30707' },
-  eventPlayer: { color: '#333' },
+  eventType: { fontWeight: '600', color: PRIMARY_COLOR },
+  eventPlayer: { color: TEXT_COLOR },
 });
 
 export default MatchDetailScreen;

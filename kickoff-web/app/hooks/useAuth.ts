@@ -9,6 +9,7 @@ import {
   signOut as firebaseSignOut,
   updateProfile,
   getIdTokenResult,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { createUserDocument } from "@/lib/firestore";
@@ -173,6 +174,16 @@ export function useAuth() {
     }
   };
 
+  // ── Password Reset ─────────────────────────────────────────────────────
+  const sendPasswordReset = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { error: null };
+    } catch (error: any) {
+      return { error };
+    }
+  };
+
   return {
     user,
     role,
@@ -185,6 +196,7 @@ export function useAuth() {
     loading,
     signIn,
     signUp,
-    signOut
+    signOut,
+    sendPasswordReset
   };
 }

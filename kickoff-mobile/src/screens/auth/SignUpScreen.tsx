@@ -9,7 +9,8 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import { signUp } from '../../firebase/auth';
+import { signUp } from '../../lib/authService';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, TEXT_COLOR } from '../../theme';
 
 const SignUpScreen = ({ navigation }: any) => {
   const [displayName, setDisplayName] = useState('');
@@ -36,7 +37,7 @@ const SignUpScreen = ({ navigation }: any) => {
 
     try {
       setLoading(true);
-      await signUp(email, password, displayName);
+      await signUp({ email, password, displayName });
     } catch (error: any) {
       Alert.alert('Sign Up Error', error.message);
     } finally {
@@ -94,7 +95,7 @@ const SignUpScreen = ({ navigation }: any) => {
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={TEXT_COLOR} />
         ) : (
           <Text style={styles.buttonText}>Sign Up</Text>
         )}
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: BACKGROUND_COLOR,
   },
   title: {
     fontSize: 28,
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#d30707',
+    backgroundColor: PRIMARY_COLOR,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -139,12 +140,12 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: '#fff',
+    color: TEXT_COLOR,
     fontSize: 16,
     fontWeight: 'bold',
   },
   link: {
-    color: '#d30707',
+    color: PRIMARY_COLOR,
     textAlign: 'center',
     marginTop: 15,
     fontSize: 14,

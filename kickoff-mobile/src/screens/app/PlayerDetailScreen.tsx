@@ -13,6 +13,7 @@ import { getPlayerStatsForId } from '../../firebase/firestore';
 import { LoadingView } from '../../components/LoadingView';
 import { EmptyState } from '../../components/EmptyState';
 import type { AppStackParamList } from '../../navigation/types';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
 
 const PlayerDetailScreen = () => {
   const route = useRoute<RouteProp<AppStackParamList, 'PlayerDetail'>>();
@@ -73,35 +74,35 @@ const PlayerDetailScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5', padding: 16 },
+  container: { flex: 1, backgroundColor: BACKGROUND_COLOR, padding: 16 },
   header: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
   },
-  name: { fontSize: 24, fontWeight: 'bold' },
+  name: { fontSize: 24, fontWeight: 'bold', color: TEXT_COLOR },
   badge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#d30707',
+    backgroundColor: PRIMARY_COLOR,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     marginTop: 8,
   },
-  badgeText: { color: '#fff', fontWeight: 'bold' },
+  badgeText: { color: TEXT_COLOR, fontWeight: 'bold' },
   meta: { color: '#666', marginTop: 8 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   statCard: {
     width: '30%',
     minWidth: 100,
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
   },
-  statValue: { fontSize: 22, fontWeight: 'bold', color: '#d30707' },
+  statValue: { fontSize: 22, fontWeight: 'bold', color: PRIMARY_COLOR },
   statLabel: { fontSize: 11, color: '#888', marginTop: 4 },
   note: { marginTop: 24, fontSize: 12, color: '#888', textAlign: 'center' },
 });

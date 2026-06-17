@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
 import { SignInForm } from "@/components/SignInForm";
 import { SignUpForm } from "@/components/SignUpForm";
+import { ForgotPasswordForm } from "@/components/ForgotPasswordForm";
 
 function getSafeRedirect(value: string | null) {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return "/dashboard";
@@ -17,7 +18,9 @@ function AuthContent() {
   const router = useRouter();
   const inviteCode = searchParams.get('inviteCode');
   const redirectTo = getSafeRedirect(searchParams.get("redirect"));
-  const [isLogin, setIsLogin] = useState(!inviteCode);
+  
+  type AuthMode = 'login' | 'signup' | 'forgot-password';
+  const [mode, setMode] = useState<AuthMode>(inviteCode ? 'signup' : 'login');
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -37,13 +40,29 @@ function AuthContent() {
         </div>
 
         <h2 className="font-display text-xl font-bold text-center mb-6">
-          {isLogin ? "Sign In" : "Create Account"}
+          {mode === 'login' && "Sign In"}
+          {mode === 'signup' && "Create Account"}
+          {mode === 'forgot-password' && "Reset Password"}
         </h2>
 
-        {isLogin ? (
-          <SignInForm onSuccess={() => router.push(redirectTo)} onSwitchToSignUp={() => setIsLogin(false)} />
-        ) : (
-          <SignUpForm onSuccess={() => router.push(redirectTo)} onSwitchToLogin={() => setIsLogin(true)} initialInviteCode={inviteCode || undefined} />
+        {mode === 'login' && (
+          <SignInForm
+            onSuccess={() => router.push(redirectTo)}
+            onSwitchToSignUp={() => setMode('signup')}
+            onForgotPassword={() => setMode('forgot-password')}
+          />
+        )}
+        {mode === 'signup' && (
+          <SignUpForm
+            onSuccess={() => router.push(redirectTo)}
+            onSwitchToLogin={() => setMode('login')}
+            initialInviteCode={inviteCode || undefined}
+          />
+        )}
+        {mode === 'forgot-password' && (
+          <ForgotPasswordForm
+            onSwitchToSignIn={() => setMode('login')}
+          />
         )}
       </motion.div>
     </div>

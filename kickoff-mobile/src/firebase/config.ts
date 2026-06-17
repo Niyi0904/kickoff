@@ -1,5 +1,8 @@
 import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
+import { initializeAuth, Auth } from 'firebase/auth';
+// @ts-ignore - getReactNativePersistence exists at runtime in Firebase 12+ but types may not export it
+import { getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 // TODO: Replace with your Firebase config
@@ -19,7 +22,9 @@ let db: Firestore;
 
 try {
   app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+  });
   db = getFirestore(app);
 } catch (error) {
   console.error('Firebase initialization error:', error);
