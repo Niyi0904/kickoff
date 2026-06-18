@@ -269,3 +269,139 @@ export const fetchLeagueSettings = async (): Promise<LeagueSettings> => {
     return DEFAULT_LEAGUE_SETTINGS;
   }
 };
+import { addDoc, updateDoc, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+
+/** Add a new team */
+export const addTeam = async (teamData: Omit<Team, 'id'>): Promise<string | null> => {
+  try {
+    const docRef = await addDoc(collection(db, 'teams'), {
+      ...teamData,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Add team error:', error);
+    return null;
+  }
+};
+
+/** Update existing team */
+export const updateTeam = async (teamId: string, updates: Partial<Team>): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'teams', teamId);
+    await updateDoc(ref, {
+      ...updates,
+      updatedAt: serverTimestamp(),
+    });
+    return true;
+  } catch (error) {
+    console.error('Update team error:', error);
+    return false;
+  }
+};
+
+/** Delete a team */
+export const deleteTeam = async (teamId: string): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'teams', teamId);
+    await deleteDoc(ref);
+    return true;
+  } catch (error) {
+    console.error('Delete team error:', error);
+    return false;
+  }
+};
+
+/** Update league settings */
+export const updateLeagueSettings = async (settings: Partial<LeagueSettings>): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'settings', 'league');
+    await setDoc(ref, { ...settings }, { merge: true });
+    return true;
+  } catch (error) {
+    console.error('Update league settings error:', error);
+    return false;
+  }
+};
+
+/** Add a new player */
+export const addPlayer = async (playerData: Omit<Player, 'id'>): Promise<string | null> => {
+  try {
+    const docRef = await addDoc(collection(db, 'players'), {
+      ...playerData,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Add player error:', error);
+    return null;
+  }
+};
+
+/** Update existing player */
+export const updatePlayer = async (playerId: string, updates: Partial<Player>): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'players', playerId);
+    await updateDoc(ref, {
+      ...updates,
+      updatedAt: serverTimestamp(),
+    });
+    return true;
+  } catch (error) {
+    console.error('Update player error:', error);
+    return false;
+  }
+};
+
+/** Delete a player */
+export const deletePlayer = async (playerId: string): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'players', playerId);
+    await deleteDoc(ref);
+    return true;
+  } catch (error) {
+    console.error('Delete player error:', error);
+    return false;
+  }
+};
+
+/** Add a new match */
+export const addMatch = async (matchData: Omit<Match, 'id'>): Promise<string | null> => {
+  try {
+    const docRef = await addDoc(collection(db, 'matches'), {
+      ...matchData,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Add match error:', error);
+    return null;
+  }
+};
+
+/** Update existing match */
+export const updateMatch = async (matchId: string, updates: Partial<Match>): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'matches', matchId);
+    await updateDoc(ref, {
+      ...updates,
+      updatedAt: serverTimestamp(),
+    });
+    return true;
+  } catch (error) {
+    console.error('Update match error:', error);
+    return false;
+  }
+};
+
+/** Delete a match */
+export const deleteMatch = async (matchId: string): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'matches', matchId);
+    await deleteDoc(ref);
+    return true;
+  } catch (error) {
+    console.error('Delete match error:', error);
+    return false;
+  }
+};

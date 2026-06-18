@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { usePlayerStats } from '../../hooks/useAppData';
 import { LoadingView } from '../../components/LoadingView';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
 
 type StatType = 'goals' | 'assists' | 'yellowCards' | 'redCards';
 
@@ -63,7 +64,7 @@ const StatsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: BACKGROUND_COLOR,
     padding: 16,
   },
   filterContainer: {
@@ -76,22 +77,22 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 6,
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     borderWidth: 1,
     borderColor: '#ddd',
   },
   filterBtnActive: {
-    backgroundColor: '#d30707',
-    borderColor: '#d30707',
+    backgroundColor: PRIMARY_COLOR,
+    borderColor: PRIMARY_COLOR,
   },
   filterBtnText: {
     textAlign: 'center',
     fontSize: 12,
     fontWeight: '600',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
   },
   playerCard: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
   rank: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
     width: 30,
   },
   playerDetails: {
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
   },
 });
 

@@ -9,6 +9,7 @@ export type AppTabParamList = {
   Teams: undefined;
   Players: undefined;
   Matches: undefined;
+  Admin: undefined;
 };
 
 export type AppStackParamList = {
@@ -16,17 +17,32 @@ export type AppStackParamList = {
   TeamDetail: { teamId: string };
   PlayerDetail: { playerId: string };
   MatchDetail: { matchId: string };
+  AdminHome: undefined;
+  LeagueSettings: undefined;
+  TeamManagement: undefined;
+  TeamForm: { teamId?: string };
+  PlayerManagement: undefined;
+  PlayerForm: { playerId?: string };
+  MatchManagement: undefined;
+  MatchForm: { matchId?: string };
 };
 
 export type AuthStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
+  ForgotPassword: undefined;
 };
 
 export type AppTabNavigation = BottomTabNavigationProp<AppTabParamList>;
 export type AppStackNavigation = NativeStackNavigationProp<AppStackParamList>;
 
-export type TeamsScreenNav = CompositeNavigationProp<
-  BottomTabNavigationProp<AppTabParamList, 'Teams'>,
-  NativeStackNavigationProp<AppStackParamList>
->;
+export type AdminStackParamList = {
+  AdminHome: undefined;
+  LeagueSettings: undefined;
+  TeamManagement: undefined;
+  TeamForm: { teamId?: string };
+  PlayerManagement: undefined;
+  PlayerForm: { playerId?: string };
+  MatchManagement: undefined;
+  MatchForm: { matchId?: string };
+};

@@ -1,22 +1,36 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { useLeagueStandings, usePlayerStats, useLeagueSettings } from '../../hooks/useAppData';
 import { LoadingView } from '../../components/LoadingView';
+import StatCard from '../../components/StatCard';
+import { MatchesCard } from '../../components/MatchesCard';
+import { useQueryClient } from '@tanstack/react-query';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
 
 const DashboardScreen = () => {
+  const queryClient = useQueryClient();
   const { data: standings, isLoading: standingsLoading } = useLeagueStandings();
   const { data: stats, isLoading: statsLoading } = usePlayerStats();
   const { seasonName, isLoading: settingsLoading } = useLeagueSettings();
 
+  const onRefresh = React.useCallback(() => {
+    // Invalidate queries to refetch fresh data
+    queryClient.invalidateQueries({ queryKey: ['standings'] });
+    queryClient.invalidateQueries({ queryKey: ['playerStats'] });
+    queryClient.invalidateQueries({ queryKey: ['settings', 'league'] });
+  }, [queryClient]);
+
   if (standingsLoading || statsLoading || settingsLoading) return <LoadingView />;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={<RefreshControl refreshing={standingsLoading || statsLoading || settingsLoading} onRefresh={onRefresh} />}
+    >
       <Text style={styles.title}>{seasonName}</Text>
       <Text style={styles.subtitle}>League overview</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Top Teams</Text>
+      <StatCard title="Top Teams">
         {standings?.slice(0, 3).map((team, index) => (
           <View key={team.teamId} style={styles.cardRow}>
             <Text style={styles.position}>{index + 1}</Text>
@@ -24,17 +38,17 @@ const DashboardScreen = () => {
             <Text style={styles.points}>{team.points} pts</Text>
           </View>
         ))}
-      </View>
+      </StatCard>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Top Scorers</Text>
+      <StatCard title="Top Scorers">
         {stats?.sort((a, b) => b.goals - a.goals).slice(0, 5).map((player) => (
           <View key={player.playerId} style={styles.cardRow}>
             <Text style={styles.playerName}>{player.playerName}</Text>
             <Text style={styles.goals}>{player.goals} goals</Text>
           </View>
         ))}
-      </View>
+      </StatCard>
+      <MatchesCard />
     </ScrollView>
   );
 };
@@ -42,21 +56,45 @@ const DashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: BACKGROUND_COLOR,
     padding: 16,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    gap: 8,
+  },
+  filterBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: CARD_BACKGROUND,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  filterBtnActive: {
+    backgroundColor: PRIMARY_COLOR,
+    borderColor: PRIMARY_COLOR,
+  },
+  filterBtnText: {
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '600',
+    color: TEXT_COLOR,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
+    color: TEXT_COLOR,
   },
   subtitle: {
     fontSize: 14,
-    color: '#666',
+    color: '#bbb',
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
@@ -67,10 +105,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#d30707',
+    fontSize: 12,
+    fontWeight: '600',
+    color: TEXT_COLOR,
   },
   cardRow: {
     flexDirection: 'row',
@@ -89,14 +126,14 @@ const styles = StyleSheet.create({
   },
   points: {
     fontWeight: 'bold',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
   },
   playerName: {
     flex: 1,
   },
   goals: {
     fontWeight: 'bold',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
   },
 });
 

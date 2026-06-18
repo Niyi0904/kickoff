@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMatches, useTeams } from '../../hooks/useAppData';
 import { LoadingView } from '../../components/LoadingView';
 import type { AppStackParamList } from '../../navigation/types';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
 
 const MatchesScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
@@ -79,7 +80,7 @@ const MatchesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: BACKGROUND_COLOR,
     padding: 16,
   },
   filterContainer: {
@@ -91,22 +92,22 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     borderWidth: 1,
     borderColor: '#ddd',
   },
   filterBtnActive: {
-    backgroundColor: '#d30707',
-    borderColor: '#d30707',
+    backgroundColor: PRIMARY_COLOR,
+    borderColor: PRIMARY_COLOR,
   },
   filterBtnText: {
     textAlign: 'center',
     fontSize: 12,
     fontWeight: '600',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
   },
   matchCard: {
-    backgroundColor: '#fff',
+    backgroundColor: CARD_BACKGROUND,
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   matchDay: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
   },
   matchDate: {
     fontSize: 10,
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
   teamName: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#333',
+    color: TEXT_COLOR,
   },
   score: {
     paddingHorizontal: 12,
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#d30707',
+    color: PRIMARY_COLOR,
   },
   status: {
     fontSize: 10,

@@ -23,9 +23,10 @@ function getFirebaseErrorMessage(code: string): string {
 interface SignInFormProps {
   onSuccess?: () => void;
   onSwitchToSignUp?: () => void;
+  onForgotPassword?: () => void;
 }
 
-export function SignInForm({ onSuccess, onSwitchToSignUp }: SignInFormProps) {
+export function SignInForm({ onSuccess, onSwitchToSignUp, onForgotPassword }: SignInFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,15 +88,28 @@ export function SignInForm({ onSuccess, onSwitchToSignUp }: SignInFormProps) {
         className="bg-secondary border-border"
         required
       />
-      <Input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="bg-secondary border-border"
-        minLength={6}
-        required
-      />
+      <div className="space-y-1.5">
+        <Input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="bg-secondary border-border focus-visible:ring-primary focus-visible:ring-1"
+          minLength={6}
+          required
+        />
+        {onForgotPassword && (
+          <div className="flex justify-end px-0.5">
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              className="text-xs text-muted-foreground hover:text-primary transition-colors font-medium focus-visible:outline-none"
+            >
+              Forgot password?
+            </button>
+          </div>
+        )}
+      </div>
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? "Signing in..." : "Sign In"}
       </Button>

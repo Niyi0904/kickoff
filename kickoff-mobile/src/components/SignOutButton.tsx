@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
+import { PRIMARY_COLOR } from '../theme';
 
 export const SignOutButton = () => {
   const { signOut } = useAuth();
@@ -21,5 +22,5 @@ export const SignOutButton = () => {
 
 const styles = StyleSheet.create({
   btn: { marginRight: 12, paddingVertical: 4, paddingHorizontal: 8 },
-  text: { color: '#d30707', fontSize: 13, fontWeight: '600' },
+  text: { color: PRIMARY_COLOR, fontSize: 13, fontWeight: '600' },
 });
