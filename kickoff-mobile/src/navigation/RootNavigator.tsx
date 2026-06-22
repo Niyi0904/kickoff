@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { PRIMARY_COLOR } from '../theme';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useAuth } from '../hooks/useAuth';
+import { useApp } from '../context/AppContext';
+import WelcomeScreen from '../screens/auth/WelcomeScreen';
 import SignInScreen from '../screens/auth/SignInScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import SignUpScreen from '../screens/auth/SignUpScreen';
@@ -20,13 +21,15 @@ import MatchDetailScreen from '../screens/app/MatchDetailScreen';
 import { SignOutButton } from '../components/SignOutButton';
 import AdminHomeScreen from '../screens/admin/AdminHomeScreen';
 import LeagueSettingsScreen from '../screens/admin/LeagueSettingsScreen';
-import { TeamManagementScreen } from '../screens/admin/TeamManagementScreen';
+import TeamManagementScreen from '../screens/admin/TeamManagementScreen';
 import TeamFormScreen from '../screens/admin/TeamFormScreen';
 import PlayerManagementScreen from '../screens/admin/PlayerManagementScreen';
 import PlayerFormScreen from '../screens/admin/PlayerFormScreen';
 import MatchManagementScreen from '../screens/admin/MatchManagementScreen';
 import MatchFormScreen from '../screens/admin/MatchFormScreen';
 import type { AppStackParamList, AppTabParamList, AuthStackParamList } from './types';
+
+export const navigationRef = React.createRef<NavigationRef>();
 
 const AdminStack = createNativeStackNavigator<AppStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -35,6 +38,7 @@ const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 const AuthNavigator = () => (
   <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+    <AuthStack.Screen name="Welcome" component={WelcomeScreen} />
     <AuthStack.Screen name="SignIn" component={SignInScreen} />
     <AuthStack.Screen name="SignUp" component={SignUpScreen} />
     <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
@@ -77,7 +81,7 @@ const AppNavigator = () => (
 );
 
 export const RootNavigator = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useApp();
 
   if (isLoading) {
     return (
@@ -88,7 +92,7 @@ export const RootNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {isAuthenticated ? (
         <AppNavigator />
       ) : (
@@ -97,3 +101,12 @@ export const RootNavigator = () => {
     </NavigationContainer>
   );
 };
+
+export function navigateToMainTabs() {
+  if (navigationRef.current) {
+    navigationRef.current.resetRoot({
+      index: 0,
+      routes: [{ name: 'MainTabs' }],
+    });
+  }
+}

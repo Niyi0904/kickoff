@@ -1,132 +1,153 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
-import { Button, Card, Snackbar } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { StackNavigationProp } from '@react-navigation/stack';
-import type { RouteProp } from '@react-navigation/native';
-import type { AppStackParamList } from '../../navigation/types';
-import { addTeam, updateTeam, fetchTeamById } from '../../firebase/firestore';
-import { EditableField } from '../../components/EditableField';
-import { PRIMARY_COLOR, BACKGROUND_COLOR } from '../../theme';
+import React, { useState } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput,
+} from 'react-native';
+import { getTeamById } from '../../lib/data';
 
-type TeamFormScreenNavigationProp = StackNavigationProp<AppStackParamList, 'TeamForm'>;
-type TeamFormScreenRouteProp = RouteProp<AppStackParamList, 'TeamForm'>;
-
-const TeamFormScreen: React.FC = () => {
-  const navigation = useNavigation<TeamFormScreenNavigationProp>();
-  const route = useRoute<TeamFormScreenRouteProp>();
+export default function TeamFormScreen({ route, navigation }: any) {
   const { teamId } = route.params || {};
-  const isEdit = Boolean(teamId);
+  const existing = teamId ? getTeamById(teamId) : null;
 
-  const [loading, setLoading] = useState(isEdit);
-  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    name: '',
-    logo: '',
-    primaryColor: '#000000',
-    founded: '',
-    stadium: '',
+    name: existing?.name || '',
+    shortName: existing?.shortName || '',
+    manager: existing?.manager || '',
+    stadium: existing?.stadium || '',
+    founded: existing?.founded || '',
+    description: existing?.description || '',
   });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [snackbar, setSnackbar] = useState({ visible: false, message: '' });
 
-  useEffect(() => {
-    if (isEdit) {
-      const loadTeam = async () => {
-        setLoading(true);
-        const team = await fetchTeamById(teamId!);
-        if (team) {
-          setForm({
-            name: team.name,
-            logo: team.logo ?? '',
-            primaryColor: team.primaryColor,
-            founded: team.founded,
-            stadium: team.stadium,
-          });
-        }
-        setLoading(false);
-      };
-      loadTeam();
-    }
-  }, [teamId, isEdit]);
-
-  const validate = (): boolean => {
-    const newErrors: { [key: string]: string } = {};
-    if (!form.name.trim()) newErrors.name = 'Team name is required';
-    if (!form.primaryColor.match(/^#[0-9A-Fa-f]{6}$/))
-      newErrors.primaryColor = 'Enter a valid hex color (e.g., #ff7700)';
-    if (form.founded && isNaN(Number(form.founded)))
-      newErrors.founded = 'Founded year must be a number';
-    if (!form.stadium.trim()) newErrors.stadium = 'Stadium is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const update = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSave = async () => {
-    if (!validate()) return;
-    setSaving(true);
-    const success = isEdit
-      ? await updateTeam(teamId!, {
-          name: form.name,
-          logo: form.logo,
-          primaryColor: form.primaryColor,
-          founded: form.founded,
-          stadium: form.stadium,
-        })
-      : await addTeam({
-          name: form.name,
-          logo: form.logo,
-          primaryColor: form.primaryColor,
-          founded: form.founded,
-          stadium: form.stadium,
-        });
-    setSaving(false);
-    if (success) {
-      setSnackbar({ visible: true, message: `Team ${isEdit ? 'updated' : 'created'} successfully` });
-      setTimeout(() => navigation.goBack(), 1500);
-    } else {
-      setSnackbar({ visible: true, message: `Failed to ${isEdit ? 'update' : 'create'} team` });
-    }
+    // Placeholder save
+    navigation.goBack();
   };
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={PRIMARY_COLOR} />
-      </View>
-    );
-  }
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content>
-          <EditableField label="Team Name" value={form.name} onChange={v => setForm({ ...form, name: v })} error={errors.name} />
-          <EditableField label="Logo URL" value={form.logo} onChange={v => setForm({ ...form, logo: v })} error={errors.logo} />
-          <EditableField label="Primary Color" value={form.primaryColor} onChange={v => setForm({ ...form, primaryColor: v })} error={errors.primaryColor} />
-          <EditableField label="Founded" value={form.founded} onChange={v => setForm({ ...form, founded: v })} error={errors.founded} />
-          <EditableField label="Stadium" value={form.stadium} onChange={v => setForm({ ...form, stadium: v })} error={errors.stadium} />
-          <Button mode="contained" onPress={handleSave} loading={saving} style={styles.saveBtn} disabled={saving}>
-            {isEdit ? 'Update Team' : 'Create Team'}
-          </Button>
-        </Card.Content>
-      </Card>
-      <Snackbar
-        visible={snackbar.visible}
-        onDismiss={() => setSnackbar({ ...snackbar, visible: false })}
-        duration={3000}
-      >
-        {snackbar.message}
-      </Snackbar>
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{existing ? 'Edit Team' : 'Add Team'}</Text>
+        </View>
+
+        <View style={styles.form}>
+          {[
+            { label: 'Team Name', key: 'name', placeholder: 'Full name' },
+            { label: 'Short Name', key: 'shortName', placeholder: 'e.g. LAG' },
+            { label: 'Manager', key: 'manager', placeholder: 'Manager name' },
+            { label: 'Stadium', key: 'stadium', placeholder: 'Stadium name' },
+            { label: 'Founded', key: 'founded', placeholder: 'Year' },
+          ].map(field => (
+            <View key={field.key} style={styles.field}>
+              <Text style={styles.label}>{field.label}</Text>
+              <TextInput
+                value={form[field.key as keyof typeof form]}
+                onChangeText={v => update(field.key, v)}
+                placeholder={field.placeholder}
+                placeholderTextColor="#5A6880"
+                style={styles.input}
+              />
+            </View>
+          ))}
+
+          <View style={styles.field}>
+            <Text style={styles.label}>Description</Text>
+            <TextInput
+              value={form.description}
+              onChangeText={v => update('description', v)}
+              placeholder="Team description"
+              placeholderTextColor="#5A6880"
+              style={[styles.input, styles.textArea]}
+              multiline
+              numberOfLines={4}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Team</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: BACKGROUND_COLOR },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  card: { marginBottom: 20 },
-  saveBtn: { marginTop: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#09101E',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 52,
+    paddingBottom: 8,
+    gap: 12,
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backIcon: {
+    color: '#F0F4FF',
+    fontSize: 18,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#F0F4FF',
+    textTransform: 'uppercase',
+  },
+  form: {
+    paddingHorizontal: 20,
+    paddingBottom: 32,
+    gap: 16,
+  },
+  field: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 13,
+    color: '#7A8699',
+    fontWeight: '500',
+  },
+  input: {
+    width: '100%',
+    height: 52,
+    backgroundColor: '#131B2E',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 12,
+    color: '#F0F4FF',
+    paddingHorizontal: 16,
+    fontSize: 15,
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+    paddingTop: 12,
+  },
+  saveButton: {
+    width: '100%',
+    height: 54,
+    borderRadius: 14,
+    backgroundColor: '#00E676',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  saveButtonText: {
+    color: '#09101E',
+    fontSize: 16,
+    fontWeight: '700',
+  },
 });
-
-export default TeamFormScreen;

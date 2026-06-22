@@ -1,125 +1,229 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
-import { Button, HelperText } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { StackNavigationProp } from '@react-navigation/stack';
-import type { AppStackParamList } from '../../navigation/types';
-import { fetchLeagueSettings, updateLeagueSettings } from '../../firebase/firestore';
-import { EditableField } from '../../components/EditableField';
-import { PRIMARY_COLOR, BACKGROUND_COLOR } from '../../theme';
+import React, { useState } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput,
+} from 'react-native';
 
-type LeagueSettingsScreenNavigationProp = StackNavigationProp<AppStackParamList, 'LeagueSettings'>;
+export default function LeagueSettingsScreen({ navigation }: any) {
+  const [generating, setGenerating] = useState(false);
+  const [generated, setGenerated] = useState(false);
 
-type FormState = {
-  seasonName: string;
-  inviteDeadline: string; // ISO string for input
-  leagueVenue: string;
-  matchDay: string;
-  defaultTime: string;
-  pointsWin: string;
-  pointsDraw: string;
-  pointsLoss: string;
-  yellowsPerBan: string;
-};
-
-const LeagueSettingsScreen: React.FC = () => {
-  const navigation = useNavigation<LeagueSettingsScreenNavigationProp>();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<FormState>({
-    seasonName: '',
-    inviteDeadline: '',
-    leagueVenue: '',
-    matchDay: '',
-    defaultTime: '',
-    pointsWin: '',
-    pointsDraw: '',
-    pointsLoss: '',
-    yellowsPerBan: '',
-  });
-
-  useEffect(() => {
-    const load = async () => {
-      const settings = await fetchLeagueSettings();
-      if (settings) {
-        setForm({
-          seasonName: settings.seasonName ?? '',
-          inviteDeadline: new Date(settings.inviteDeadline).toISOString().slice(0, 16),
-          leagueVenue: settings.leagueVenue ?? '',
-          matchDay: settings.matchDay ?? '',
-          defaultTime: settings.defaultTime ?? '',
-          pointsWin: String(settings.pointsWin ?? 3),
-          pointsDraw: String(settings.pointsDraw ?? 1),
-          pointsLoss: String(settings.pointsLoss ?? 0),
-          yellowsPerBan: String(settings.yellowsPerBan ?? 3),
-        });
-      }
-      setLoading(false);
-    };
-    load();
-  }, []);
-
-  const handleSave = async () => {
-    setSaving(true);
-    const success = await updateLeagueSettings({
-      seasonName: form.seasonName,
-      inviteDeadline: new Date(form.inviteDeadline).getTime(),
-      leagueVenue: form.leagueVenue,
-      matchDay: form.matchDay,
-      defaultTime: form.defaultTime,
-      pointsWin: Number(form.pointsWin),
-      pointsDraw: Number(form.pointsDraw),
-      pointsLoss: Number(form.pointsLoss),
-      yellowsPerBan: Number(form.yellowsPerBan),
-    });
-    setSaving(false);
-    if (success) {
-      Alert.alert('Success', 'League settings saved');
-      navigation.goBack();
-    } else {
-      Alert.alert('Error', 'Failed to save settings');
-    }
+  const handleGenerate = async () => {
+    setGenerating(true);
+    await new Promise(r => setTimeout(r, 1800));
+    setGenerating(false);
+    setGenerated(true);
   };
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={PRIMARY_COLOR} />
-      </View>
-    );
-  }
+  const settingsGroups = [
+    {
+      title: 'League Configuration',
+      items: [
+        { label: 'League Name', value: 'Lagos Premier League', type: 'text' },
+        { label: 'Season', value: '2024/25', type: 'text' },
+        { label: 'Total Gameweeks', value: '22', type: 'number' },
+        { label: 'Teams', value: '8', type: 'number' },
+      ],
+    },
+    {
+      title: 'Scoring Rules',
+      items: [
+        { label: 'Points per Win', value: '3', type: 'number' },
+        { label: 'Points per Draw', value: '1', type: 'number' },
+        { label: 'Points per Loss', value: '0', type: 'number' },
+      ],
+    },
+  ];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <EditableField label="Season Name" value={form.seasonName} onChange={v => setForm({ ...form, seasonName: v })} />
-      <EditableField label="Invite Deadline" value={form.inviteDeadline} onChange={v => setForm({ ...form, inviteDeadline: v })} placeholder="YYYY-MM-DDTHH:MM" />
-      <EditableField label="League Venue" value={form.leagueVenue} onChange={v => setForm({ ...form, leagueVenue: v })} />
-      <EditableField label="Match Day" value={form.matchDay} onChange={v => setForm({ ...form, matchDay: v })} />
-      <EditableField label="Default Time" value={form.defaultTime} onChange={v => setForm({ ...form, defaultTime: v })} />
-      <EditableField label="Points – Win" value={form.pointsWin} onChange={v => setForm({ ...form, pointsWin: v })} keyboardType="numeric" />
-      <EditableField label="Points – Draw" value={form.pointsDraw} onChange={v => setForm({ ...form, pointsDraw: v })} keyboardType="numeric" />
-      <EditableField label="Points – Loss" value={form.pointsLoss} onChange={v => setForm({ ...form, pointsLoss: v })} keyboardType="numeric" />
-      <EditableField label="Yellows per Ban" value={form.yellowsPerBan} onChange={v => setForm({ ...form, yellowsPerBan: v })} keyboardType="numeric" />
-      <Button mode="contained" onPress={handleSave} loading={saving} style={styles.saveBtn}>
-        Save Settings
-      </Button>
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>League Settings</Text>
+        </View>
+
+        {settingsGroups.map(group => (
+          <View key={group.title} style={styles.section}>
+            <Text style={styles.sectionTitle}>{group.title}</Text>
+            <View style={styles.settingsCard}>
+              {group.items.map((item, idx) => (
+                <View key={item.label} style={[styles.settingRow, idx < group.items.length - 1 && styles.settingRowBorder]}>
+                  <Text style={styles.settingLabel}>{item.label}</Text>
+                  <TextInput
+                    defaultValue={item.value}
+                    style={styles.settingInput}
+                    textAlign="right"
+                  />
+                </View>
+              ))}
+            </View>
+          </View>
+        ))}
+
+        {/* Generate fixtures */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Generate Fixtures</Text>
+          <View style={styles.generateCard}>
+            <Text style={styles.generateDesc}>Auto-generate fixture schedule for the season based on the number of teams and gameweeks.</Text>
+            {generated && (
+              <View style={styles.successRow}>
+                <Text style={styles.successIcon}>✓</Text>
+                <Text style={styles.successText}>Fixtures generated successfully!</Text>
+              </View>
+            )}
+          </View>
+          <TouchableOpacity
+            style={[styles.primaryButton, generating && styles.primaryButtonDisabled]}
+            onPress={handleGenerate}
+            disabled={generating}
+          >
+            <Text style={styles.primaryButtonText}>
+              {generating ? 'Generating...' : '📅 Generate Fixture Schedule'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>💾 Save Settings</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: BACKGROUND_COLOR,
-  },
-  centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#09101E',
   },
-  saveBtn: {
-    marginTop: 20,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 52,
+    paddingBottom: 8,
+    gap: 12,
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backIcon: {
+    color: '#F0F4FF',
+    fontSize: 18,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#F0F4FF',
+    textTransform: 'uppercase',
+  },
+  section: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    color: '#5A6880',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  settingsCard: {
+    backgroundColor: '#131B2E',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+    overflow: 'hidden',
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    paddingHorizontal: 16,
+  },
+  settingRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.04)',
+  },
+  settingLabel: {
+    fontSize: 14,
+    color: '#B8C4D8',
+  },
+  settingInput: {
+    width: 120,
+    height: 36,
+    backgroundColor: '#1B2540',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 8,
+    color: '#F0F4FF',
+    textAlign: 'right',
+    paddingRight: 12,
+    fontSize: 14,
+  },
+  generateCard: {
+    backgroundColor: '#131B2E',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+    marginBottom: 12,
+  },
+  generateDesc: {
+    fontSize: 14,
+    color: '#B8C4D8',
+    lineHeight: 20,
+  },
+  successRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 8,
+  },
+  successIcon: {
+    fontSize: 14,
+    color: '#00E676',
+  },
+  successText: {
+    fontSize: 13,
+    color: '#00E676',
+  },
+  primaryButton: {
+    width: '100%',
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: '#00E676',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  primaryButtonDisabled: {
+    backgroundColor: '#1B2540',
+  },
+  primaryButtonText: {
+    color: '#09101E',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  secondaryButton: {
+    width: '100%',
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: '#4D7EFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
   },
 });
-
-export default LeagueSettingsScreen;
