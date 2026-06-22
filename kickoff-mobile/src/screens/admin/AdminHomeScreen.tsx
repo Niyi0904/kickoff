@@ -60,6 +60,17 @@ export default function AdminHomeScreen({ navigation }: any) {
           ))}
         </View>
 
+        {/* Stats grid */}
+        <View style={styles.statsGrid}>
+          {stats.map(s => (
+            <View key={s.label} style={[styles.statCard, { borderColor: `${s.color}20` }]}>
+              <Text style={styles.statIcon}>{s.icon}</Text>
+              <Text style={[styles.statValue, { color: s.color }]}>{s.value}</Text>
+              <Text style={styles.statLabel}>{s.label}</Text>
+            </View>
+          ))}
+        </View>
+
         {/* Actions */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
