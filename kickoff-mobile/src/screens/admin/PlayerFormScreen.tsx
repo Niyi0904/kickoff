@@ -1,153 +1,226 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator, Alert, Text, Switch } from 'react-native';
-import { Button, Card, Snackbar } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { StackNavigationProp } from '@react-navigation/stack';
-import type { RouteProp } from '@react-navigation/native';
-import type { AppStackParamList } from '../../navigation/types';
-import { addPlayer, updatePlayer, fetchPlayerById } from '../../firebase/firestore';
-import { EditableField } from '../../components/EditableField';
-import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
+import React, { useState } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput,
+} from 'react-native';
+import { getPlayerById, getTeamById, TEAMS } from '../../lib/data';
 
-type PlayerFormScreenNavigationProp = StackNavigationProp<AppStackParamList, 'PlayerForm'>;
-type PlayerFormScreenRouteProp = RouteProp<AppStackParamList, 'PlayerForm'>;
-
-const PlayerFormScreen: React.FC = () => {
-  const navigation = useNavigation<PlayerFormScreenNavigationProp>();
-  const route = useRoute<PlayerFormScreenRouteProp>();
+export default function PlayerFormScreen({ route, navigation }: any) {
   const { playerId } = route.params || {};
-  const isEdit = Boolean(playerId);
+  const existing = playerId ? getPlayerById(playerId) : null;
+  const team = existing ? getTeamById(existing.teamId) : null;
 
-  const [loading, setLoading] = useState(isEdit);
-  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    name: '',
-    number: '',
-    position: '',
-    teamId: '',
-    isManager: false,
+    name: existing?.name || '',
+    number: existing?.number?.toString() || '',
+    position: existing?.position || 'FW',
+    nationality: existing?.nationality || '',
+    age: existing?.age?.toString() || '',
+    teamId: existing?.teamId || TEAMS[0]?.id || '',
   });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [snackbar, setSnackbar] = useState({ visible: false, message: '' });
 
-  useEffect(() => {
-    if (isEdit) {
-      const loadPlayer = async () => {
-        setLoading(true);
-        const player = await fetchPlayerById(playerId!);
-        if (player) {
-          setForm({
-            name: player.name,
-            number: String(player.number),
-            position: player.position,
-            teamId: player.teamId,
-            isManager: player.isManager ?? false,
-          });
-        }
-        setLoading(false);
-      };
-      loadPlayer();
-    }
-  }, [playerId, isEdit]);
-
-  const validate = (): boolean => {
-    const newErrors: { [key: string]: string } = {};
-    if (!form.name.trim()) newErrors.name = 'Player name is required';
-    if (!form.number.trim() || isNaN(Number(form.number))) newErrors.number = 'Valid number is required';
-    if (!form.position.trim()) newErrors.position = 'Position is required';
-    if (!form.teamId.trim()) newErrors.teamId = 'Team ID is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const update = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSave = async () => {
-    if (!validate()) return;
-    setSaving(true);
-    const success = isEdit
-      ? await updatePlayer(playerId!, {
-          name: form.name,
-          number: Number(form.number),
-          position: form.position,
-          teamId: form.teamId,
-          isManager: form.isManager,
-        })
-      : await addPlayer({
-          name: form.name,
-          number: Number(form.number),
-          position: form.position,
-          teamId: form.teamId,
-          isManager: form.isManager,
-        });
-    setSaving(false);
-    if (success) {
-      setSnackbar({ visible: true, message: `Player ${isEdit ? 'updated' : 'created'} successfully` });
-      setTimeout(() => navigation.goBack(), 1500);
-    } else {
-      setSnackbar({ visible: true, message: `Failed to ${isEdit ? 'update' : 'create'} player` });
-    }
+    navigation.goBack();
   };
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={PRIMARY_COLOR} />
-      </View>
-    );
-  }
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content>
-          <EditableField label="Player Name" value={form.name} onChange={v => setForm({ ...form, name: v })} error={errors.name} />
-          <EditableField label="Number" value={form.number} onChange={v => setForm({ ...form, number: v })} error={errors.number} keyboardType="numeric" />
-          <EditableField label="Position" value={form.position} onChange={v => setForm({ ...form, position: v })} error={errors.position} />
-          <EditableField label="Team ID" value={form.teamId} onChange={v => setForm({ ...form, teamId: v })} error={errors.teamId} />
-          
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Is Manager?</Text>
-            <Switch
-              value={form.isManager}
-              onValueChange={v => setForm({ ...form, isManager: v })}
-              trackColor={{ false: '#767577', true: PRIMARY_COLOR }}
-            />
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{existing ? 'Edit Player' : 'Add Player'}</Text>
+        </View>
+
+        <View style={styles.form}>
+          {[
+            { label: 'Full Name', key: 'name', placeholder: 'Player name' },
+            { label: 'Squad Number', key: 'number', placeholder: 'e.g. 9' },
+            { label: 'Nationality', key: 'nationality', placeholder: '🇳🇬 Nigerian' },
+            { label: 'Age', key: 'age', placeholder: 'Age' },
+          ].map(field => (
+            <View key={field.key} style={styles.field}>
+              <Text style={styles.label}>{field.label}</Text>
+              <TextInput
+                value={form[field.key as keyof typeof form]}
+                onChangeText={v => update(field.key, v)}
+                placeholder={field.placeholder}
+                placeholderTextColor="#5A6880"
+                style={styles.input}
+                keyboardType={field.key === 'number' || field.key === 'age' ? 'numeric' : 'default'}
+              />
+            </View>
+          ))}
+
+          <View style={styles.field}>
+            <Text style={styles.label}>Position</Text>
+            <View style={styles.posRow}>
+              {['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'FW'].map(pos => (
+                <TouchableOpacity
+                  key={pos}
+                  style={[styles.posChip, form.position === pos && styles.posChipActive]}
+                  onPress={() => update('position', pos)}
+                >
+                  <Text style={[styles.posChipText, form.position === pos && styles.posChipTextActive]}>
+                    {pos}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
 
-          <Button mode="contained" onPress={handleSave} loading={saving} style={styles.saveBtn} disabled={saving} buttonColor={PRIMARY_COLOR}>
-            {isEdit ? 'Update Player' : 'Create Player'}
-          </Button>
-        </Card.Content>
-      </Card>
-      <Snackbar
-        visible={snackbar.visible}
-        onDismiss={() => setSnackbar({ ...snackbar, visible: false })}
-        duration={3000}
-      >
-        {snackbar.message}
-      </Snackbar>
-    </ScrollView>
+          <View style={styles.field}>
+            <Text style={styles.label}>Team</Text>
+            <View style={styles.teamRow}>
+              {TEAMS.map(t => (
+                <TouchableOpacity
+                  key={t.id}
+                  style={[styles.teamChip, form.teamId === t.id && styles.teamChipActive]}
+                  onPress={() => update('teamId', t.id)}
+                >
+                  <Text style={styles.teamChipBadge}>{t.badge}</Text>
+                  <Text style={[styles.teamChipText, form.teamId === t.id && styles.teamChipTextActive]}>
+                    {t.shortName}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Player</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: BACKGROUND_COLOR },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  card: { marginBottom: 20, backgroundColor: CARD_BACKGROUND },
-  saveBtn: { marginTop: 20 },
-  switchRow: {
+  container: {
+    flex: 1,
+    backgroundColor: '#09101E',
+  },
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    marginBottom: 10,
+    paddingHorizontal: 20,
+    paddingTop: 52,
+    paddingBottom: 8,
+    gap: 12,
   },
-  switchLabel: {
-    fontSize: 14,
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backIcon: {
+    color: '#F0F4FF',
+    fontSize: 18,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#F0F4FF',
+    textTransform: 'uppercase',
+  },
+  form: {
+    paddingHorizontal: 20,
+    paddingBottom: 32,
+    gap: 16,
+  },
+  field: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 13,
+    color: '#7A8699',
+    fontWeight: '500',
+  },
+  input: {
+    width: '100%',
+    height: 52,
+    backgroundColor: '#131B2E',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 12,
+    color: '#F0F4FF',
+    paddingHorizontal: 16,
+    fontSize: 15,
+  },
+  posRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  posChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+  },
+  posChipActive: {
+    backgroundColor: '#00E676',
+    borderColor: '#00E676',
+  },
+  posChipText: {
+    fontSize: 12,
     fontWeight: '600',
-    color: TEXT_COLOR,
+    color: '#7A8699',
+  },
+  posChipTextActive: {
+    color: '#09101E',
+  },
+  teamRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  teamChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+  },
+  teamChipActive: {
+    backgroundColor: 'rgba(0,230,118,0.15)',
+    borderColor: 'rgba(0,230,118,0.3)',
+  },
+  teamChipBadge: {
+    fontSize: 14,
+  },
+  teamChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#7A8699',
+  },
+  teamChipTextActive: {
+    color: '#00E676',
+  },
+  saveButton: {
+    width: '100%',
+    height: 54,
+    borderRadius: 14,
+    backgroundColor: '#00E676',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  saveButtonText: {
+    color: '#09101E',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
-
-export default PlayerFormScreen;

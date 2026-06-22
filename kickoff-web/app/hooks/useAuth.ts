@@ -9,7 +9,6 @@ import {
   signOut as firebaseSignOut,
   updateProfile,
   getIdTokenResult,
-  sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { createUserDocument } from "@/lib/firestore";
@@ -177,7 +176,17 @@ export function useAuth() {
   // ── Password Reset ─────────────────────────────────────────────────────
   const sendPasswordReset = async (email: string) => {
     try {
-      await sendPasswordResetEmail(auth, email);
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send password reset email');
+      }
       return { error: null };
     } catch (error: any) {
       return { error };

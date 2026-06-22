@@ -1,142 +1,307 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
+  View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { usePlayers, useTeams } from '../../hooks/useAppData';
-import { LoadingView } from '../../components/LoadingView';
-import { EmptyState } from '../../components/EmptyState';
-import type { AppStackParamList } from '../../navigation/types';
-import { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from '../../theme';
+import { PLAYERS, getTeamById } from '../../lib/data';
 
-const PlayersScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
-  const { data: players, isLoading } = usePlayers();
-  const { data: teams } = useTeams();
+const POSITIONS = ['All', 'GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LW', 'RW', 'FW'];
+
+export default function PlayersScreen({ navigation }: any) {
   const [search, setSearch] = useState('');
-  const [teamFilter, setTeamFilter] = useState<string>('all');
+  const [posFilter, setPosFilter] = useState('All');
 
-  const filtered = useMemo(() => {
-    let list = players ?? [];
-    if (teamFilter !== 'all') {
-      list = list.filter((p) => p.teamId === teamFilter);
-    }
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter((p) => p.name.toLowerCase().includes(q));
-    }
-    return list.sort((a, b) => a.name.localeCompare(b.name));
-  }, [players, teamFilter, search]);
+  const filtered = PLAYERS.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    const matchPos = posFilter === 'All' || p.position === posFilter;
+    return matchSearch && matchPos;
+  });
 
-  if (isLoading) return <LoadingView />;
-
-  const getTeamName = (teamId: string) => teams?.find((t) => t.id === teamId)?.name ?? '—';
+  const sorted = [...filtered].sort((a, b) => b.goals - a.goals);
 
   return (
-    <ScrollView style={styles.container}>
-      <TextInput
-        style={styles.search}
-        placeholder="Search players..."
-        value={search}
-        onChangeText={setSearch}
-      />
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Players</Text>
+        </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filters}>
-        <TouchableOpacity
-          style={[styles.chip, teamFilter === 'all' && styles.chipActive]}
-          onPress={() => setTeamFilter('all')}
-        >
-          <Text style={styles.chipText}>All teams</Text>
-        </TouchableOpacity>
-        {teams?.map((t) => (
-          <TouchableOpacity
-            key={t.id}
-            style={[styles.chip, teamFilter === t.id && styles.chipActive]}
-            onPress={() => setTeamFilter(t.id)}
-          >
-            <Text style={styles.chipText}>{t.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+        {/* Search */}
+        <View style={styles.searchContainer}>
+          <View style={styles.searchWrapper}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              value={search}
+              onChangeText={setSearch}
+              placeholder="Search players..."
+              placeholderTextColor="#5A6880"
+              style={styles.searchInput}
+            />
+          </View>
+        </View>
 
-      {filtered.length === 0 ? (
-        <EmptyState message="No players found." />
-      ) : (
-        filtered.map((player) => (
-          <TouchableOpacity
-            key={player.id}
-            style={styles.card}
-            onPress={() => navigation.navigate('PlayerDetail', { playerId: player.id })}
-          >
-            <View style={styles.numberBadge}>
-              <Text style={styles.numberText}>{player.number}</Text>
-            </View>
-            <View style={styles.info}>
-              <Text style={styles.name}>{player.name}</Text>
-              <Text style={styles.meta}>
-                {player.position} • {getTeamName(player.teamId)}
-                {player.isManager ? ' • Manager' : ''}
+        {/* Position filter */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+          {POSITIONS.map(pos => (
+            <TouchableOpacity
+              key={pos}
+              style={[styles.filterChip, posFilter === pos && styles.filterChipActive]}
+              onPress={() => setPosFilter(pos)}
+            >
+              <Text style={[styles.filterChipText, posFilter === pos && styles.filterChipTextActive]}>
+                {pos}
               </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Players list */}
+        <View style={styles.list}>
+          {sorted.map((player, idx) => {
+            const team = getTeamById(player.teamId)!;
+            return (
+              <TouchableOpacity
+                key={player.id}
+                style={styles.playerCard}
+                onPress={() => navigation.navigate('PlayerDetail', { playerId: player.id })}
+                activeOpacity={0.9}
+              >
+                {/* Rank */}
+                <Text style={[styles.rank, { color: idx === 0 ? '#00E676' : '#5A6880' }]}>{idx + 1}</Text>
+
+                {/* Avatar */}
+                <View style={styles.avatarWrapper}>
+                  <View style={[styles.avatar, { backgroundColor: `${team.color}30`, borderColor: `${team.color}30` }]}>
+                    <Text style={styles.avatarText}>👤</Text>
+                  </View>
+                  {player.isClaimed && (
+                    <View style={styles.claimedBadge}>
+                      <Text style={styles.claimedText}>✓</Text>
+                    </View>
+                  )}
+                </View>
+
+                {/* Info */}
+                <View style={styles.info}>
+                  <Text style={styles.name} numberOfLines={1}>{player.name}</Text>
+                  <View style={styles.metaRow}>
+                    <Text style={[styles.teamName, { color: team.color }]}>{team.shortName}</Text>
+                    <Text style={styles.metaDot}>·</Text>
+                    <View style={styles.posBadge}>
+                      <Text style={styles.posText}>{player.position}</Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Stats */}
+                <View style={styles.statsCol}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statValue}>{player.goals}</Text>
+                    <Text style={styles.statLabel}>Gls</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={[styles.statValue, { color: '#4D7EFF' }]}>{player.assists}</Text>
+                    <Text style={styles.statLabel}>Ast</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={[styles.statValue, { color: '#A855F7' }]}>{player.rating.toFixed(1)}</Text>
+                    <Text style={styles.statLabel}>Rtg</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+
+          {sorted.length === 0 && (
+            <View style={styles.empty}>
+              <Text style={styles.emptyIcon}>🔍</Text>
+              <Text style={styles.emptyText}>No players found</Text>
             </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-        ))
-      )}
-    </ScrollView>
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BACKGROUND_COLOR, padding: 16 },
-  search: {
-    backgroundColor: CARD_BACKGROUND,
-    borderRadius: 8,
-    padding: 12,
+  container: {
+    flex: 1,
+    backgroundColor: '#09101E',
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 52,
+    paddingBottom: 8,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#F0F4FF',
+    textTransform: 'uppercase',
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#eee',
-    color: TEXT_COLOR,
   },
-  filters: { marginBottom: 12, maxHeight: 40 },
-  chip: {
-    paddingHorizontal: 12,
+  searchWrapper: {
+    position: 'relative',
+  },
+  searchIcon: {
+    position: 'absolute',
+    left: 14,
+    top: 16,
+    fontSize: 14,
+    color: '#5A6880',
+    zIndex: 1,
+  },
+  searchInput: {
+    width: '100%',
+    height: 44,
+    backgroundColor: '#131B2E',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 12,
+    color: '#F0F4FF',
+    paddingLeft: 42,
+    paddingRight: 16,
+    fontSize: 14,
+  },
+  filterRow: {
+    paddingHorizontal: 20,
     paddingVertical: 8,
-    borderRadius: 16,
-    backgroundColor: CARD_BACKGROUND,
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    gap: 8,
   },
-  chipActive: { backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR },
-  chipText: { fontSize: 12, fontWeight: '600', color: TEXT_COLOR },
-  card: {
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    marginRight: 8,
+  },
+  filterChipActive: {
+    backgroundColor: '#00E676',
+  },
+  filterChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#7A8699',
+  },
+  filterChipTextActive: {
+    color: '#09101E',
+  },
+  list: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    gap: 8,
+  },
+  playerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: CARD_BACKGROUND,
-    borderRadius: 8,
+    backgroundColor: '#131B2E',
+    borderRadius: 14,
     padding: 12,
-    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.04)',
+    gap: 12,
   },
-  numberBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: PRIMARY_COLOR,
-    justifyContent: 'center',
+  rank: {
+    width: 24,
+    textAlign: 'center',
+    fontFamily: 'monospace',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  avatarWrapper: {
+    position: 'relative',
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
+    borderWidth: 1,
     alignItems: 'center',
-    marginRight: 12,
+    justifyContent: 'center',
   },
-  numberText: { color: TEXT_COLOR, fontWeight: 'bold' },
-  info: { flex: 1 },
-  name: { fontSize: 15, fontWeight: '600', color: TEXT_COLOR },
-  meta: { fontSize: 12, color: '#888', marginTop: 2 },
-  chevron: { fontSize: 22, color: '#ccc' },
+  avatarText: {
+    fontSize: 20,
+  },
+  claimedBadge: {
+    position: 'absolute',
+    top: -3,
+    right: -3,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#00E676',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  claimedText: {
+    fontSize: 8,
+    color: '#09101E',
+    fontWeight: '700',
+  },
+  info: {
+    flex: 1,
+  },
+  name: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#F0F4FF',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+  },
+  teamName: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  metaDot: {
+    fontSize: 11,
+    color: '#5A6880',
+  },
+  posBadge: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+  },
+  posText: {
+    fontSize: 11,
+    color: '#5A6880',
+  },
+  statsCol: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statValue: {
+    fontFamily: 'monospace',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#00E676',
+  },
+  statLabel: {
+    fontSize: 9,
+    color: '#5A6880',
+    textTransform: 'uppercase',
+    marginTop: 2,
+  },
+  empty: {
+    alignItems: 'center',
+    paddingVertical: 64,
+    gap: 12,
+  },
+  emptyIcon: {
+    fontSize: 40,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#5A6880',
+  },
 });
-
-export default PlayersScreen;

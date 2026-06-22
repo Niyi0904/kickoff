@@ -28,6 +28,7 @@ export type AppStackParamList = {
 };
 
 export type AuthStackParamList = {
+  Welcome: undefined;
   SignIn: undefined;
   SignUp: undefined;
   ForgotPassword: undefined;

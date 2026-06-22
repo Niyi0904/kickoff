@@ -1,1 +1,1 @@
-export { PRIMARY_COLOR, BACKGROUND_COLOR, CARD_BACKGROUND, TEXT_COLOR } from './colors';
+export { PRIMARY_COLOR } from './colors';
