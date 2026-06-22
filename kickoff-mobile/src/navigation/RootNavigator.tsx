@@ -64,7 +64,8 @@ const MainTabs = () => (
 );
 
 const AppNavigator = () => (
-  <AppStack.Navigator>
+  <AppStack.Navigator initialRouteName="MainTabs">
+    <AppStack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
     <AppStack.Screen name="AdminHome" component={AdminHomeScreen} options={{ title: 'Admin' }} />
     <AppStack.Screen name="LeagueSettings" component={LeagueSettingsScreen} options={{ title: 'Settings' }} />
     <AppStack.Screen name="TeamManagement" component={TeamManagementScreen} options={{ title: 'Teams' }} />
@@ -72,8 +73,7 @@ const AppNavigator = () => (
     <AppStack.Screen name="PlayerManagement" component={PlayerManagementScreen} options={{ title: 'Players' }} />
     <AppStack.Screen name="PlayerForm" component={PlayerFormScreen} options={{ title: 'Player Form' }} />
     <AppStack.Screen name="MatchManagement" component={MatchManagementScreen} options={{ title: 'Matches' }} />
-    <AppStack.Screen name="MatchForm" component={MatchFormScreen} options={{ title: 'Match Form' }} />
-    <AppStack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+    <AppStack.Screen name="MatchForm" component={MatchFormScreen} options={{ title: 'Match Form' }} />    
     <AppStack.Screen name="TeamDetail" component={TeamDetailScreen} options={{ title: 'Team' }} />
     <AppStack.Screen name="PlayerDetail" component={PlayerDetailScreen} options={{ title: 'Player' }} />
     <AppStack.Screen name="MatchDetail" component={MatchDetailScreen} options={{ title: 'Match' }} />

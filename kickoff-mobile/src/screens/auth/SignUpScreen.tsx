@@ -21,7 +21,7 @@ export default function SignUpScreen({ navigation }: any) {
     setDone(true);
     setTimeout(() => {
       loginAsRole('player');
-      navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+      // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
     }, 1500);
   };
 

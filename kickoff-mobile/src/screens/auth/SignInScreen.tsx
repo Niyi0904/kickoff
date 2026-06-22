@@ -26,7 +26,7 @@ export default function SignInScreen({ navigation }: any) {
     setLoading(true);
     try {
       await login(email, password);
-      navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+      // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
     } catch {
       setError('Invalid credentials. Try a demo account.');
     } finally {
@@ -36,7 +36,7 @@ export default function SignInScreen({ navigation }: any) {
 
   const handleDemo = (role: UserRole) => {
     loginAsRole(role);
-    navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+    // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
   };
 
   return (

@@ -9,7 +9,7 @@ export default function WelcomeScreen({ navigation }: any) {
 
   const handleGuest = () => {
     loginAsRole('guest');
-    navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+    // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
   };
 
   return (
