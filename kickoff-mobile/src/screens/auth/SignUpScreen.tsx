@@ -1,28 +1,31 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { useApp } from '../../context/AppContext';
+import type { SignUpScreenProps } from '../../navigation/types';
+import { signUp } from '../../firebase/auth';
 
-export default function SignUpScreen({ navigation }: any) {
-  const { loginAsRole } = useApp();
+export default function SignUpScreen({ navigation }: SignUpScreenProps) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
 
   const update = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSubmit = async () => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1000));
-    setLoading(false);
-    setDone(true);
-    setTimeout(() => {
-      loginAsRole('player');
-      // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
-    }, 1500);
+    setError('');
+    try {
+      await signUp(form.email, form.password, form.name);
+      setDone(true);
+    } catch (e: any) {
+      setError(e.message || 'Sign up failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (done) {
@@ -53,7 +56,7 @@ export default function SignUpScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <TouchableOpacity
@@ -162,6 +165,11 @@ export default function SignUpScreen({ navigation }: any) {
               </View>
             ) : null}
 
+            {error ? (
+              <View style={styles.errorBox}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
             <TouchableOpacity
               style={[styles.continueButton, (loading || !form.password || form.password !== form.confirm) && styles.continueButtonDisabled]}
               onPress={handleSubmit}
@@ -183,7 +191,7 @@ export default function SignUpScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -343,6 +351,17 @@ const styles = StyleSheet.create({
   },
   continueButtonDisabled: {
     backgroundColor: '#1B2540',
+  },
+  errorBox: {
+    backgroundColor: 'rgba(255,61,90,0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,61,90,0.3)',
+    borderRadius: 10,
+    padding: 10,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#FF3D5A',
   },
   continueButtonText: {
     color: '#09101E',

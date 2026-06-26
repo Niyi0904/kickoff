@@ -1,19 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { useApp } from '../../context/AppContext';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import type { WelcomeScreenProps } from '../../navigation/types';
 
 const { width, height } = Dimensions.get('window');
 
-export default function WelcomeScreen({ navigation }: any) {
-  const { loginAsRole } = useApp();
-
-  const handleGuest = () => {
-    loginAsRole('guest');
-    // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
-  };
-
+export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       {/* Hero */}
       <View style={styles.hero}>
         {/* Background pattern */}
@@ -33,7 +26,7 @@ export default function WelcomeScreen({ navigation }: any) {
           {/* Logo */}
           <View style={styles.logoContainer}>
             <View style={styles.logo}>
-              <Text style={styles.logoText}>⚽</Text>
+              <Image source={require('../../assets/kickoff-logo-icon.png')} style={styles.logoImage} resizeMode="contain" />
             </View>
           </View>
 
@@ -74,14 +67,8 @@ export default function WelcomeScreen({ navigation }: any) {
         >
           <Text style={styles.secondaryButtonText}>Create Account</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.guestButton}
-          onPress={handleGuest}
-        >
-          <Text style={styles.guestButtonText}>Browse as Guest →</Text>
-        </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -129,9 +116,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 50,
     elevation: 10,
+    overflow: 'hidden',
   },
-  logoText: {
-    fontSize: 40,
+  logoImage: {
+    width: 48,
+    height: 48,
   },
   heroTextContainer: {
     alignItems: 'center',
@@ -205,13 +194,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  guestButton: {
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  guestButtonText: {
-    color: '#5A6880',
-    fontSize: 14,
-  },
+
 });

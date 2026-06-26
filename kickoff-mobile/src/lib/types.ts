@@ -144,6 +144,32 @@ export interface LeagueSettings {
   yellowsPerBan: number;
 }
 
+// Link Request Types
+export type LinkRequestStatus = 'pending' | 'approved' | 'rejected';
+
+export interface LinkRequest {
+  id: string;
+  playerId: string;
+  userId: string;
+  userEmail?: string;
+  playerName?: string;
+  status: LinkRequestStatus;
+  createdAt: number;
+}
+
+// Suspension Types
+export interface Suspension {
+  id: string;
+  playerId: string;
+  playerName?: string;
+  reason: string;
+  matchId?: string;
+  startDate: number;
+  endDate: number;
+  active: boolean;
+  createdAt: number;
+}
+
 // API Response Types
 export interface ApiResponse<T> {
   success: boolean;

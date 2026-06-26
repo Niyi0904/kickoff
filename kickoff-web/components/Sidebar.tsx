@@ -58,13 +58,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-sidebar p-6 fixed inset-y-0 left-0 z-30 overflow-y-auto">
         <div className="flex items-center gap-3 mb-10">
-          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-            <Trophy className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="font-display text-lg font-bold text-foreground tracking-wider">KICKOFF</h1>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Team Manager</p>
-          </div>
+          <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-8 w-auto" />
         </div>
 
         <nav className="flex flex-col gap-1 flex-1">
@@ -162,10 +156,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-sidebar border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Trophy className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <span className="font-display text-base font-bold text-foreground">KICKOFF</span>
+          <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-6 w-auto" />
         </div>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="text-foreground">
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

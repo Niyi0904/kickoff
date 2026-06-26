@@ -1,46 +1,32 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { useApp } from '../../context/AppContext';
-import type { UserRole } from '../../lib/data';
+import type { SignInScreenProps } from '../../navigation/types';
+import { signIn } from '../../firebase/auth';
 
-const DEMO_ROLES: { role: UserRole; label: string; email: string; desc: string; color: string }[] = [
-  { role: 'player', label: 'Player', email: 'emeka@lfc.ng', desc: 'View your profile & stats', color: '#4D7EFF' },
-  { role: 'manager', label: 'Team Manager', email: 'manager@lfc.ng', desc: 'Manage your team', color: '#FFB800' },
-  { role: 'admin', label: 'League Admin', email: 'admin@lagosfa.ng', desc: 'Full admin access', color: '#00E676' },
-];
-
-export default function SignInScreen({ navigation }: any) {
-  const { login, loginAsRole } = useApp();
+export default function SignInScreen({ navigation }: SignInScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showDemos, setShowDemos] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) { setError('Please fill in all fields'); return; }
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
-      // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
-    } catch {
-      setError('Invalid credentials. Try a demo account.');
+      await signIn(email, password);
+    } catch (e: any) {
+      setError(e.message || 'Invalid credentials.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDemo = (role: UserRole) => {
-    loginAsRole(role);
-    // navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
-  };
-
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -110,40 +96,15 @@ export default function SignInScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
 
-        {/* Demo accounts */}
+        {/* Demo accounts (prefill only) */}
         <View style={styles.demoSection}>
           <TouchableOpacity
             style={styles.demoToggle}
-            onPress={() => setShowDemos(!showDemos)}
+            onPress={() => { setEmail('admin@lagosfa.ng'); setPassword('password123'); }}
             activeOpacity={0.8}
           >
-            <Text style={styles.demoToggleText}>Try a demo account</Text>
-            <Text style={[styles.demoToggleArrow, showDemos && styles.demoToggleArrowOpen]}>▼</Text>
+            <Text style={styles.demoToggleText}>Prefill demo account (admin)</Text>
           </TouchableOpacity>
-
-          {showDemos && (
-            <View style={styles.demoList}>
-              {DEMO_ROLES.map(({ role, label, email: dEmail, desc, color }) => (
-                <TouchableOpacity
-                  key={role}
-                  style={styles.demoItem}
-                  onPress={() => handleDemo(role)}
-                  activeOpacity={0.8}
-                >
-                  <View style={[styles.demoIcon, { backgroundColor: `${color}20`, borderColor: `${color}40` }]}>
-                    <Text style={styles.demoIconText}>
-                      {role === 'player' ? '👤' : role === 'manager' ? '🎯' : '⚙️'}
-                    </Text>
-                  </View>
-                  <View style={styles.demoInfo}>
-                    <Text style={styles.demoLabel}>{label}</Text>
-                    <Text style={styles.demoDesc}>{desc}</Text>
-                  </View>
-                  <Text style={[styles.demoEnter, { color }]}>Enter →</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
         </View>
 
         <View style={styles.footer}>
@@ -153,7 +114,7 @@ export default function SignInScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -289,55 +250,7 @@ const styles = StyleSheet.create({
     color: '#B8C4D8',
     fontWeight: '500',
   },
-  demoToggleArrow: {
-    fontSize: 12,
-    color: '#5A6880',
-    transform: [{ rotate: '0deg' }],
-  },
-  demoToggleArrowOpen: {
-    transform: [{ rotate: '180deg' }],
-  },
-  demoList: {
-    marginTop: 8,
-    gap: 8,
-  },
-  demoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#131B2E',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
-    gap: 12,
-  },
-  demoIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  demoIconText: {
-    fontSize: 16,
-  },
-  demoInfo: {
-    flex: 1,
-  },
-  demoLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#F0F4FF',
-  },
-  demoDesc: {
-    fontSize: 12,
-    color: '#5A6880',
-  },
-  demoEnter: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
