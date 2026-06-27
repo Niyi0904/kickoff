@@ -90,7 +90,7 @@ const MainTabs = () => {
             <SignOutButton />
           </View>
         ),
-        headerStyle: { backgroundColor: colors.background },
+        headerStyle: { backgroundColor: colors.card },
         headerTintColor: colors.text,
       })}
     >
@@ -111,7 +111,7 @@ const AppNavigator = () => {
   <AppStack.Navigator
     initialRouteName="MainTabs"
     screenOptions={{
-      headerStyle: { backgroundColor: colors.background },
+      headerStyle: { backgroundColor: colors.card },
       headerTintColor: colors.text,
       headerTitleStyle: { color: colors.text },
     }}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
+import { useTheme } from 'next-themes';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ProfilePictureUploadDialog } from './ProfilePictureUploadDialog';
 import { getInitials } from '@/lib/userProfile';
-import { LogOut, Camera } from 'lucide-react';
+import { LogOut, Camera, Moon, Sun } from 'lucide-react';
 import Image from 'next/image';
 
 interface UserProfileDropdownProps {
@@ -31,6 +32,7 @@ export function UserProfileDropdown({
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(
     user?.photoURL || null
   );
+  const { theme, setTheme } = useTheme();
 
   // Sync profile image URL when user changes
   useEffect(() => {
@@ -93,6 +95,14 @@ export function UserProfileDropdown({
             <span>
               {profileImageUrl ? 'Change Picture' : 'Add Picture'}
             </span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />

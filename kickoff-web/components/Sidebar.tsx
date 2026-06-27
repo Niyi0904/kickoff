@@ -17,7 +17,8 @@ import {
   ShieldAlert,
   User,
   UserCheck,
-  Globe2
+  Globe2,
+  BarChart2
 } from "lucide-react";
 import { useMyLinkedPlayer } from '@/app/hooks/usePlayerLinking';
 import { useAppContext } from "@/app/context/AppDataContext";
@@ -29,6 +30,7 @@ const navItems = [
   { path: "/teams", label: "Teams", icon: Shield },
   { path: "/players", label: "Players", icon: Users },
   { path: "/stats", label: "Stats", icon: TrendingUp },
+  { path: "/analytics", label: "Analytics", icon: BarChart2 },
   { path: "/standings", label: "Standings", icon: Trophy },
   { path: "/matches", label: "Matches", icon: ClipboardList },
   { path: "/", label: "Public Home", icon: Globe2 },
@@ -56,10 +58,12 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-sidebar p-6 fixed inset-y-0 left-0 z-30 overflow-y-auto">
-        <div className="flex items-center gap-3 mb-10">
-          <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-8 w-auto" />
-        </div>
+      <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-sidebar px-6 py-2 fixed inset-y-0 left-0 z-30 overflow-y-auto">
+        <Link href="/">
+          <div className="flex items-center cursor-pointer justify-center h-14  mb-3">
+            <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-[150px] w-[200px]" />
+          </div>
+        </Link>
 
         <nav className="flex flex-col gap-1 flex-1">
           {navItems.map((item) => {
