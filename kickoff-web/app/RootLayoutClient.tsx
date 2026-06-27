@@ -7,6 +7,7 @@ import Sidebar from "@/components/Sidebar";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { QueryProvider } from "./context/QueryProvider";
 import { usePathname } from "next/navigation";
+import { ThemeProvider } from "next-themes";
 
 export function RootLayoutClient({
   children,
@@ -19,26 +20,30 @@ export function RootLayoutClient({
   if (isPublicRoute) {
     return (
       <QueryProvider>
-        <TooltipProvider>
-          <Toaster />
-          {children}
-          <SpeedInsights />
-        </TooltipProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <TooltipProvider>
+            <Toaster />
+            {children}
+            <SpeedInsights />
+          </TooltipProvider>
+        </ThemeProvider>
       </QueryProvider>
     );
   }
 
   return (
     <QueryProvider>
-      <AppDataProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sidebar>
-            {children}
-            <SpeedInsights />
-          </Sidebar>
-        </TooltipProvider>
-      </AppDataProvider>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <AppDataProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sidebar>
+              {children}
+              <SpeedInsights />
+            </Sidebar>
+          </TooltipProvider>
+        </AppDataProvider>
+      </ThemeProvider>
     </QueryProvider>
   );
 }

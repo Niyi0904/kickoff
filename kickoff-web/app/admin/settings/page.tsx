@@ -233,10 +233,19 @@ function SettingsContent() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="flex flex-col items-center gap-4">
-                    <RefreshCw className="w-8 h-8 text-primary animate-spin" />
-                    <p className="text-muted-foreground text-sm">Loading settings...</p>
+            <div className="space-y-8 pb-20 max-w-3xl">
+                <div className="space-y-2">
+                    <div className="h-8 w-48 bg-secondary/50 animate-pulse rounded-xl" />
+                    <div className="h-4 w-64 bg-secondary/30 animate-pulse rounded-xl" />
+                </div>
+                <div className="glass-card rounded-2xl border border-border/50 p-6 space-y-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="space-y-2">
+                            <div className="h-4 w-24 bg-secondary/40 animate-pulse rounded-lg" />
+                            <div className="h-10 bg-secondary/30 animate-pulse rounded-xl" />
+                        </div>
+                    ))}
+                    <div className="h-12 bg-secondary/30 animate-pulse rounded-xl" />
                 </div>
             </div>
         );

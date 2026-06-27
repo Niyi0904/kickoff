@@ -20,6 +20,7 @@ import {
   runTransaction,
 } from "firebase/firestore";
 import { useToast } from "@/app/hooks/use-toast";
+import { getAuth } from "firebase/auth";
 
 // ─────────────────────────────────────────────
 // Interfaces
@@ -39,6 +40,8 @@ export interface Player {
 export interface Team {
   id: string;
   name: string;
+  abbreviation: string;
+  approved: boolean;
   logo?: string | null;
   primaryColor: string;
   founded: string;
@@ -126,6 +129,8 @@ async function fetchTeams(): Promise<Team[]> {
     return {
       id: d.id,
       name: t.name,
+      abbreviation: t.abbreviation ?? t.name?.substring(0, 3).toUpperCase() ?? "",
+      approved: t.approved ?? true, // Fallback: existing teams treated as approved
       logo: t.logo ?? null,
       primaryColor: t.primary_color ?? t.primaryColor ?? "",
       founded: t.founded ?? "",
@@ -223,17 +228,68 @@ export function useAppData() {
     keys.forEach((k) => queryClient.invalidateQueries({ queryKey: QUERY_KEYS[k] }));
   }, [queryClient]);
 
-  // ── Team mutations ─────────────────────────────────────────────────────
-  const addTeam = async (team: Omit<Team, "id">) => {
+  // ── Get current auth role (inlined for use in mutations) ───────────────
+  const getCurrentUserRole = useCallback(async (): Promise<{ role: string; uid: string } | null> => {
     try {
-      await addDoc(collection(db, "teams"), {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+      if (!currentUser) return null;
+      const roleSnap = await getDoc(doc(db, "user_roles", currentUser.uid));
+      const role = roleSnap.exists() ? (roleSnap.data().role ?? 'player') : 'player';
+      return { role, uid: currentUser.uid };
+    } catch {
+      return null;
+    }
+  }, []);
+
+  // ── Team mutations ─────────────────────────────────────────────────────
+  interface AddTeamPayload {
+    name: string;
+    abbreviation: string;
+    stadium: string;
+    founded: string;
+    primaryColor: string;
+    logo?: string | null;
+  }
+
+  const addTeam = async (team: AddTeamPayload) => {
+    try {
+      const userInfo = await getCurrentUserRole();
+      const isLeagueManager = userInfo?.role === 'league_manager' || userInfo?.role === 'admin';
+      const approved = isLeagueManager || false;
+
+      const docRef = await addDoc(collection(db, "teams"), {
         name: team.name,
+        abbreviation: team.abbreviation,
         stadium: team.stadium,
         founded: team.founded,
         primary_color: team.primaryColor,
         logo: team.logo ?? null,
+        approved: approved,
+        createdAt: serverTimestamp(),
       });
-      invalidate("teams");
+
+      // If the creator is a team_manager, automatically link them as manager
+      if (userInfo && !isLeagueManager) {
+        // Find the player record for this user
+        const playersSnap = await getDocs(
+          query(collection(db, "players"), where("linkedUserId", "==", userInfo.uid))
+        );
+        if (!playersSnap.empty) {
+          const playerDoc = playersSnap.docs[0];
+          // Update the player's team
+          await updateDoc(doc(db, "players", playerDoc.id), {
+            team_id: docRef.id,
+            is_manager: true,
+          });
+          // Update user_roles with teamId
+          await updateDoc(doc(db, "user_roles", userInfo.uid), {
+            teamId: docRef.id,
+          });
+        }
+      }
+
+      invalidate("teams", "players");
       toast({ title: "Success", description: "Team added successfully" });
       return { error: null };
     } catch (error) {
@@ -249,12 +305,26 @@ export function useAppData() {
         dbUpdates.primary_color = updates.primaryColor;
         delete dbUpdates.primaryColor;
       }
+      // Strip id from updates
+      delete dbUpdates.id;
       await updateDoc(doc(db, "teams", id), dbUpdates);
       invalidate("teams");
       toast({ title: "Success", description: "Team updated successfully" });
       return { error: null };
     } catch (error) {
       toast({ title: "Error", description: "Failed to update team", variant: "destructive" });
+      return { error };
+    }
+  };
+
+  const approveTeam = async (teamId: string) => {
+    try {
+      await updateDoc(doc(db, "teams", teamId), { approved: true });
+      invalidate("teams");
+      toast({ title: "Success", description: "Team approved successfully" });
+      return { error: null };
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to approve team", variant: "destructive" });
       return { error };
     }
   };
@@ -780,7 +850,7 @@ export function useAppData() {
     // Pre-computed (use these directly in components where possible)
     standings, topScorers,
     // Team
-    addTeam, updateTeam, deleteTeam,
+    addTeam, updateTeam, deleteTeam, approveTeam,
     // Player
     addPlayer, updatePlayer, deletePlayer, setManager,
     // Match

@@ -1,17 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../theme';
 
 type StatCardProps = {
   title: string;
   children: React.ReactNode;
 };
 
-export const StatCard: React.FC<StatCardProps> = ({ title, children }) => (
-  <View style={styles.card}>
-    <Text style={styles.title}>{title}</Text>
-    {children}
-  </View>
-);
+export const StatCard: React.FC<StatCardProps> = React.memo(({ title, children }) => {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.card, { backgroundColor: colors.card, shadowColor: colors.black }]}>
+      <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+      {children}
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   card: {

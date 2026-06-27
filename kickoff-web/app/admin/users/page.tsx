@@ -104,7 +104,17 @@ function UsersContent() {
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-muted-foreground">Loading users...</div>
+          <div className="space-y-4 py-4">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-5 h-5 bg-secondary/40 animate-pulse rounded-lg" />
+              <div className="h-6 w-32 bg-secondary/50 animate-pulse rounded-lg" />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-16 bg-secondary/30 animate-pulse rounded-xl" />
+              ))}
+            </div>
+          </div>
         ) : users.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">No users found</div>
         ) : (

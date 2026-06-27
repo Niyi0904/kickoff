@@ -40,8 +40,20 @@ service cloud.firestore {
 
     match /teams/{teamId} {
       allow read:  if true;
-      // Team managers can edit their own team details
-      allow write: if isLeagueManager() || isTeamManagerOf(teamId);
+      // Create: league_manager or team_manager can create
+      // Enforce team_manager's team must have approved == false
+      // Enforce league_manager can set approved == true
+      allow create: if isAuthenticated() && 
+        (getUserRole() == 'league_manager' || getUserRole() == 'admin' || getUserRole() == 'team_manager') &&
+        ((getUserRole() == 'league_manager' || getUserRole() == 'admin') ? 
+          (request.resource.data.approved == true) : 
+          (request.resource.data.approved == false));
+      // Update: league_manager can update any field including approved
+      // team_manager can update their team but NOT the approved field
+      allow update: if isLeagueManager() || 
+        (isTeamManagerOf(teamId) && resource.data.approved == request.resource.data.approved);
+      // Delete: only league manager
+      allow delete: if isLeagueManager();
     }
 
     match /players/{playerId} {

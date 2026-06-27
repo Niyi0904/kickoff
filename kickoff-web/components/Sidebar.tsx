@@ -17,7 +17,8 @@ import {
   ShieldAlert,
   User,
   UserCheck,
-  Globe2
+  Globe2,
+  BarChart2
 } from "lucide-react";
 import { useMyLinkedPlayer } from '@/app/hooks/usePlayerLinking';
 import { useAppContext } from "@/app/context/AppDataContext";
@@ -29,6 +30,7 @@ const navItems = [
   { path: "/teams", label: "Teams", icon: Shield },
   { path: "/players", label: "Players", icon: Users },
   { path: "/stats", label: "Stats", icon: TrendingUp },
+  { path: "/analytics", label: "Analytics", icon: BarChart2 },
   { path: "/standings", label: "Standings", icon: Trophy },
   { path: "/matches", label: "Matches", icon: ClipboardList },
   { path: "/", label: "Public Home", icon: Globe2 },
@@ -56,16 +58,12 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-sidebar p-6 fixed inset-y-0 left-0 z-30 overflow-y-auto">
-        <div className="flex items-center gap-3 mb-10">
-          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-            <Trophy className="w-5 h-5 text-primary-foreground" />
+      <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-sidebar px-6 py-2 fixed inset-y-0 left-0 z-30 overflow-y-auto">
+        <Link href="/">
+          <div className="flex items-center cursor-pointer justify-center h-14  mb-3">
+            <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-[150px] w-[200px]" />
           </div>
-          <div>
-            <h1 className="font-display text-lg font-bold text-foreground tracking-wider">KICKOFF</h1>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Team Manager</p>
-          </div>
-        </div>
+        </Link>
 
         <nav className="flex flex-col gap-1 flex-1">
           {navItems.map((item) => {
@@ -162,10 +160,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-sidebar border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Trophy className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <span className="font-display text-base font-bold text-foreground">KICKOFF</span>
+          <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-6 w-auto" />
         </div>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="text-foreground">
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

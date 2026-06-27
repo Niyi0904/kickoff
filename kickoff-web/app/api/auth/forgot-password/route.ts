@@ -80,6 +80,8 @@ export async function POST(request: NextRequest) {
       actionCodeSettings
     );
 
+    const logoUrl = productionUrl ? `${productionUrl}/kickoff-logo-wordmark.png` : '';
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -115,27 +117,6 @@ export async function POST(request: NextRequest) {
               border-bottom: 1px solid #1f293d;
               padding: 30px;
               text-align: center;
-            }
-            .logo-emoji {
-              font-size: 32px;
-              margin-bottom: 10px;
-              display: inline-block;
-            }
-            .brand-title {
-              font-family: 'Oswald', 'Arial Black', sans-serif;
-              font-size: 24px;
-              font-weight: bold;
-              letter-spacing: 0.05em;
-              color: #1fad66;
-              text-transform: uppercase;
-              margin: 0;
-            }
-            .brand-subtitle {
-              font-size: 10px;
-              color: #a0aec0;
-              text-transform: uppercase;
-              letter-spacing: 0.2em;
-              margin: 4px 0 0 0;
             }
             .content {
               padding: 40px 30px;
@@ -208,9 +189,7 @@ export async function POST(request: NextRequest) {
           <div class="wrapper">
             <div class="container">
               <div class="header">
-                <span class="logo-emoji">⚽</span>
-                <h1 class="brand-title">KICKOFF</h1>
-                <p class="brand-subtitle">Team Manager</p>
+                ${logoUrl ? `<img src="${logoUrl}" alt="KICKOFF" style="height: 40px; width: auto;" />` : '<h1 style="font-family: \'Oswald\', \'Arial Black\', sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 0.05em; color: #1fad66; text-transform: uppercase; margin: 0;">KICKOFF</h1>'}
               </div>
               <div class="content">
                 <h2>Reset Your Password</h2>

@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ShieldAlert, ShieldCheck, RefreshCw, CheckCircle2,
+  ShieldAlert, ShieldCheck, CheckCircle2,
   AlertTriangle, ChevronRight, Clock, Gavel
 } from 'lucide-react';
 import { useActiveSuspensions, useOverrideSuspension } from '@/app/hooks/useSuspensions';
@@ -94,8 +94,14 @@ function SuspensionsContent() {
 
       {/* ── Loading ─────────────────────────────────────────────── */}
       {isLoading && (
-        <div className="flex items-center justify-center py-20">
-          <RefreshCw className="w-6 h-6 text-primary animate-spin" />
+        <div className="space-y-4 py-10">
+          <div className="h-8 w-48 bg-secondary/50 animate-pulse rounded-xl" />
+          <div className="h-4 w-64 bg-secondary/30 animate-pulse rounded-xl mb-6" />
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-24 bg-secondary/30 animate-pulse rounded-2xl" />
+            ))}
+          </div>
         </div>
       )}
 

@@ -708,14 +708,8 @@ function PublicHeader({
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#07130f]/88 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-[#26c267] text-[#06110d]">
-            <Trophy className="h-5 w-5" />
-          </span>
-          <span>
-            <span className="block text-xl font-black leading-none text-white">KICKOFF</span>
-            <span className="text-xs font-semibold text-white/55">League Platform</span>
-          </span>
+        <Link href="/" className="flex items-center gap-3 h-14">
+          <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-[150px] w-[170px]" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
@@ -1343,14 +1337,8 @@ function PublicFooter({ navItems, profileHref }: { navItems: PublicNavItem[]; pr
     <footer className="border-t border-white/10 bg-[#07130f] px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_1.5fr_auto]">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-md bg-[#26c267] text-[#06110d]">
-              <Trophy className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-xl font-black text-white">KICKOFF</p>
-              <p className="text-sm text-white/45">Football league management</p>
-            </div>
+          <div className="flex items-center gap-3 h-14">
+            <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-[150px] w-[170px]" />
           </div>
         </div>
         <nav className="grid grid-cols-2 gap-2 sm:grid-cols-4">

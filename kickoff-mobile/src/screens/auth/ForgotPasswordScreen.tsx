@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import type { ForgotPasswordScreenProps } from '../../navigation/types';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../firebase/config';
 
-export default function ForgotPasswordScreen({ navigation }: any) {
+export default function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
 
   const handleReset = async () => {
     if (!email) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1000));
-    setLoading(false);
-    setSent(true);
+    setError('');
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSent(true);
+    } catch (e: any) {
+      setError(e.message || 'Failed to send reset email.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (sent) {
@@ -34,7 +44,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backIcon}>←</Text>
@@ -64,6 +74,11 @@ export default function ForgotPasswordScreen({ navigation }: any) {
             </View>
           </View>
 
+          {error ? (
+            <View style={styles.errorBox}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : null}
           <TouchableOpacity
             style={[styles.submitButton, loading && styles.submitButtonDisabled]}
             onPress={handleReset}
@@ -77,7 +92,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -197,6 +212,17 @@ const styles = StyleSheet.create({
     paddingLeft: 44,
     paddingRight: 16,
     fontSize: 15,
+  },
+  errorBox: {
+    backgroundColor: 'rgba(255,61,90,0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,61,90,0.3)',
+    borderRadius: 10,
+    padding: 10,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#FF3D5A',
   },
   submitButton: {
     width: '100%',

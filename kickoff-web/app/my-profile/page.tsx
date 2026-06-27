@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { getInitials } from '@/lib/utils';
 import {
   Clock, UserCheck, ArrowRight, Target,
-  Shield, Activity, RefreshCw, UserX
+  Shield, Activity, UserX
 } from 'lucide-react';
 
 export default function MyProfilePage() {
@@ -39,8 +39,28 @@ function MyProfileContent() {
   // ── Loading ──────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <RefreshCw className="w-6 h-6 text-primary animate-spin" />
+      <div className="space-y-8 pb-20 max-w-3xl px-4 min-w-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 p-6 bg-card rounded-3xl border border-border">
+          <div className="w-20 h-20 rounded-2xl bg-secondary/40 animate-pulse" />
+          <div className="flex-1 space-y-3">
+            <div className="h-6 w-48 bg-secondary/50 animate-pulse rounded-lg" />
+            <div className="h-4 w-32 bg-secondary/30 animate-pulse rounded-lg" />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="h-5 w-32 bg-secondary/40 animate-pulse rounded-lg" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-24 bg-secondary/30 animate-pulse rounded-2xl" />
+            ))}
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="h-5 w-36 bg-secondary/40 animate-pulse rounded-lg" />
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-16 bg-secondary/30 animate-pulse rounded-xl" />
+          ))}
+        </div>
       </div>
     );
   }

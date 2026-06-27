@@ -1,0 +1,12 @@
+# Begin: ritual init — scaffolded skill dirs (regenerated on every init)
+.agents/skills/ritual/
+.claude/skills/ritual/
+.cursor/rules/ritual/
+.cursor\rules\ritual-discovery.mdc
+.gemini/skills/ritual/
+.github/skills/ritual/
+.kiro/skills/ritual/
+.kiro\steering\ritual-discovery.md
+.windsurf\rules\ritual-discovery.md
+CLAUDE.local.md
+# End: ritual init

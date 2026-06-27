@@ -18,7 +18,7 @@ import {
   DEFAULT_LEAGUE_SETTINGS,
   type PlayerEvent,
 } from '../lib/firestoreMappers';
-import type { Team, Player, Match, PlayerStats, TeamStanding, LeagueSettings } from '../lib/types';
+import type { Team, Player, Match, PlayerStats, TeamStanding, LeagueSettings, User, RoleType, LinkRequest, LinkRequestStatus, Suspension } from '../lib/types';
 
 export type { PlayerEvent };
 
@@ -49,22 +49,14 @@ export const fetchPlayers = async (teamId?: string): Promise<Player[]> => {
     if (teamId) {
       constraints.push(where('team_id', '==', teamId));
     }
-    const playersQuery = constraints.length
+    const ref = constraints.length
       ? query(collection(db, 'players'), ...constraints)
-      : collection(db, 'players');
-    const snapshot = await getDocs(playersQuery);
-    const all = snapshot.docs.map((d) => mapPlayer(d.id, d.data() as Record<string, unknown>));
-    if (!teamId) return all;
-    return all.filter((p) => p.teamId === teamId);
+      : query(collection(db, 'players'), orderBy('name', 'asc'));
+    const snapshot = await getDocs(ref);
+    return snapshot.docs.map((d) => mapPlayer(d.id, d.data() as Record<string, unknown>));
   } catch (error) {
-    try {
-      const snapshot = await getDocs(collection(db, 'players'));
-      const all = snapshot.docs.map((d) => mapPlayer(d.id, d.data() as Record<string, unknown>));
-      return teamId ? all.filter((p) => p.teamId === teamId) : all;
-    } catch (e) {
-      console.error('Fetch players error:', e);
-      return [];
-    }
+    console.error('Fetch players error:', error);
+    return [];
   }
 };
 
@@ -390,6 +382,226 @@ export const updateMatch = async (matchId: string, updates: Partial<Match>): Pro
     return true;
   } catch (error) {
     console.error('Update match error:', error);
+    return false;
+  }
+};
+
+// ── Player Linking ─────────────────────────────────────────────
+
+/** Claim a player profile by linking it to the current user */
+export const claimPlayerProfile = async (playerId: string, userId: string): Promise<boolean> => {
+  try {
+    await updateDoc(doc(db, 'players', playerId), { linkedUserId: userId });
+    await updateDoc(doc(db, 'user_roles', userId), { playerId });
+    return true;
+  } catch (error) {
+    console.error('Claim player profile error:', error);
+    return false;
+  }
+};
+
+/** Unlink a player profile */
+export const unlinkPlayerProfile = async (playerId: string, userId: string): Promise<boolean> => {
+  try {
+    await updateDoc(doc(db, 'players', playerId), { linkedUserId: null });
+    await updateDoc(doc(db, 'user_roles', userId), { playerId: null });
+    return true;
+  } catch (error) {
+    console.error('Unlink player profile error:', error);
+    return false;
+  }
+};
+
+/** Fetch unclaimed players for a team */
+export const fetchUnclaimedPlayers = async (teamId?: string): Promise<Player[]> => {
+  try {
+    const constraints: QueryConstraint[] = [where('linkedUserId', '==', null)];
+    if (teamId) {
+      constraints.push(where('team_id', '==', teamId));
+    }
+    const snapshot = await getDocs(query(collection(db, 'players'), ...constraints));
+    return snapshot.docs.map((d) => mapPlayer(d.id, d.data() as Record<string, unknown>));
+  } catch (error) {
+    console.error('Fetch unclaimed players error:', error);
+    return [];
+  }
+};
+
+// ── Match Event Mutations ──────────────────────────────────────
+
+type EventCollection = 'goals' | 'assists' | 'yellow_cards' | 'red_cards';
+
+interface BaseEvent {
+  playerId: string;
+  matchId: string;
+  matchDay: number;
+  teamId: string;
+}
+
+/** Add a match event (goal, assist, yellow, red) */
+export const addMatchEvent = async (
+  collectionName: EventCollection,
+  event: BaseEvent & { minute?: number },
+): Promise<string | null> => {
+  try {
+    const docRef = await addDoc(collection(db, collectionName), {
+      ...event,
+      minute: event.minute ?? 0,
+      timestamp: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error(`Add ${collectionName} error:`, error);
+    return null;
+  }
+};
+
+/** Delete a match event */
+export const deleteMatchEvent = async (
+  collectionName: EventCollection,
+  eventId: string,
+): Promise<boolean> => {
+  try {
+    await deleteDoc(doc(db, collectionName, eventId));
+    return true;
+  } catch (error) {
+    console.error(`Delete ${collectionName} error:`, error);
+    return false;
+  }
+};
+
+/** Delete all events for a match (used before re-recording) */
+export const clearMatchEvents = async (matchId: string): Promise<boolean> => {
+  try {
+    const collections: EventCollection[] = ['goals', 'assists', 'yellow_cards', 'red_cards'];
+    await Promise.all(
+      collections.map(async (col) => {
+        const snap = await getDocs(query(collection(db, col), where('matchId', '==', matchId)));
+        await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, col, d.id))));
+      }),
+    );
+    return true;
+  } catch (error) {
+    console.error('Clear match events error:', error);
+    return false;
+  }
+};
+
+// ── Admin: User Management ─────────────────────────────────────
+
+export const fetchAllUsers = async (): Promise<(User & { role?: string })[]> => {
+  try {
+    const [userSnap, roleSnap] = await Promise.all([
+      getDocs(collection(db, 'users')),
+      getDocs(collection(db, 'user_roles')),
+    ]);
+    const roleMap = new Map(roleSnap.docs.map(d => [d.id, d.data().role as string]));
+    return userSnap.docs.map(d => {
+      const data = d.data() as User;
+      return { ...data, id: d.id, role: roleMap.get(d.id) ?? 'player' };
+    });
+  } catch (error) {
+    console.error('Fetch all users error:', error);
+    return [];
+  }
+};
+
+export const updateUserRole = async (uid: string, role: RoleType): Promise<boolean> => {
+  try {
+    await setDoc(doc(db, 'user_roles', uid), { uid, role }, { merge: true });
+    return true;
+  } catch (error) {
+    console.error('Update user role error:', error);
+    return false;
+  }
+};
+
+// ── Admin: Link Requests ───────────────────────────────────────
+
+export const fetchLinkRequests = async (status?: LinkRequestStatus): Promise<LinkRequest[]> => {
+  try {
+    const constraints: QueryConstraint[] = [];
+    if (status) constraints.push(where('status', '==', status));
+    const snapshot = await getDocs(
+      constraints.length
+        ? query(collection(db, 'link_requests'), ...constraints, orderBy('createdAt', 'desc'))
+        : query(collection(db, 'link_requests'), orderBy('createdAt', 'desc')),
+    );
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as LinkRequest));
+  } catch (error) {
+    console.error('Fetch link requests error:', error);
+    return [];
+  }
+};
+
+export const createLinkRequest = async (playerId: string, userId: string, userEmail?: string): Promise<string | null> => {
+  try {
+    const docRef = await addDoc(collection(db, 'link_requests'), {
+      playerId,
+      userId,
+      userEmail,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Create link request error:', error);
+    return null;
+  }
+};
+
+export const updateLinkRequestStatus = async (requestId: string, status: LinkRequestStatus): Promise<boolean> => {
+  try {
+    const ref = doc(db, 'link_requests', requestId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return false;
+    const data = snap.data();
+    await updateDoc(ref, { status });
+
+    if (status === 'approved' && data.playerId && data.userId) {
+      await updateDoc(doc(db, 'players', data.playerId), { linkedUserId: data.userId });
+      await updateDoc(doc(db, 'user_roles', data.userId), { playerId: data.playerId });
+    }
+    return true;
+  } catch (error) {
+    console.error('Update link request error:', error);
+    return false;
+  }
+};
+
+// ── Admin: Suspensions ─────────────────────────────────────────
+
+export const fetchSuspensions = async (activeOnly?: boolean): Promise<Suspension[]> => {
+  try {
+    const constraints: QueryConstraint[] = [orderBy('createdAt', 'desc')];
+    if (activeOnly) constraints.unshift(where('active', '==', true));
+    const snapshot = await getDocs(query(collection(db, 'suspensions'), ...constraints));
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Suspension));
+  } catch (error) {
+    console.error('Fetch suspensions error:', error);
+    return [];
+  }
+};
+
+export const createSuspension = async (data: Omit<Suspension, 'id' | 'createdAt'>): Promise<string | null> => {
+  try {
+    const docRef = await addDoc(collection(db, 'suspensions'), {
+      ...data,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Create suspension error:', error);
+    return null;
+  }
+};
+
+export const endSuspension = async (suspensionId: string): Promise<boolean> => {
+  try {
+    await updateDoc(doc(db, 'suspensions', suspensionId), { active: false });
+    return true;
+  } catch (error) {
+    console.error('End suspension error:', error);
     return false;
   }
 };
