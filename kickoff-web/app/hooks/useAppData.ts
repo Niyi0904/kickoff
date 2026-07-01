@@ -18,9 +18,12 @@ import {
   serverTimestamp,
   getDoc,
   runTransaction,
+  QueryConstraint,
 } from "firebase/firestore";
 import { useToast } from "@/app/hooks/use-toast";
 import { getAuth } from "firebase/auth";
+import { useAuthContext } from "@/app/context/AuthContext";
+import { ENABLE_LEAGUE_FILTERING } from "@/lib/config";
 
 // ─────────────────────────────────────────────
 // Interfaces
@@ -124,22 +127,26 @@ export interface MatchAttendance {
 // ─────────────────────────────────────────────
 
 export const QUERY_KEYS = {
-  teams:       ['teams']       as const,
-  players:     ['players']     as const,
-  matches:     ['matches']     as const,
-  goals:       ['goals']       as const,
-  assists:     ['assists']     as const,
-  yellowCards: ['yellowCards'] as const,
-  redCards:    ['redCards']    as const,
-  attendance:  ['attendance']  as const,
+  teams:       (l?: string | null) => (l ? ['teams', l] as const : ['teams'] as const),
+  players:     (l?: string | null) => (l ? ['players', l] as const : ['players'] as const),
+  matches:     (l?: string | null) => (l ? ['matches', l] as const : ['matches'] as const),
+  goals:       (l?: string | null) => (l ? ['goals', l] as const : ['goals'] as const),
+  assists:     (l?: string | null) => (l ? ['assists', l] as const : ['assists'] as const),
+  yellowCards: (l?: string | null) => (l ? ['yellowCards', l] as const : ['yellowCards'] as const),
+  redCards:    (l?: string | null) => (l ? ['redCards', l] as const : ['redCards'] as const),
+  attendance:  (l?: string | null) => (l ? ['attendance', l] as const : ['attendance'] as const),
 };
 
 // ─────────────────────────────────────────────
 // Fetchers — pure async functions, no React state
 // ─────────────────────────────────────────────
 
-async function fetchTeams(): Promise<Team[]> {
-  const snap = await getDocs(collection(db, "teams"));
+async function fetchTeams(leagueId?: string | null): Promise<Team[]> {
+  const constraints: QueryConstraint[] = [];
+  if (ENABLE_LEAGUE_FILTERING && leagueId) {
+    constraints.push(where("leagueId", "==", leagueId));
+  }
+  const snap = await getDocs(query(collection(db, "teams"), ...constraints));
   return snap.docs.map((d) => {
     const t = d.data();
     return {
@@ -151,12 +158,17 @@ async function fetchTeams(): Promise<Team[]> {
       primaryColor: t.primary_color ?? t.primaryColor ?? "",
       founded: t.founded ?? "",
       stadium: t.stadium ?? "",
+      leagueId: t.leagueId ?? null,
     };
   });
 }
 
-async function fetchPlayers(): Promise<Player[]> {
-  const snap = await getDocs(collection(db, "players"));
+async function fetchPlayers(leagueId?: string | null): Promise<Player[]> {
+  const constraints: QueryConstraint[] = [];
+  if (ENABLE_LEAGUE_FILTERING && leagueId) {
+    constraints.push(where("leagueId", "==", leagueId));
+  }
+  const snap = await getDocs(query(collection(db, "players"), ...constraints));
   return snap.docs.map((d) => {
     const p = d.data();
     return {
@@ -167,23 +179,36 @@ async function fetchPlayers(): Promise<Player[]> {
       teamId: p.team_id ?? p.teamId,
       isManager: p.is_manager ?? p.isManager ?? false,
       photo: p.photo ?? null,
-      linkedUserId: p.linkedUserId ?? null
+      linkedUserId: p.linkedUserId ?? null,
+      leagueId: p.leagueId ?? null,
     };
   });
 }
 
-async function fetchMatches(): Promise<Match[]> {
-  const snap = await getDocs(query(collection(db, "matches"), orderBy("matchDay", "desc")));
+async function fetchMatches(leagueId?: string | null): Promise<Match[]> {
+  const constraints: QueryConstraint[] = [orderBy("matchDay", "desc")];
+  if (ENABLE_LEAGUE_FILTERING && leagueId) {
+    constraints.unshift(where("leagueId", "==", leagueId));
+  }
+  const snap = await getDocs(query(collection(db, "matches"), ...constraints));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Match));
 }
 
-async function fetchEvents(colName: string): Promise<PlayerEvent[]> {
-  const snap = await getDocs(collection(db, colName));
+async function fetchEvents(colName: string, leagueId?: string | null): Promise<PlayerEvent[]> {
+  const constraints: QueryConstraint[] = [];
+  if (ENABLE_LEAGUE_FILTERING && leagueId) {
+    constraints.push(where("leagueId", "==", leagueId));
+  }
+  const snap = await getDocs(query(collection(db, colName), ...constraints));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PlayerEvent));
 }
 
-async function fetchAttendance(): Promise<MatchAttendance[]> {
-  const snap = await getDocs(collection(db, "match_attendance"));
+async function fetchAttendance(leagueId?: string | null): Promise<MatchAttendance[]> {
+  const constraints: QueryConstraint[] = [];
+  if (ENABLE_LEAGUE_FILTERING && leagueId) {
+    constraints.push(where("leagueId", "==", leagueId));
+  }
+  const snap = await getDocs(query(collection(db, "match_attendance"), ...constraints));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as MatchAttendance));
 }
 
@@ -211,48 +236,51 @@ function calculatePoints(match: Partial<Match>) {
 export function useAppData() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { leagueId } = useAuthContext();
 
   // ── Queries (each collection independent) ──────────────────────────────
   const { data: teams = [], isLoading: teamsLoading } =
-    useQuery({ queryKey: QUERY_KEYS.teams, queryFn: fetchTeams, staleTime: 1000 * 60 * 5 });
+    useQuery({ queryKey: QUERY_KEYS.teams(leagueId), queryFn: () => fetchTeams(leagueId), staleTime: 1000 * 60 * 5 });
 
   const { data: players = [], isLoading: playersLoading } =
-    useQuery({ queryKey: QUERY_KEYS.players, queryFn: fetchPlayers, staleTime: 1000 * 60 * 5 });
+    useQuery({ queryKey: QUERY_KEYS.players(leagueId), queryFn: () => fetchPlayers(leagueId), staleTime: 1000 * 60 * 5 });
 
   const { data: matches = [], isLoading: matchesLoading } =
-    useQuery({ queryKey: QUERY_KEYS.matches, queryFn: fetchMatches, staleTime: 1000 * 60 * 2 });
+    useQuery({ queryKey: QUERY_KEYS.matches(leagueId), queryFn: () => fetchMatches(leagueId), staleTime: 1000 * 60 * 2 });
 
   const { data: goals = [] } =
-    useQuery({ queryKey: QUERY_KEYS.goals, queryFn: () => fetchEvents("goals"), staleTime: 1000 * 60 * 2 });
+    useQuery({ queryKey: QUERY_KEYS.goals(leagueId), queryFn: () => fetchEvents("goals", leagueId), staleTime: 1000 * 60 * 2 });
 
   const { data: assists = [] } =
-    useQuery({ queryKey: QUERY_KEYS.assists, queryFn: () => fetchEvents("assists"), staleTime: 1000 * 60 * 2 });
+    useQuery({ queryKey: QUERY_KEYS.assists(leagueId), queryFn: () => fetchEvents("assists", leagueId), staleTime: 1000 * 60 * 2 });
 
   const { data: yellowCards = [] } =
-    useQuery({ queryKey: QUERY_KEYS.yellowCards, queryFn: () => fetchEvents("yellow_cards"), staleTime: 1000 * 60 * 2 });
+    useQuery({ queryKey: QUERY_KEYS.yellowCards(leagueId), queryFn: () => fetchEvents("yellow_cards", leagueId), staleTime: 1000 * 60 * 2 });
 
   const { data: redCards = [] } =
-    useQuery({ queryKey: QUERY_KEYS.redCards, queryFn: () => fetchEvents("red_cards"), staleTime: 1000 * 60 * 2 });
+    useQuery({ queryKey: QUERY_KEYS.redCards(leagueId), queryFn: () => fetchEvents("red_cards", leagueId), staleTime: 1000 * 60 * 2 });
 
   const { data: attendance = [] } =
-    useQuery({ queryKey: QUERY_KEYS.attendance, queryFn: fetchAttendance, staleTime: 1000 * 60 * 2 });
+    useQuery({ queryKey: QUERY_KEYS.attendance(leagueId), queryFn: () => fetchAttendance(leagueId), staleTime: 1000 * 60 * 2 });
 
   const loading = teamsLoading || playersLoading || matchesLoading;
 
   // ── Invalidation helpers ───────────────────────────────────────────────
   const invalidate = useCallback((...keys: (keyof typeof QUERY_KEYS)[]) => {
-    keys.forEach((k) => queryClient.invalidateQueries({ queryKey: QUERY_KEYS[k] }));
-  }, [queryClient]);
+    keys.forEach((k) => queryClient.invalidateQueries({ queryKey: QUERY_KEYS[k](leagueId) }));
+  }, [queryClient, leagueId]);
 
   // ── Get current auth role (inlined for use in mutations) ───────────────
-  const getCurrentUserRole = useCallback(async (): Promise<{ role: string; uid: string } | null> => {
+  const getCurrentUserRole = useCallback(async (): Promise<{ role: string; uid: string; leagueId: string | null } | null> => {
     try {
       const auth = getAuth();
       const currentUser = auth.currentUser;
       if (!currentUser) return null;
       const roleSnap = await getDoc(doc(db, "user_roles", currentUser.uid));
-      const role = roleSnap.exists() ? (roleSnap.data().role ?? 'player') : 'player';
-      return { role, uid: currentUser.uid };
+      const data = roleSnap.exists() ? roleSnap.data() : {};
+      const role = data?.role ?? 'player';
+      const leagueId = data?.leagueId ?? null;
+      return { role, uid: currentUser.uid, leagueId };
     } catch {
       return null;
     }
@@ -282,6 +310,7 @@ export function useAppData() {
         primary_color: team.primaryColor,
         logo: team.logo ?? null,
         approved: approved,
+        leagueId: userInfo?.leagueId ?? null,
         createdAt: serverTimestamp(),
       });
 
@@ -298,10 +327,12 @@ export function useAppData() {
             team_id: docRef.id,
             is_manager: true,
           });
-          // Update user_roles with teamId
-          await updateDoc(doc(db, "user_roles", userInfo.uid), {
-            teamId: docRef.id,
-          });
+          // Update user_roles with teamId and preserve leagueId if present
+          const roleUpdates: Record<string, unknown> = { teamId: docRef.id };
+          if (userInfo?.leagueId) {
+            roleUpdates.leagueId = userInfo.leagueId;
+          }
+          await updateDoc(doc(db, "user_roles", userInfo.uid), roleUpdates);
         }
       }
 
@@ -365,6 +396,7 @@ export function useAppData() {
   // ── Player mutations ───────────────────────────────────────────────────
   const addPlayer = async (player: Omit<Player, "id">) => {
     try {
+      const userInfo = await getCurrentUserRole();
       await addDoc(collection(db, "players"), {
         name: player.name,
         position: player.position,
@@ -372,6 +404,7 @@ export function useAppData() {
         team_id: player.teamId,
         is_manager: player.isManager,
         photo: player.photo ?? null,
+        leagueId: userInfo?.leagueId ?? null,
       });
       invalidate("players");
       toast({ title: "Success", description: "Player added successfully" });
@@ -430,12 +463,15 @@ export function useAppData() {
       const matchesRef = collection(db, "matches");
 
       // If matchDay is explicitly provided, skip the auto-calculation entirely
+      const userInfo = await getCurrentUserRole();
+
       if (matchData.matchDay) {
         const docRef = await addDoc(matchesRef, {
           ...matchData,
           createdAt: serverTimestamp(),
           homePoints: calculatePoints(matchData).home,
           awayPoints: calculatePoints(matchData).away,
+          leagueId: userInfo?.leagueId ?? null,
         });
         invalidate("matches");
         toast({ title: "Success", description: `Match Day ${matchData.matchDay} added` });
@@ -472,6 +508,7 @@ export function useAppData() {
           matchDay:    newMatchDay,
           homePoints,
           awayPoints,
+          leagueId: userInfo?.leagueId ?? null,
           createdAt:   serverTimestamp(),
         });
       });
@@ -531,10 +568,11 @@ export function useAppData() {
   // ── Batch fixture generation (replaces sequential loop in matches/page.tsx) ──
   const addMatchesBatch = async (fixtures: (Partial<Match> & { status: 'upcoming' | 'played' })[]) => {
     try {
+      const userInfo = await getCurrentUserRole();
       const batch = writeBatch(db);
       fixtures.forEach((fixture) => {
         const ref = doc(collection(db, "matches"));
-        batch.set(ref, { ...fixture, createdAt: serverTimestamp() });
+        batch.set(ref, { ...fixture, leagueId: userInfo?.leagueId ?? null, createdAt: serverTimestamp() });
       });
       await batch.commit();
       invalidate("matches");
@@ -592,14 +630,16 @@ export function useAppData() {
     }
   ) => {
     try {
+      const userInfo = await getCurrentUserRole();
       const batch = writeBatch(db);
       const ts = serverTimestamp();
+      const leagueId = userInfo?.leagueId ?? null;
 
-      stats.goals.forEach((g) =>   batch.set(doc(collection(db, "goals")),        { ...g, matchId, matchDay, timestamp: ts }));
-      stats.assists.forEach((a) =>  batch.set(doc(collection(db, "assists")),      { ...a, matchId, matchDay, timestamp: ts }));
-      stats.yellows.forEach((y) =>  batch.set(doc(collection(db, "yellow_cards")), { ...y, matchId, matchDay, timestamp: ts }));
-      stats.reds.forEach((r) =>     batch.set(doc(collection(db, "red_cards")),    { ...r, matchId, matchDay, timestamp: ts }));
-      stats.attendance?.forEach((a) => batch.set(doc(collection(db, "match_attendance")), { ...a, matchId, matchDay, timestamp: ts }));
+      stats.goals.forEach((g) =>   batch.set(doc(collection(db, "goals")),        { ...g, matchId, matchDay, timestamp: ts, leagueId }));
+      stats.assists.forEach((a) =>  batch.set(doc(collection(db, "assists")),      { ...a, matchId, matchDay, timestamp: ts, leagueId }));
+      stats.yellows.forEach((y) =>  batch.set(doc(collection(db, "yellow_cards")), { ...y, matchId, matchDay, timestamp: ts, leagueId }));
+      stats.reds.forEach((r) =>     batch.set(doc(collection(db, "red_cards")),    { ...r, matchId, matchDay, timestamp: ts, leagueId }));
+      stats.attendance?.forEach((a) => batch.set(doc(collection(db, "match_attendance")), { ...a, matchId, matchDay, timestamp: ts, leagueId }));
 
       await batch.commit();
       invalidate("goals", "assists", "yellowCards", "redCards", "attendance");
@@ -629,6 +669,7 @@ export function useAppData() {
   // ── Legacy addRecord / updateRecord (match_records collection) ────────
   const addRecord = async (record: Omit<MatchRecord, "id">) => {
     try {
+      const userInfo = await getCurrentUserRole();
       await addDoc(collection(db, "match_records"), {
         player_id:     record.playerId,
         match_date:    record.matchDate,
@@ -638,6 +679,7 @@ export function useAppData() {
         yellow_cards:  record.yellowCards,
         red_cards:     record.redCards,
         minutes_played: record.minutesPlayed,
+        leagueId:      userInfo?.leagueId ?? null,
       });
       toast({ title: "Success", description: "Record added successfully" });
       return { error: null };
@@ -879,7 +921,7 @@ export function useAppData() {
     getPlayerStats, getTopScorers, getStandings, getPlayerRecords,
     // Manual refetch (escape hatch, rarely needed)
     refetch: () => {
-      Object.values(QUERY_KEYS).forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
+      Object.values(QUERY_KEYS).forEach((keyFn) => queryClient.invalidateQueries({ queryKey: keyFn(leagueId) }));
     },
   };
 }

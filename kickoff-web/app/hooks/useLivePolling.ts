@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "./useAppData";
 
 interface UseLivePollingOptions {
   enabled: boolean;
@@ -23,11 +22,11 @@ export function useLivePolling({ enabled, interval = 15000 }: UseLivePollingOpti
     }
 
     intervalRef.current = setInterval(() => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.matches });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.goals });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.assists });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.yellowCards });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.redCards });
+      queryClient.invalidateQueries({ queryKey: ['matches'] });
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ['assists'] });
+      queryClient.invalidateQueries({ queryKey: ['yellowCards'] });
+      queryClient.invalidateQueries({ queryKey: ['redCards'] });
     }, interval);
 
     return () => {

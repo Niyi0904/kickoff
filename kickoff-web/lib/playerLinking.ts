@@ -147,10 +147,11 @@ export async function approveLinkRequest(
     linkedUserId: userId,
   });
 
-  // Update user roles document with linked playerId and teamId
+  // Update user roles document with linked playerId, teamId, and leagueId
   batch.set(doc(db, 'user_roles', userId), {
     playerId: playerId,
     teamId: teamId,
+    leagueId: playerData?.leagueId ?? null,
     updatedAt: serverTimestamp()
   }, { merge: true });
 

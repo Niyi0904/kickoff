@@ -14,6 +14,7 @@ export interface LeagueSettings {
   pointsDraw:     number;
   pointsLoss:     number;
   yellowsPerBan:  number;
+  leagueId?:      string | null;
 }
 
 export const DEFAULT_SETTINGS: LeagueSettings = {
@@ -48,6 +49,7 @@ async function fetchLeagueSettings(): Promise<LeagueSettings> {
     pointsDraw:     d.pointsDraw     ?? DEFAULT_SETTINGS.pointsDraw,
     pointsLoss:     d.pointsLoss     ?? DEFAULT_SETTINGS.pointsLoss,
     yellowsPerBan:  d.yellowsPerBan  ?? DEFAULT_SETTINGS.yellowsPerBan,
+    leagueId:       d.leagueId       ?? null,
   };
 }
 
