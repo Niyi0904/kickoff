@@ -78,10 +78,26 @@ export interface Match {
   league: string;
   createdAt: any;
   time?: string;
-  status: 'upcoming' | 'played';
+  status: 'upcoming' | 'live' | 'played';
   scheduledDate?: string;
   report?: string;
   keyMoments?: string;
+  // Live match fields
+  matchTimer?: number;
+  stoppageTime?: number;
+  matchPhase?: 'firstHalf' | 'halftime' | 'secondHalf' | 'fulltime';
+  homePossession?: number;
+  awayPossession?: number;
+  homeShots?: number;
+  awayShots?: number;
+  homeShotsOnTarget?: number;
+  awayShotsOnTarget?: number;
+  homeCorners?: number;
+  awayCorners?: number;
+  homeOffsides?: number;
+  awayOffsides?: number;
+  homeFouls?: number;
+  awayFouls?: number;
 }
 
 export interface PlayerEvent {

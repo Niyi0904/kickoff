@@ -18,7 +18,8 @@ import {
   User,
   UserCheck,
   Globe2,
-  BarChart2
+  BarChart2,
+  Radio
 } from "lucide-react";
 import { useMyLinkedPlayer } from '@/app/hooks/usePlayerLinking';
 import { useAppContext } from "@/app/context/AppDataContext";
@@ -27,6 +28,7 @@ import { usePendingLinkRequests } from '@/app/hooks/usePlayerLinking';
 
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/live", label: "Live", icon: Radio },
   { path: "/teams", label: "Teams", icon: Shield },
   { path: "/players", label: "Players", icon: Users },
   { path: "/stats", label: "Stats", icon: TrendingUp },

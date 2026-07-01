@@ -102,7 +102,7 @@ const TYPO_LINES = [
   { text: "Live.", start: TYPO_START + 29, end: TYPO_START + 54 },
   { text: "Every event captured instantly.", start: TYPO_START + 58, end: TYPO_START + 88 },
   { text: "Real-time competition management.", start: TYPO_START + 92, end: TYPO_START + 122 },
-  { text: "Built for modern football.", start: TYPO_START + 126, end: TOTAL - 10 },
+  { text: "Built for modern football.", start: TYPO_START + 126, end: TOTAL },
 ];
 
 // ── Background ────────────────────────────────────────────────
