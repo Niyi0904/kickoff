@@ -160,6 +160,12 @@ service cloud.firestore {
       allow write: if isLeagueManager();
     }
 
+    // Leagues Collection
+    match /leagues/{leagueId} {
+      allow read:  if true;
+      allow write: if isLeagueManager();
+    }
+
     // ─────────────────────────────────────────────────────────
     // Catch-all
     // ─────────────────────────────────────────────────────────

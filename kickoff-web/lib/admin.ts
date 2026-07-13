@@ -6,6 +6,7 @@ import {
   getDocs, query, where, deleteDoc, serverTimestamp, writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { CURRENT_LEAGUE_ID } from './config';
 
 export type UserRoleType = 'league_manager' | 'team_manager' | 'player' | 'admin' | 'user';
 
@@ -326,5 +327,39 @@ export async function runRoleMigration(): Promise<{ success: boolean; count: num
   } catch (error) {
     console.error('Role migration error:', error);
     return { success: false, count: 0, error };
+  }
+}
+
+export async function createLeagueDocument(): Promise<{ success: boolean; error?: any }> {
+  try {
+    const settingsSnap = await getDoc(doc(db, 'settings', 'league'));
+    if (!settingsSnap.exists()) {
+      return { success: false, error: 'settings/league document not found' };
+    }
+
+    const s = settingsSnap.data();
+    const leagueId = CURRENT_LEAGUE_ID;
+    const now = new Date().toISOString();
+
+    await setDoc(doc(db, 'leagues', leagueId), {
+      id:             leagueId,
+      slug:           'default',
+      name:           s.seasonName || 'Default League',
+      createdAt:      now,
+      seasonName:     s.seasonName     ?? 'Current Season',
+      inviteDeadline: s.inviteDeadline ?? '2099-12-31T23:59:59',
+      leagueVenue:    s.leagueVenue    ?? '',
+      matchDay:       s.matchDay       ?? 'Tuesday',
+      defaultTime:    s.defaultTime    ?? '10:00',
+      pointsWin:      s.pointsWin      ?? 3,
+      pointsDraw:     s.pointsDraw     ?? 1,
+      pointsLoss:     s.pointsLoss     ?? 0,
+      yellowsPerBan:  s.yellowsPerBan  ?? 3,
+    }, { merge: true });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Create league document error:', error);
+    return { success: false, error };
   }
 }

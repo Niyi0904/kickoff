@@ -3,6 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import {
+  ENABLE_LEAGUES_COLLECTION,
+  CURRENT_LEAGUE_ID,
+} from "@/lib/config";
 
 export interface LeagueSettings {
   seasonName:     string;
@@ -17,6 +21,13 @@ export interface LeagueSettings {
   leagueId?:      string | null;
 }
 
+export interface League extends LeagueSettings {
+  id:        string;
+  slug:      string;
+  name:      string;
+  createdAt: any;
+}
+
 export const DEFAULT_SETTINGS: LeagueSettings = {
   seasonName:     'Current Season',
   inviteDeadline: '2099-12-31T23:59:59',
@@ -29,12 +40,7 @@ export const DEFAULT_SETTINGS: LeagueSettings = {
   yellowsPerBan:  3,
 };
 
-async function fetchLeagueSettings(): Promise<LeagueSettings> {
-  const snap = await getDoc(doc(db, 'settings', 'league'));
-  if (!snap.exists()) return DEFAULT_SETTINGS;
-  const d = snap.data();
-
-  // Handle Firestore Timestamp vs ISO String
+function normalizeSettings(d: Record<string, any>): LeagueSettings {
   const inviteDeadline = d.inviteDeadline?.toDate
     ? d.inviteDeadline.toDate().toISOString()
     : d.inviteDeadline || DEFAULT_SETTINGS.inviteDeadline;
@@ -49,13 +55,29 @@ async function fetchLeagueSettings(): Promise<LeagueSettings> {
     pointsDraw:     d.pointsDraw     ?? DEFAULT_SETTINGS.pointsDraw,
     pointsLoss:     d.pointsLoss     ?? DEFAULT_SETTINGS.pointsLoss,
     yellowsPerBan:  d.yellowsPerBan  ?? DEFAULT_SETTINGS.yellowsPerBan,
-    leagueId:       d.leagueId       ?? null,
+    leagueId:       d.leagueId       ?? d.id ?? null,
   };
 }
 
+async function fetchLeagueSettings(): Promise<LeagueSettings> {
+  if (ENABLE_LEAGUES_COLLECTION) {
+    const snap = await getDoc(doc(db, 'leagues', CURRENT_LEAGUE_ID));
+    if (!snap.exists()) return DEFAULT_SETTINGS;
+    return normalizeSettings(snap.data());
+  }
+
+  const snap = await getDoc(doc(db, 'settings', 'league'));
+  if (!snap.exists()) return DEFAULT_SETTINGS;
+  return normalizeSettings(snap.data());
+}
+
 export function useLeagueSettings() {
+  const queryKey = ENABLE_LEAGUES_COLLECTION
+    ? ['leagues', CURRENT_LEAGUE_ID]
+    : ['settings', 'league'];
+
   const { data, isLoading } = useQuery({
-    queryKey: ['settings', 'league'],
+    queryKey,
     queryFn: fetchLeagueSettings,
     staleTime: 1000 * 60 * 10,
   });
@@ -74,4 +96,8 @@ export function useLeagueSettings() {
     defaultTime:   settings.defaultTime,
     yellowsPerBan: settings.yellowsPerBan,
   };
+}
+
+export function useLeague() {
+  return useLeagueSettings();
 }
