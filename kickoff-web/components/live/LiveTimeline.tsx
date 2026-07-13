@@ -115,7 +115,7 @@ export function LiveTimeline({ match, goals, assists, yellowCards, redCards, pla
         minute: c.minute ?? 0,
         type: 'commentary',
         text: c.text,
-        teamId: null,
+        teamId: undefined,
       });
     });
 
