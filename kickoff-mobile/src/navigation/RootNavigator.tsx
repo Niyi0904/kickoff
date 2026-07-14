@@ -19,6 +19,8 @@ import StatsScreen from '../screens/app/StatsScreen';
 import TeamsScreen from '../screens/app/TeamsScreen';
 import PlayersScreen from '../screens/app/PlayersScreen';
 import MatchesScreen from '../screens/app/MatchesScreen';
+import LiveScreen from '../screens/app/LiveScreen';
+import LiveMatchDetailScreen from '../screens/app/LiveMatchDetailScreen';
 import TeamDetailScreen from '../screens/app/TeamDetailScreen';
 import PlayerDetailScreen from '../screens/app/PlayerDetailScreen';
 import MatchDetailScreen from '../screens/app/MatchDetailScreen';
@@ -57,6 +59,7 @@ const AuthNavigator = () => (
 
 const tabIcons: Record<string, string> = {
   Dashboard: '🏠',
+  Live: '📡',
   Standings: '🏆',
   Stats: '📊',
   Teams: '⚽',
@@ -95,6 +98,7 @@ const MainTabs = () => {
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
+      <Tab.Screen name="Live" component={LiveScreen} options={{ title: 'Live' }} />
       <Tab.Screen name="Standings" component={StandingsScreen} options={{ title: 'Standings' }} />
       <Tab.Screen name="Stats" component={StatsScreen} options={{ title: 'Stats' }} />
       <Tab.Screen name="Teams" component={TeamsScreen} options={{ title: 'Teams' }} />
@@ -132,6 +136,7 @@ const AppNavigator = () => {
     <AppStack.Screen name="TeamDetail" component={TeamDetailScreen} options={{ title: 'Team' }} />
     <AppStack.Screen name="PlayerDetail" component={PlayerDetailScreen} options={{ title: 'Player' }} />
     <AppStack.Screen name="MatchDetail" component={MatchDetailScreen} options={{ title: 'Match' }} />
+    <AppStack.Screen name="LiveMatchDetail" component={LiveMatchDetailScreen} options={{ title: 'Live Match', headerShown: false }} />
   </AppStack.Navigator>
   );
 };

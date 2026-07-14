@@ -40,7 +40,7 @@ export interface Player {
 }
 
 // Match Types
-export type MatchStatus = 'upcoming' | 'played' | 'cancelled';
+export type MatchStatus = 'upcoming' | 'live' | 'played' | 'cancelled';
 
 export interface Match {
   id: string;
@@ -63,6 +63,22 @@ export interface Match {
   createdAt: number;
   report?: string;
   keyMoments?: string;
+  // Live match fields
+  matchTimer?: number;
+  stoppageTime?: number;
+  matchPhase?: 'firstHalf' | 'halftime' | 'secondHalf' | 'fulltime';
+  homePossession?: number;
+  awayPossession?: number;
+  homeShots?: number;
+  awayShots?: number;
+  homeShotsOnTarget?: number;
+  awayShotsOnTarget?: number;
+  homeCorners?: number;
+  awayCorners?: number;
+  homeOffsides?: number;
+  awayOffsides?: number;
+  homeFouls?: number;
+  awayFouls?: number;
 }
 
 // Event Types

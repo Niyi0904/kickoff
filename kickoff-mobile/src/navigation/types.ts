@@ -4,6 +4,7 @@ import type { CompositeNavigationProp } from '@react-navigation/native';
 
 export type AppTabParamList = {
   Dashboard: undefined;
+  Live: undefined;
   Standings: undefined;
   Stats: undefined;
   Teams: undefined;
@@ -18,6 +19,7 @@ export type AppStackParamList = {
   TeamDetail: { teamId: string };
   PlayerDetail: { playerId: string };
   MatchDetail: { matchId: string };
+  LiveMatchDetail: { matchId: string };
   AdminHome: undefined;
   AdminUsers: undefined;
   AdminLinkRequests: undefined;

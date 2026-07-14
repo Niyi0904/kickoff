@@ -107,9 +107,9 @@ export function generateFixtures(
   weekCount:   number,
   startWeek:   number   = 1,
   matchDay:    string   = 'Tuesday',
-  defaultTime: string   = '10:00',
+  defaultTime: string   = '9:30',
   startDate?:  string,
-  leagueName:  string   = 'Seasonal League'
+  leagueName:  string   = 'Focus Baller League'
 ): GeneratedFixture[] {
   const fixtures: GeneratedFixture[] = [];
   const teamList = [...teams];
@@ -123,7 +123,7 @@ export function generateFixtures(
   const matchDays = getNextMatchDays(weekCount, matchDay, startDate);
 
   // Spread matches across common time slots
-  const timeSlots = ['8:00', '10:00', '12:00', '14:00'];
+  const timeSlots = ['9:30', '10:40', '11:50'];
 
   for (let weekIndex = 0; weekIndex < weekCount; weekIndex++) {
     const scheduledDate  = matchDays[weekIndex];
