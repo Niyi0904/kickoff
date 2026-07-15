@@ -88,6 +88,7 @@ export function useAuth() {
         setRole(null);
         setTeamId(null);
         setPlayerId(null);
+        setLeagueId(null);
 
         const info = await getUserRoleInfo(currentUser.uid);
 
@@ -103,6 +104,7 @@ export function useAuth() {
         setRole(null);
         setTeamId(null);
         setPlayerId(null);
+        setLeagueId(null);
       }
 
       setLoading(false);
@@ -170,6 +172,7 @@ export function useAuth() {
       setRole(null);
       setTeamId(null);
       setPlayerId(null);
+      setLeagueId(null);
       currentUidRef.current = null;
       await firebaseSignOut(auth);
     } catch (error: any) {

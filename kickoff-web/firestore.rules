@@ -12,21 +12,37 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Read the user's role from the user_roles collection
+    // Read the user's full role data from the user_roles collection
+    function getUserRoleData() {
+      return get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data;
+    }
+
+    // Read the user's role string
     function getUserRole() {
-      return get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data.role;
+      return getUserRoleData().role;
     }
 
     // Is the requesting user a league manager (or legacy admin)?
+    // Unscoped — used only for user_roles/{uid} (the source collection)
     function isLeagueManager() {
       return isAuthenticated() && (getUserRole() == 'league_manager' || getUserRole() == 'admin');
     }
 
-    // Is the requesting user a team manager of a specific team?
-    function isTeamManagerOf(teamId) {
+    // Is the requesting user a league manager of a specific league?
+    function isLeagueManagerOf(leagueId) {
+      return isLeagueManager() && getUserRoleData().leagueId == leagueId;
+    }
+
+    // Is the requesting user a team manager of a specific team (unscoped by league)?
+    function isTeamManagerOfTeam(teamId) {
       return isAuthenticated() && 
         getUserRole() == 'team_manager' && 
-        get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data.teamId == teamId;
+        getUserRoleData().teamId == teamId;
+    }
+
+    // Is the requesting user a team manager of a specific team within a specific league?
+    function isTeamManagerOf(leagueId, teamId) {
+      return isTeamManagerOfTeam(teamId) && getUserRoleData().leagueId == leagueId;
     }
 
     // Is the requesting user reading/writing their own document?
@@ -35,45 +51,50 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────────────────
+    // Leagues Collection
+    // ─────────────────────────────────────────────────────────
+
+    match /leagues/{leagueId} {
+      allow read:  if true;
+      allow write: if isLeagueManagerOf(leagueId);
+    }
+
+    // ─────────────────────────────────────────────────────────
     // League Data Collections
     // ─────────────────────────────────────────────────────────
 
     match /teams/{teamId} {
       allow read:  if true;
-      // Create: league_manager or team_manager can create
-      // Enforce team_manager's team must have approved == false
-      // Enforce league_manager can set approved == true
       allow create: if isAuthenticated() && 
         (getUserRole() == 'league_manager' || getUserRole() == 'admin' || getUserRole() == 'team_manager') &&
         ((getUserRole() == 'league_manager' || getUserRole() == 'admin') ? 
           (request.resource.data.approved == true) : 
-          (request.resource.data.approved == false));
-      // Update: league_manager can update any field including approved
-      // team_manager can update their team but NOT the approved field
-      allow update: if isLeagueManager() || 
-        (isTeamManagerOf(teamId) && resource.data.approved == request.resource.data.approved);
-      // Delete: only league manager
-      allow delete: if isLeagueManager();
+          (request.resource.data.approved == false)) &&
+        (isLeagueManagerOf(request.resource.data.leagueId) || isTeamManagerOf(request.resource.data.leagueId, teamId));
+      allow update: if isLeagueManagerOf(resource.data.leagueId) || 
+        (isTeamManagerOf(resource.data.leagueId, teamId) && resource.data.approved == request.resource.data.approved);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     match /players/{playerId} {
       allow read:  if true;
-      // Team managers can add/edit/delete players for their own team
-      allow create: if isLeagueManager() || 
-                    isTeamManagerOf(request.resource.data.team_id) || 
-                    isTeamManagerOf(request.resource.data.teamId);
-      allow update: if isLeagueManager() || 
-                    ((isTeamManagerOf(resource.data.team_id) || isTeamManagerOf(resource.data.teamId)) && 
-                     (isTeamManagerOf(request.resource.data.team_id) || isTeamManagerOf(request.resource.data.teamId)));
-      allow delete: if isLeagueManager() || 
-                    isTeamManagerOf(resource.data.team_id) || 
-                    isTeamManagerOf(resource.data.teamId);
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId) || 
+                    isTeamManagerOf(request.resource.data.leagueId, request.resource.data.team_id) || 
+                    isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId) || 
+                    ((isTeamManagerOf(resource.data.leagueId, resource.data.team_id) || isTeamManagerOf(resource.data.leagueId, resource.data.teamId)) && 
+                     (isTeamManagerOf(request.resource.data.leagueId, request.resource.data.team_id) || isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId)));
+      allow delete: if isLeagueManagerOf(resource.data.leagueId) || 
+                    isTeamManagerOf(resource.data.leagueId, resource.data.team_id) || 
+                    isTeamManagerOf(resource.data.leagueId, resource.data.teamId);
       allow list: if isLeagueManager();
     }
 
     match /matches/{matchId} {
       allow read:  if true;
-      allow write: if isLeagueManager(); // Team managers cannot modify matches
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     // ─────────────────────────────────────────────────────────
@@ -83,27 +104,37 @@ service cloud.firestore {
 
     match /goals/{goalId} {
       allow read:  if true;
-      allow write: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     match /assists/{assistId} {
       allow read:  if true;
-      allow write: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     match /yellow_cards/{cardId} {
       allow read:  if true;
-      allow write: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     match /red_cards/{cardId} {
       allow read:  if true;
-      allow write: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     match /match_attendance/{attendanceId} {
       allow read:  if true;
-      allow write: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     // ─────────────────────────────────────────────────────────
@@ -112,7 +143,9 @@ service cloud.firestore {
 
     match /suspensions/{suspensionId} {
       allow read: if isAuthenticated();
-      allow write: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     // ─────────────────────────────────────────────────────────
@@ -122,8 +155,8 @@ service cloud.firestore {
     match /link_requests/{requestId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
-      allow update: if isLeagueManager();
-      allow delete: if isLeagueManager();
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     // ─────────────────────────────────────────────────────────
@@ -149,15 +182,17 @@ service cloud.firestore {
     // user_invites
     match /user_invites/{inviteCode} {
       allow read:   if isAuthenticated();
-      allow create: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
       allow update: if isAuthenticated();
-      allow delete: if isLeagueManager();
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     // League Settings
     match /settings/{docId} {
       allow read:  if true;
-      allow write: if isLeagueManager();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
     // Leagues Collection

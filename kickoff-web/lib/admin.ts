@@ -6,18 +6,7 @@ import {
   getDocs, query, where, deleteDoc, serverTimestamp, writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { CURRENT_LEAGUE_ID } from './config';
-
-export type UserRoleType = 'league_manager' | 'team_manager' | 'player' | 'admin' | 'user';
-
-export interface UserRoleDoc {
-  role: UserRoleType;
-  teamId?: string | null;
-  playerId?: string | null;
-  leagueId?: string | null;
-  createdAt?: any;
-  updatedAt?: any;
-}
+import { LEAGUE_ID } from './firestore';
 
 export function generateInviteCode(): string {
   return Math.random().toString(36).substr(2, 9).toUpperCase();
@@ -151,7 +140,7 @@ export async function completeRegistration(inviteCode: string, userId: string): 
     role: invite.role ?? 'player',
     playerId: invite.linkedPlayerId ?? null,
     teamId: teamId,
-    leagueId,
+    leagueId: LEAGUE_ID,
     updatedAt: serverTimestamp()
   });
 
@@ -194,7 +183,7 @@ export async function linkExistingUserToPlayer(
     batch.set(doc(db, 'user_roles', userId), {
       playerId: playerId,
       teamId: teamId,
-      leagueId,
+      leagueId: LEAGUE_ID,
       updatedAt: serverTimestamp()
     }, { merge: true });
 
@@ -237,8 +226,8 @@ export async function isUserRegistered(email: string): Promise<boolean> {
   return !snap.empty;
 }
 
-export async function setUserRole(userId: string, role: UserRoleType): Promise<void> {
-  await setDoc(doc(db, 'user_roles', userId), { role, updatedAt: serverTimestamp() }, { merge: true });
+export async function setUserRole(userId: string, role: 'league_manager' | 'team_manager' | 'player'): Promise<void> {
+  await setDoc(doc(db, 'user_roles', userId), { role, leagueId: LEAGUE_ID, updatedAt: serverTimestamp() }, { merge: true });
 }
 
 export async function getAllUsersWithRoles(): Promise<any[]> {
@@ -307,13 +296,13 @@ export async function runRoleMigration(): Promise<{ success: boolean; count: num
         }
       }
 
-      // Update if role, teamId, playerId, or leagueId changes (so we backfill all missing fields)
-      if (newRole !== currentRole || data.playerId !== playerId || data.teamId !== teamId || data.leagueId !== leagueId) {
+      // Update if role, teamId, or playerId changes (so we backfill all missing teamIds/playerIds)
+      if (newRole !== currentRole || data.playerId !== playerId || data.teamId !== teamId || !data.leagueId) {
         batch.set(doc(db, 'user_roles', userId), {
           role: newRole,
           playerId,
           teamId,
-          leagueId,
+          leagueId: LEAGUE_ID,
           updatedAt: serverTimestamp()
         }, { merge: true });
         count++;
