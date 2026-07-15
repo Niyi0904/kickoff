@@ -141,7 +141,14 @@ export function LiveLineups({ match, players, goals, assists, yellowCards, redCa
         <div className="grid gap-1.5">
           {homeLineup.length > 0 ? (
             homeLineup.map(player => (
-              <LineupPlayerRow key={player.id} {...player} />
+              <LineupPlayerRow
+                key={player.id}
+                player={player}
+                goalsCount={player.goalsCount}
+                assistsCount={player.assistsCount}
+                yellowsCount={player.yellowsCount}
+                redsCount={player.redsCount}
+              />
             ))
           ) : (
             <p className="text-xs text-muted-foreground py-4 text-center italic">No lineup data available.</p>
@@ -163,7 +170,14 @@ export function LiveLineups({ match, players, goals, assists, yellowCards, redCa
         <div className="grid gap-1.5">
           {awayLineup.length > 0 ? (
             awayLineup.map(player => (
-              <LineupPlayerRow key={player.id} {...player} />
+              <LineupPlayerRow
+                key={player.id}
+                player={player}
+                goalsCount={player.goalsCount}
+                assistsCount={player.assistsCount}
+                yellowsCount={player.yellowsCount}
+                redsCount={player.redsCount}
+              />
             ))
           ) : (
             <p className="text-xs text-muted-foreground py-4 text-center italic">No lineup data available.</p>

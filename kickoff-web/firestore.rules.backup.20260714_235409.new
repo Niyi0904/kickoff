@@ -1,0 +1,206 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────
+    // Helper Functions
+    // ─────────────────────────────────────────────────────────
+
+    // Is the requesting user authenticated at all?
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Read the user's full role data from the user_roles collection
+    function getUserRoleData() {
+      return get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data;
+    }
+
+    // Read the user's role string
+    function getUserRole() {
+      return getUserRoleData().role;
+    }
+
+    // Is the requesting user a league manager (or legacy admin)?
+    // Unscoped — used only for user_roles/{uid} (the source collection)
+    function isLeagueManager() {
+      return isAuthenticated() && (getUserRole() == 'league_manager' || getUserRole() == 'admin');
+    }
+
+    // Is the requesting user a league manager of a specific league?
+    function isLeagueManagerOf(leagueId) {
+      return isLeagueManager() && getUserRoleData().leagueId == leagueId;
+    }
+
+    // Is the requesting user a team manager of a specific team (unscoped by league)?
+    function isTeamManagerOfTeam(teamId) {
+      return isAuthenticated() && 
+        getUserRole() == 'team_manager' && 
+        getUserRoleData().teamId == teamId;
+    }
+
+    // Is the requesting user a team manager of a specific team within a specific league?
+    function isTeamManagerOf(leagueId, teamId) {
+      return isTeamManagerOfTeam(teamId) && getUserRoleData().leagueId == leagueId;
+    }
+
+    // Is the requesting user reading/writing their own document?
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Leagues Collection
+    // ─────────────────────────────────────────────────────────
+
+    match /leagues/{leagueId} {
+      allow read:  if true;
+      allow write: if isLeagueManagerOf(leagueId);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // League Data Collections
+    // ─────────────────────────────────────────────────────────
+
+    match /teams/{teamId} {
+      allow read:  if true;
+      allow create: if isAuthenticated() && 
+        (getUserRole() == 'league_manager' || getUserRole() == 'admin' || getUserRole() == 'team_manager') &&
+        ((getUserRole() == 'league_manager' || getUserRole() == 'admin') ? 
+          (request.resource.data.approved == true) : 
+          (request.resource.data.approved == false)) &&
+        (isLeagueManagerOf(request.resource.data.leagueId) || isTeamManagerOf(request.resource.data.leagueId, teamId));
+      allow update: if isLeagueManagerOf(resource.data.leagueId) || 
+        (isTeamManagerOf(resource.data.leagueId, teamId) && resource.data.approved == request.resource.data.approved);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    match /players/{playerId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId) || 
+                    isTeamManagerOf(request.resource.data.leagueId, request.resource.data.team_id) || 
+                    isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId) || 
+                    ((isTeamManagerOf(resource.data.leagueId, resource.data.team_id) || isTeamManagerOf(resource.data.leagueId, resource.data.teamId)) && 
+                     (isTeamManagerOf(request.resource.data.leagueId, request.resource.data.team_id) || isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId)));
+      allow delete: if isLeagueManagerOf(resource.data.leagueId) || 
+                    isTeamManagerOf(resource.data.leagueId, resource.data.team_id) || 
+                    isTeamManagerOf(resource.data.leagueId, resource.data.teamId);
+      allow list: if isLeagueManager();
+    }
+
+    match /matches/{matchId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Match Event Collections
+    // Only league managers can alter match events
+    // ─────────────────────────────────────────────────────────
+
+    match /goals/{goalId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    match /assists/{assistId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    match /yellow_cards/{cardId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    match /red_cards/{cardId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    match /match_attendance/{attendanceId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Suspension Logics (League Manager Only)
+    // ─────────────────────────────────────────────────────────
+
+    match /suspensions/{suspensionId} {
+      allow read: if isAuthenticated();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // PLAYER PROFILE AUTH LINKING
+    // ─────────────────────────────────────────────────────────
+
+    match /link_requests/{requestId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // User Management Collections
+    // ─────────────────────────────────────────────────────────
+
+    // Users can read and update their own profile.
+    match /users/{uid} {
+      allow read:   if isOwner(uid) || isLeagueManager();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid);
+      allow delete: if isLeagueManager();
+      allow list: if isLeagueManager();
+    }
+
+    // user_roles: users can read their own role. League managers can read/write all.
+    match /user_roles/{uid} {
+      allow read:  if isOwner(uid) || isLeagueManager();
+      allow write: if isLeagueManager();
+      allow list: if isLeagueManager();
+    }
+
+    // user_invites
+    match /user_invites/{inviteCode} {
+      allow read:   if isAuthenticated();
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isAuthenticated();
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    // League Settings
+    match /settings/{docId} {
+      allow read:  if true;
+      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
+      allow update: if isLeagueManagerOf(resource.data.leagueId);
+      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Catch-all
+    // ─────────────────────────────────────────────────────────
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
