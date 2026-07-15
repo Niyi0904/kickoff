@@ -34,6 +34,7 @@ service cloud.firestore {
     function isLeagueManagerOf(leagueId) {
       return isAuthenticated() &&
         getUserRole() in ["league_manager", "admin"] &&
+        getUserRoleData() != null &&
         getUserRoleData().leagueId == leagueId;
     }
 
@@ -41,6 +42,7 @@ service cloud.firestore {
     function isTeamManagerOfTeam(teamId) {
       return isAuthenticated() &&
         getUserRole() == "team_manager" &&
+        getUserRoleData() != null &&
         getUserRoleData().teamId == teamId;
     }
 
@@ -48,6 +50,7 @@ service cloud.firestore {
     function isTeamManagerOf(leagueId, teamId) {
       return isAuthenticated() &&
         getUserRole() == "team_manager" &&
+        getUserRoleData() != null &&
         getUserRoleData().teamId == teamId &&
         getUserRoleData().leagueId == leagueId;
     }

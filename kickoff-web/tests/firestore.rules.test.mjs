@@ -38,45 +38,6 @@ beforeEach(async () => {
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-// async function seedUserRole(uid, role, leagueId, teamId = null) {
-//   await testEnv.withSecurityRulesDisabled(async (db) => {
-//     await setDoc(doc(db, 'user_roles', uid), { role, leagueId, teamId });
-//   });
-// }
-
-// async function seedDocument(collectionPath, docId, data) {
-//   await testEnv.withSecurityRulesDisabled(async (db) => {
-//     await setDoc(doc(db, collectionPath, docId), data);
-//   });
-// }
-
-// 2
-// async function seedUserRole(uid, role, leagueId, teamId = null) {
-//   await testEnv.withSecurityRulesDisabled(async (context) => {
-//     const db = context.firestore();
-
-//     await setDoc(
-//       doc(db, "user_roles", uid),
-//       {
-//         role,
-//         leagueId,
-//         teamId,
-//       }
-//     );
-//   });
-// }
-
-// async function seedDocument(collectionPath, docId, data) {
-//   await testEnv.withSecurityRulesDisabled(async (context) => {
-//     const db = context.firestore();
-
-//     await setDoc(
-//       doc(db, collectionPath, docId),
-//       data
-//     );
-//   });
-// }
-
 async function seedUserRole(uid, role, leagueId, teamId = null) {
   await testEnv.withSecurityRulesDisabled(async (context) => {
     const db = context.firestore();
@@ -110,7 +71,8 @@ function unauthed() {
 describe("Single-league — league_manager access", () => {
   let lm;
 
-  before(async () => {
+  beforeEach(async function () {
+    this.timeout(30000);
     await seedUserRole("lm1", "league_manager", LEAGUE_A);
     await seedDocument("leagues", LEAGUE_A, { name: "Default League" });
     await seedDocument("teams", "teamA1", {
@@ -318,7 +280,8 @@ describe("Single-league — league_manager access", () => {
 describe("Single-league — team_manager access", () => {
   let tm;
 
-  before(async () => {
+  beforeEach(async function () {
+    this.timeout(30000);
     await seedUserRole("tm1", "team_manager", LEAGUE_A, "teamA1");
     await seedDocument("teams", "teamA1", {
       name: "Team A1",
@@ -474,7 +437,8 @@ describe("Single-league — team_manager access", () => {
 describe("Single-league — player access", () => {
   let pl;
 
-  before(async () => {
+  beforeEach(async function () {
+    this.timeout(30000);
     await seedUserRole("pl1", "player", LEAGUE_A);
     await seedDocument("teams", "teamA1", {
       name: "Team A1",
@@ -568,7 +532,8 @@ describe("Single-league — player access", () => {
 describe("Single-league — unauthenticated access", () => {
   let ua;
 
-  before(async () => {
+  beforeEach(async function () {
+    this.timeout(30000);
     await seedDocument("teams", "teamA1", {
       name: "Team A1",
       leagueId: LEAGUE_A,
@@ -644,7 +609,8 @@ describe("Single-league — unauthenticated access", () => {
 describe("Two-league isolation", () => {
   let lmB, tmB;
 
-  before(async () => {
+  beforeEach(async function () {
+    this.timeout(30000);
     // Seed user_roles for League B users
     await seedUserRole("lmB", "league_manager", LEAGUE_B);
     await seedUserRole("tmB", "team_manager", LEAGUE_B, "teamB1");
@@ -827,7 +793,8 @@ describe("Two-league isolation", () => {
   describe("League A league_manager CAN write their own data but NOT League B", () => {
     let lmA;
 
-    before(async () => {
+    beforeEach(async function () {
+      this.timeout(30000);
       await seedUserRole("lmA", "league_manager", LEAGUE_A);
       lmA = authContext("lmA");
     });
@@ -873,7 +840,8 @@ describe("Two-league isolation", () => {
 describe("user_roles collection — unchanged behavior", () => {
   let lm, pl;
 
-  before(async () => {
+  beforeEach(async function () {
+    this.timeout(30000);
     await seedUserRole("lm_u", "league_manager", LEAGUE_A);
     await seedUserRole("pl_u", "player", LEAGUE_A);
     await seedDocument("user_roles", "other", {
