@@ -172,10 +172,10 @@ service cloud.firestore {
       allow list: if isLeagueManager();
     }
 
-    // user_roles: users can read their own role. League managers can read/write all.
+    // user_roles: users can read their own role. League managers can manage role documents for their own league.
     match /user_roles/{uid} {
       allow read:  if isOwner(uid) || isLeagueManager();
-      allow write: if isLeagueManager();
+      allow write: if isLeagueManagerOf(request.resource.data.leagueId);
       allow list: if isLeagueManager();
     }
 
