@@ -172,11 +172,13 @@ service cloud.firestore {
       allow list: if isLeagueManager();
     }
 
-    // user_roles: users can read their own role. League managers can manage role documents for their own league.
+    // user_roles: users can create their own initial role document, and league managers can manage role documents for their own league.
     match /user_roles/{uid} {
-      allow read:  if isOwner(uid) || isLeagueManager();
-      allow write: if isLeagueManagerOf(request.resource.data.leagueId);
-      allow list: if isLeagueManager();
+      allow read:   if isOwner(uid) || isLeagueManager();
+      allow create: if (isOwner(uid) && request.resource.data.role in ['player', 'team_manager'])
+                    || isLeagueManagerOf(request.resource.data.leagueId);
+      allow update, delete: if isLeagueManagerOf(resource.data.leagueId);
+      allow list:   if isLeagueManager();
     }
 
     // user_invites
