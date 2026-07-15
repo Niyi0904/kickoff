@@ -1,6 +1,8 @@
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 
+export const LEAGUE_ID = 'default';
+
 export async function getUserRole(userId: string): Promise<string | null> {
   try {
     const userDoc = await getDoc(doc(db, 'user_roles', userId));
@@ -32,6 +34,7 @@ export async function createUserDocument(userId: string, email: string, displayN
     // Create user role entry (default to 'user')
     await setDoc(doc(db, 'user_roles', userId), {
       role: 'user',
+      leagueId: LEAGUE_ID,
       createdAt: serverTimestamp(),
     });
   } catch (error) {

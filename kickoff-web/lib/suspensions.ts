@@ -26,6 +26,7 @@ export interface Suspension {
   active:         boolean;
   status:         SuspensionStatus;
   createdAt:      any;
+  leagueId?:      string | null;
   overriddenBy?:  string;   // admin UID who overrode
   overrideNote?:  string;   // reason for override
   overriddenAt?:  any;
@@ -97,6 +98,17 @@ export async function createSuspension(
   triggerMatchId: string,
   matchesBanned:  number = 1,
 ): Promise<string> {
+  let leagueId: string | null = null;
+  const matchSnap = await getDoc(doc(db, 'matches', triggerMatchId));
+  if (matchSnap.exists()) {
+    leagueId = matchSnap.data()?.leagueId ?? null;
+  }
+
+  if (!leagueId) {
+    const playerSnap = await getDoc(doc(db, 'players', playerId));
+    leagueId = playerSnap.exists() ? playerSnap.data()?.leagueId ?? null : null;
+  }
+
   const ref = await addDoc(collection(db, 'suspensions'), {
     playerId,
     reason,
@@ -105,6 +117,7 @@ export async function createSuspension(
     matchesServed: 0,
     active:        true,
     status:        'active' as SuspensionStatus,
+    leagueId,
     createdAt:     serverTimestamp(),
   });
   return ref.id;

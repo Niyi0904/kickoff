@@ -1,17 +1,57 @@
 import { NextResponse } from 'next/server';
 import {
-  collection, getDocs, writeBatch, doc, serverTimestamp,
+  collection, getDocs, writeBatch, doc, serverTimestamp, getDoc, setDoc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
+const LEAGUE_COLLECTIONS = [
+  'teams',
+  'players',
+  'matches',
+  'goals',
+  'assists',
+  'yellow_cards',
+  'red_cards',
+  'match_attendance',
+  'suspensions',
+  'match_records',
+] as const;
+
+async function ensureLeagueId(): Promise<string> {
+  const settingsRef = doc(db, 'settings', 'league');
+  const settingsSnap = await getDoc(settingsRef);
+  const existingLeagueId = settingsSnap.exists() ? settingsSnap.data()?.leagueId : null;
+  if (existingLeagueId) return existingLeagueId;
+  const defaultLeagueId = 'default';
+  await setDoc(settingsRef, { leagueId: defaultLeagueId }, { merge: true });
+  return defaultLeagueId;
+}
+
+async function backfillCollection(collectionName: string, leagueId: string) {
+  const snap = await getDocs(collection(db, collectionName));
+  const docs = snap.docs.filter((docSnap) => docSnap.data()?.leagueId == null);
+  const chunkSize = 400;
+
+  for (let i = 0; i < docs.length; i += chunkSize) {
+    const batch = writeBatch(db);
+    docs.slice(i, i + chunkSize).forEach((docSnap) => {
+      batch.set(docSnap.ref, { leagueId }, { merge: true });
+    });
+    await batch.commit();
+  }
+}
+
 export async function POST() {
   try {
+    const leagueId = await ensureLeagueId();
+    await Promise.all(LEAGUE_COLLECTIONS.map((collectionName) => backfillCollection(collectionName, leagueId)));
+
     const rolesSnap = await getDocs(collection(db, 'user_roles'));
     const playersSnap = await getDocs(collection(db, 'players'));
-    const batch = writeBatch(db);
-    let count = 0;
 
     const players = playersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const batch = writeBatch(db);
+    let count = 0;
 
     for (const roleDoc of rolesSnap.docs) {
       const userId = roleDoc.id;
@@ -20,12 +60,13 @@ export async function POST() {
       let newRole = currentRole;
       let playerId = data.playerId ?? null;
       let teamId = data.teamId ?? null;
+      let currentLeagueId = data.leagueId ?? null;
 
-      // Find if this user is linked to a player profile
       const linkedPlayer: any = players.find((p: any) => p.linkedUserId === userId);
       if (linkedPlayer) {
         playerId = linkedPlayer.id;
         teamId = linkedPlayer.team_id ?? linkedPlayer.teamId ?? null;
+        currentLeagueId = currentLeagueId ?? linkedPlayer.leagueId ?? null;
       }
 
       if (currentRole === 'admin') {
@@ -38,12 +79,12 @@ export async function POST() {
         }
       }
 
-      // Update if role, teamId, or playerId changes
-      if (newRole !== currentRole || data.playerId !== playerId || data.teamId !== teamId) {
+      if (newRole !== currentRole || data.playerId !== playerId || data.teamId !== teamId || data.leagueId !== currentLeagueId) {
         batch.set(doc(db, 'user_roles', userId), {
           role: newRole,
           playerId,
           teamId,
+          leagueId: currentLeagueId,
           updatedAt: serverTimestamp()
         }, { merge: true });
         count++;

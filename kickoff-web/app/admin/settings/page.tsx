@@ -193,6 +193,7 @@ function SettingsContent() {
                 pointsDraw: Number(pointsDraw),
                 pointsLoss: Number(pointsLoss),
                 yellowsPerBan: Number(yellowsPerBan),
+                leagueId: settings?.leagueId ?? 'default',
             }, { merge: true });
 
             // Invalidate the settings cache so all components get fresh values

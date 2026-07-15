@@ -14,45 +14,35 @@ service cloud.firestore {
 
     // Read the user's full role data from the user_roles collection
     function getUserRoleData() {
-      return exists(/databases/$(database)/documents/user_roles/$(request.auth.uid))
-        ? get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data
-        : null;
+      return get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data;
     }
 
     // Read the user's role string
     function getUserRole() {
-      return getUserRoleData() != null ? getUserRoleData().role : null;
+      return getUserRoleData().role;
     }
 
     // Is the requesting user a league manager (or legacy admin)?
+    // Unscoped — used only for user_roles/{uid} (the source collection)
     function isLeagueManager() {
-      return isAuthenticated() &&
-        getUserRole() in ["league_manager", "admin"];
+      return isAuthenticated() && (getUserRole() == 'league_manager' || getUserRole() == 'admin');
     }
 
     // Is the requesting user a league manager of a specific league?
     function isLeagueManagerOf(leagueId) {
-      return isAuthenticated() &&
-        getUserRole() in ["league_manager", "admin"] &&
-        getUserRoleData() != null &&
-        getUserRoleData().leagueId == leagueId;
+      return isLeagueManager() && getUserRoleData().leagueId == leagueId;
     }
 
     // Is the requesting user a team manager of a specific team (unscoped by league)?
     function isTeamManagerOfTeam(teamId) {
-      return isAuthenticated() &&
-        getUserRole() == "team_manager" &&
-        getUserRoleData() != null &&
+      return isAuthenticated() && 
+        getUserRole() == 'team_manager' && 
         getUserRoleData().teamId == teamId;
     }
 
     // Is the requesting user a team manager of a specific team within a specific league?
     function isTeamManagerOf(leagueId, teamId) {
-      return isAuthenticated() &&
-        getUserRole() == "team_manager" &&
-        getUserRoleData() != null &&
-        getUserRoleData().teamId == teamId &&
-        getUserRoleData().leagueId == leagueId;
+      return isTeamManagerOfTeam(teamId) && getUserRoleData().leagueId == leagueId;
     }
 
     // Is the requesting user reading/writing their own document?
@@ -81,9 +71,8 @@ service cloud.firestore {
           (request.resource.data.approved == true) : 
           (request.resource.data.approved == false)) &&
         (isLeagueManagerOf(request.resource.data.leagueId) || isTeamManagerOf(request.resource.data.leagueId, teamId));
-      allow update: if resource.data != null && 
-        (isLeagueManagerOf(resource.data.leagueId) || 
-        (isTeamManagerOf(resource.data.leagueId, teamId) && resource.data.approved == request.resource.data.approved));
+      allow update: if isLeagueManagerOf(resource.data.leagueId) || 
+        (isTeamManagerOf(resource.data.leagueId, teamId) && resource.data.approved == request.resource.data.approved);
       allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
@@ -183,13 +172,11 @@ service cloud.firestore {
       allow list: if isLeagueManager();
     }
 
-    // user_roles: users can create their own initial role document, and league managers can manage role documents for their own league.
+    // user_roles: users can read their own role. League managers can read/write all.
     match /user_roles/{uid} {
-      allow read:   if isOwner(uid) || isLeagueManager();
-      allow create: if (isOwner(uid) && request.resource.data.role in ['player', 'team_manager'])
-                    || isLeagueManagerOf(request.resource.data.leagueId);
-      allow update, delete: if isLeagueManagerOf(resource.data.leagueId);
-      allow list:   if isLeagueManager();
+      allow read:  if isOwner(uid) || isLeagueManager();
+      allow write: if isLeagueManager();
+      allow list: if isLeagueManager();
     }
 
     // user_invites

@@ -6,9 +6,20 @@ import {
   getDocs, query, where, deleteDoc, serverTimestamp, writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { LEAGUE_ID } from './firestore';
 
 export function generateInviteCode(): string {
   return Math.random().toString(36).substr(2, 9).toUpperCase();
+}
+
+export async function getUserLeagueId(userId: string): Promise<string | null> {
+  try {
+    const snap = await getDoc(doc(db, 'user_roles', userId));
+    return snap.exists() ? snap.data()?.leagueId ?? null : null;
+  } catch (error) {
+    console.error('Could not read user leagueId for', userId, error);
+    return null;
+  }
 }
 
 async function getInviteDeadlineMs(): Promise<number> {
@@ -74,11 +85,13 @@ export async function createUserInvite(
     }
 
     if (playerMode === 'create_new' && newPlayer) {
+      const creatorLeagueId = await getUserLeagueId(createdByAdminId);
       const newPlayerRef = doc(collection(db, 'players'));
       batch.set(newPlayerRef, {
         name: newPlayer.name, position: newPlayer.position,
         number: newPlayer.number, team_id: newPlayer.teamId,
         is_manager: false, photo: null, linkedUserId: null,
+        leagueId: creatorLeagueId,
         createdAt: serverTimestamp(),
       });
       linkedPlayerId = newPlayerRef.id;
@@ -109,18 +122,25 @@ export async function completeRegistration(inviteCode: string, userId: string): 
   });
 
   let teamId: string | null = null;
+  let leagueId: string | null = null;
   if (invite.linkedPlayerId) {
     const playerSnap = await getDoc(doc(db, 'players', invite.linkedPlayerId));
     if (playerSnap.exists()) {
       const playerData = playerSnap.data();
       teamId = playerData?.team_id ?? playerData?.teamId ?? null;
+      leagueId = playerData?.leagueId ?? null;
     }
+  }
+
+  if (!leagueId) {
+    leagueId = await getUserLeagueId(invite.createdByAdminId);
   }
 
   batch.set(doc(db, 'user_roles', userId), {
     role: invite.role ?? 'player',
     playerId: invite.linkedPlayerId ?? null,
     teamId: teamId,
+    leagueId: LEAGUE_ID,
     updatedAt: serverTimestamp()
   });
 
@@ -152,10 +172,18 @@ export async function linkExistingUserToPlayer(
     const batch = writeBatch(db);
     batch.update(doc(db, 'players', playerId), { linkedUserId: userId });
     
-    // Also update user roles with playerId and teamId
+    const playerLeagueId = playerSnap.data()?.leagueId ?? null;
+    let leagueId = playerLeagueId;
+    if (!leagueId && teamId) {
+      const teamSnap = await getDoc(doc(db, 'teams', teamId));
+      leagueId = teamSnap.exists() ? teamSnap.data()?.leagueId ?? null : null;
+    }
+
+    // Also update user roles with playerId, teamId, and leagueId
     batch.set(doc(db, 'user_roles', userId), {
       playerId: playerId,
       teamId: teamId,
+      leagueId: LEAGUE_ID,
       updatedAt: serverTimestamp()
     }, { merge: true });
 
@@ -199,7 +227,7 @@ export async function isUserRegistered(email: string): Promise<boolean> {
 }
 
 export async function setUserRole(userId: string, role: 'league_manager' | 'team_manager' | 'player'): Promise<void> {
-  await setDoc(doc(db, 'user_roles', userId), { role, updatedAt: serverTimestamp() }, { merge: true });
+  await setDoc(doc(db, 'user_roles', userId), { role, leagueId: LEAGUE_ID, updatedAt: serverTimestamp() }, { merge: true });
 }
 
 export async function getAllUsersWithRoles(): Promise<any[]> {
@@ -248,12 +276,14 @@ export async function runRoleMigration(): Promise<{ success: boolean; count: num
       let newRole = currentRole;
       let playerId = data.playerId ?? null;
       let teamId = data.teamId ?? null;
+      let leagueId = data.leagueId ?? null;
 
       // Find if this user is linked to a player profile
       const linkedPlayer: any = players.find((p: any) => p.linkedUserId === userId);
       if (linkedPlayer) {
         playerId = linkedPlayer.id;
         teamId = linkedPlayer.team_id ?? linkedPlayer.teamId ?? null;
+        leagueId = leagueId ?? linkedPlayer.leagueId ?? null;
       }
 
       if (currentRole === 'admin') {
@@ -267,11 +297,12 @@ export async function runRoleMigration(): Promise<{ success: boolean; count: num
       }
 
       // Update if role, teamId, or playerId changes (so we backfill all missing teamIds/playerIds)
-      if (newRole !== currentRole || data.playerId !== playerId || data.teamId !== teamId) {
+      if (newRole !== currentRole || data.playerId !== playerId || data.teamId !== teamId || !data.leagueId) {
         batch.set(doc(db, 'user_roles', userId), {
           role: newRole,
           playerId,
           teamId,
+          leagueId: LEAGUE_ID,
           updatedAt: serverTimestamp()
         }, { merge: true });
         count++;
@@ -285,5 +316,39 @@ export async function runRoleMigration(): Promise<{ success: boolean; count: num
   } catch (error) {
     console.error('Role migration error:', error);
     return { success: false, count: 0, error };
+  }
+}
+
+export async function createLeagueDocument(): Promise<{ success: boolean; error?: any }> {
+  try {
+    const settingsSnap = await getDoc(doc(db, 'settings', 'league'));
+    if (!settingsSnap.exists()) {
+      return { success: false, error: 'settings/league document not found' };
+    }
+
+    const s = settingsSnap.data();
+    const leagueId = CURRENT_LEAGUE_ID;
+    const now = new Date().toISOString();
+
+    await setDoc(doc(db, 'leagues', leagueId), {
+      id:             leagueId,
+      slug:           'default',
+      name:           s.seasonName || 'Default League',
+      createdAt:      now,
+      seasonName:     s.seasonName     ?? 'Current Season',
+      inviteDeadline: s.inviteDeadline ?? '2099-12-31T23:59:59',
+      leagueVenue:    s.leagueVenue    ?? '',
+      matchDay:       s.matchDay       ?? 'Tuesday',
+      defaultTime:    s.defaultTime    ?? '10:00',
+      pointsWin:      s.pointsWin      ?? 3,
+      pointsDraw:     s.pointsDraw     ?? 1,
+      pointsLoss:     s.pointsLoss     ?? 0,
+      yellowsPerBan:  s.yellowsPerBan  ?? 3,
+    }, { merge: true });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Create league document error:', error);
+    return { success: false, error };
   }
 }
