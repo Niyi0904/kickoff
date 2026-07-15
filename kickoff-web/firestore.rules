@@ -12,6 +12,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Returns whether the user has a role document
+    function hasUserRole() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/user_roles/$(request.auth.uid));
+    }
+
     // Read the user's full role data from the user_roles collection
     function getUserRoleData() {
       return get(/databases/$(database)/documents/user_roles/$(request.auth.uid)).data;
@@ -19,30 +25,38 @@ service cloud.firestore {
 
     // Read the user's role string
     function getUserRole() {
-      return getUserRoleData().role;
+      return hasUserRole()
+        ? getUserRoleData().role
+        : null;
     }
 
     // Is the requesting user a league manager (or legacy admin)?
     // Unscoped — used only for user_roles/{uid} (the source collection)
     function isLeagueManager() {
-      return isAuthenticated() && (getUserRole() == 'league_manager' || getUserRole() == 'admin');
+      return hasUserRole() &&
+        (getUserRole() == "league_manager" ||
+        getUserRole() == "admin");
     }
 
     // Is the requesting user a league manager of a specific league?
     function isLeagueManagerOf(leagueId) {
-      return isLeagueManager() && getUserRoleData().leagueId == leagueId;
+      return hasUserRole() &&
+        isLeagueManager() &&
+        getUserRoleData().leagueId == leagueId;
     }
 
     // Is the requesting user a team manager of a specific team (unscoped by league)?
     function isTeamManagerOfTeam(teamId) {
-      return isAuthenticated() && 
-        getUserRole() == 'team_manager' && 
+      return hasUserRole() &&
+        getUserRole() == "team_manager" &&
         getUserRoleData().teamId == teamId;
     }
 
     // Is the requesting user a team manager of a specific team within a specific league?
     function isTeamManagerOf(leagueId, teamId) {
-      return isTeamManagerOfTeam(teamId) && getUserRoleData().leagueId == leagueId;
+      return hasUserRole() &&
+        isTeamManagerOfTeam(teamId) &&
+        getUserRoleData().leagueId == leagueId;
     }
 
     // Is the requesting user reading/writing their own document?
