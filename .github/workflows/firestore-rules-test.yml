@@ -34,7 +34,7 @@ jobs:
           version: 11
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts=false
+        run: pnpm install --frozen-lockfile --allow-scripts       
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
