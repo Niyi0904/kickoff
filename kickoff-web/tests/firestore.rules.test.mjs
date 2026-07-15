@@ -27,15 +27,41 @@ beforeEach(async () => {
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
+// async function seedUserRole(uid, role, leagueId, teamId = null) {
+//   await testEnv.withSecurityRulesDisabled(async (db) => {
+//     await setDoc(doc(db, 'user_roles', uid), { role, leagueId, teamId });
+//   });
+// }
+
+// async function seedDocument(collectionPath, docId, data) {
+//   await testEnv.withSecurityRulesDisabled(async (db) => {
+//     await setDoc(doc(db, collectionPath, docId), data);
+//   });
+// }
+
 async function seedUserRole(uid, role, leagueId, teamId = null) {
-  await testEnv.withSecurityRulesDisabled(async (db) => {
-    await setDoc(doc(db, 'user_roles', uid), { role, leagueId, teamId });
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore();
+
+    await setDoc(
+      doc(db, "user_roles", uid),
+      {
+        role,
+        leagueId,
+        teamId,
+      }
+    );
   });
 }
 
 async function seedDocument(collectionPath, docId, data) {
-  await testEnv.withSecurityRulesDisabled(async (db) => {
-    await setDoc(doc(db, collectionPath, docId), data);
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore();
+
+    await setDoc(
+      doc(db, collectionPath, docId),
+      data
+    );
   });
 }
 
