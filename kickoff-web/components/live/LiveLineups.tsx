@@ -21,7 +21,8 @@ interface LiveLineupsProps {
   awayTeam?: Team;
 }
 
-function LineupPlayerRow({ goalsCount, assistsCount, yellowsCount, redsCount, ...player }: Player & {
+function LineupPlayerRow({ player, goalsCount, assistsCount, yellowsCount, redsCount }: {
+  player: Player;
   goalsCount: number;
   assistsCount: number;
   yellowsCount: number;

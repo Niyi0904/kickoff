@@ -36,7 +36,6 @@ export function LiveTimeline({ match, goals, assists, yellowCards, redCards, pla
             minute: parseInt(matchArr[1]),
             type: "commentary" as const,
             text: matchArr[2],
-            teamId: null,
           };
         }
         return {
@@ -44,7 +43,6 @@ export function LiveTimeline({ match, goals, assists, yellowCards, redCards, pla
           minute: null,
           type: "commentary" as const,
           text: line,
-          teamId: null,
         };
       });
   }, [match?.keyMoments]);
@@ -115,7 +113,6 @@ export function LiveTimeline({ match, goals, assists, yellowCards, redCards, pla
         minute: c.minute ?? 0,
         type: 'commentary',
         text: c.text,
-        teamId: undefined,
       });
     });
 

@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { LEAGUE_ID } from './firestore';
+import { CURRENT_LEAGUE_ID } from './config';
 
 export function generateInviteCode(): string {
   return Math.random().toString(36).substr(2, 9).toUpperCase();
@@ -327,7 +328,7 @@ export async function createLeagueDocument(): Promise<{ success: boolean; error?
     }
 
     const s = settingsSnap.data();
-    const leagueId = CURRENT_LEAGUE_ID;
+    const leagueId = LEAGUE_ID;
     const now = new Date().toISOString();
 
     await setDoc(doc(db, 'leagues', leagueId), {
