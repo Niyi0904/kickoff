@@ -20,6 +20,7 @@ node_modules/
 kickoff-web/.next/
 kickoff-web/node_modules/
 kickoff-mobile/node_modules/
+kickoff-video/node_modules/
 /out/
 
 # production
@@ -37,6 +38,11 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+
+# remotion / video
+kickoff-video/.next/
+kickoff-video/out/
+kickoff-video/public/
 
 # vercel
 .vercel
