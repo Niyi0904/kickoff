@@ -10,16 +10,6 @@
     "test:rules": "mocha tests/firestore.rules.test.mjs --timeout 30000",
     "emulators": "firebase emulators:start --only firestore"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@firebase/util",
-      "esbuild",
-      "msw",
-      "protobufjs",
-      "sharp",
-      "unrs-resolver"
-    ]
-  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-toast": "^1.2.15",
