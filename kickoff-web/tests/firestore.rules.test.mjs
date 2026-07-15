@@ -286,7 +286,7 @@ describe("Single-league — team_manager access", () => {
     await seedDocument("teams", "teamA1", {
       name: "Team A1",
       leagueId: LEAGUE_A,
-      approved: true,
+      approved: false,
     });
     await seedDocument("teams", "teamA2", {
       name: "Team A2",
@@ -308,7 +308,7 @@ describe("Single-league — team_manager access", () => {
 
   it("can create their own team", async () => {
     await assertSucceeds(
-      setDoc(doc(tm.firestore(), "teams", "teamA1-new"), {
+      setDoc(doc(tm.firestore(), "teams", "teamA1"), {
         name: "My Team",
         leagueId: LEAGUE_A,
         approved: false,

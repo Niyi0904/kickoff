@@ -81,8 +81,9 @@ service cloud.firestore {
           (request.resource.data.approved == true) : 
           (request.resource.data.approved == false)) &&
         (isLeagueManagerOf(request.resource.data.leagueId) || isTeamManagerOf(request.resource.data.leagueId, teamId));
-      allow update: if isLeagueManagerOf(resource.data.leagueId) || 
-        (isTeamManagerOf(resource.data.leagueId, teamId) && resource.data.approved == request.resource.data.approved);
+      allow update: if resource.data != null && 
+        (isLeagueManagerOf(resource.data.leagueId) || 
+        (isTeamManagerOf(resource.data.leagueId, teamId) && resource.data.approved == request.resource.data.approved));
       allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
