@@ -1,0 +1,5185 @@
+{
+  "assists": {
+    "10fPDQUuYfztNJGjXTqw": {
+      "playerId": "4srcKTYzlhmUuNKEcmaD",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "2Xag7lwDQixyRxj7gTS4": {
+      "playerId": "5c5OEGNkAaMmb16f6lGm",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "DLYORtUwQLyZCLf6kEaG",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776094989,
+        "_nanoseconds": 217000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "2ooKhckVtwwitSQv5w9N": {
+      "playerId": "W1MU2pRqL8yjwds1inui",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "3ISqz4hdkN6jWFiTtN2m": {
+      "playerId": "45vFmu436Hc4Qo7RUvWf",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "lPSGLLK6FsNAGgtBwOCo",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778072689,
+        "_nanoseconds": 705000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "4gxGCS8lUl6ICeblngPf": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "nX35j9s4vUycttMrE9kx",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931971,
+        "_nanoseconds": 97000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "55qausLxcjno63vUpV9d": {
+      "playerId": "ZwggPnwiIwHvwuKcjW85",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "4qCGtNbfnEZtIpTLgSzj",
+      "matchDay": 13,
+      "timestamp": {
+        "_seconds": 1780939412,
+        "_nanoseconds": 498000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "5tOua0CABCvnqs4XOe5h": {
+      "playerId": "pYKpLlDl8rVu7CXCkAF7",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "iBw6lwv9LlcoT2zs5zfb",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023743,
+        "_nanoseconds": 538000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8FXpozgYI9VQs7Mmhupd": {
+      "playerId": "5c5OEGNkAaMmb16f6lGm",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "ByfTj9aP16aDPrctVjCc",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776094923,
+        "_nanoseconds": 764000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "96dpRh4dMpJcm9xEV0uY": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9Ew43Ceue5dxEgfWhhgH": {
+      "playerId": "SLUVevtGEhuSEi3J4ePP",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9dRBu3HceAv0tyu685Qo": {
+      "playerId": "dEqim9gsd4C8KBksZSza",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "i6mSzuFmJVq5Dku2frZg",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783941757,
+        "_nanoseconds": 4000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "AyefsezHgr6uTaTVEsgo": {
+      "playerId": "K9e4fNaudyXhNTSC8kiV",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "NEAPJkE0qePSGA9TWhWy",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023840,
+        "_nanoseconds": 928000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "CbLExibqzd5l74jl8RFn": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "lPSGLLK6FsNAGgtBwOCo",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778072689,
+        "_nanoseconds": 705000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "IDDfbXvI3sOsZeZHPhAa": {
+      "playerId": "VV2OMPRfvEyHmNZNp10m",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "HJd2suRxgFg75kc6CABQ",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779136677,
+        "_nanoseconds": 580000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "JZeK6iTTXUI5Lwwd4d9h": {
+      "playerId": "6Gjx1JpoFORXshdkLIJL",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "KHAuO50Kh9pSbbyy6Dho": {
+      "playerId": "Eg5tGdyGVyTzgvhVIQjh",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "KRt0RSrnvzYJIxHedtdW": {
+      "playerId": "NW7w2JnFyIIDpuJ2cl3V",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "oSKaxXj3U6aGDbLtvLrb",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779135780,
+        "_nanoseconds": 937000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "KUXOxg7FRGZihhsHbDlA": {
+      "playerId": "UlCJ6bsrzlrXT93YTo47",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "YmtS6wxKEfh6nmNb8cG9",
+      "matchDay": 13,
+      "timestamp": {
+        "_seconds": 1780939457,
+        "_nanoseconds": 885000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "L6kA51WRfNdwXE5pehHf": {
+      "playerId": "5c5OEGNkAaMmb16f6lGm",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "MRKDiUguDAm6Fp6MPlOd": {
+      "playerId": "W1MU2pRqL8yjwds1inui",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "NIcoxsqpWkyVP88ffWxp": {
+      "playerId": "aNEzzhDT0YSgVDhfs11O",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "YXgLCcq8SghE1dtAuK7c",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777970976,
+        "_nanoseconds": 917000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "P7ZTyrOeczUBfjfeQxtL": {
+      "playerId": "jq6uVSenXP9yLpyu6Gwv",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "MMhwJ8EDbYl6WB6JfyDE",
+      "matchDay": 5,
+      "timestamp": {
+        "_seconds": 1774882189,
+        "_nanoseconds": 800000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "PaBOBxGfvuH7OxjwvHYb": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "QKc7rPKX4nUJ0nSLsIrr": {
+      "playerId": "ijRbhBCsWRpFXckeXD1S",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "SyRsQbFBQep5r6deTwkm": {
+      "playerId": "cs3yG4ArKx87tGxWwtXc",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "i3ULWFSz6YyIWvuuAL7y",
+      "matchDay": 12,
+      "timestamp": {
+        "_seconds": 1780340989,
+        "_nanoseconds": 128000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "TlG8ZnWaCqOWJGEsJDac": {
+      "playerId": "ZwggPnwiIwHvwuKcjW85",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ZpaRebixtU8GHd4LcH5I": {
+      "playerId": "5c5OEGNkAaMmb16f6lGm",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ZsmFy1CUtQiXuxAXNmh9": {
+      "playerId": "ChLah35XjNydB7nKNnm8",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "UDV9he1F4g9YpHvphHKN",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783941673,
+        "_nanoseconds": 523000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "aSnE61GrbCCb91mKLwNP": {
+      "playerId": "W1MU2pRqL8yjwds1inui",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "0KmFrCM2lDfvd4pItcSd",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779135666,
+        "_nanoseconds": 43000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "akSTd98kEqS6ClzO2SST": {
+      "playerId": "97vzx1BaT7O1YhsHq0ih",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "YXgLCcq8SghE1dtAuK7c",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777970976,
+        "_nanoseconds": 917000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "dCmppcoDvI6VjUCOpqM2": {
+      "playerId": "UlCJ6bsrzlrXT93YTo47",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "8BkHKO7ab62rl8uAqEwD",
+      "matchDay": 7,
+      "timestamp": {
+        "_seconds": 1781704330,
+        "_nanoseconds": 849000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "e4AB8qpy4GbEVoosPaIr": {
+      "playerId": "Eg5tGdyGVyTzgvhVIQjh",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "exslyemWQQVhQWDvXESz": {
+      "playerId": "dEqim9gsd4C8KBksZSza",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "i3y8Jovu1DnaR2O3J11X": {
+      "playerId": "1zinNXcxLMJ8ldlCxaSZ",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "UmYYBqfOHW931uv68vHm",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778060203,
+        "_nanoseconds": 595000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "iJ2XPxOjjFgbNSto8urH": {
+      "playerId": "NW7w2JnFyIIDpuJ2cl3V",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "S4bOocMGTY470iHlphZl",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783939818,
+        "_nanoseconds": 407000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "icMzKwLCkGEiQ3LpcsDd": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "jXVtFsZugWbkZv5g4gD0": {
+      "playerId": "NW7w2JnFyIIDpuJ2cl3V",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "xMowrahca4Wz1wKZLKpr",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776095273,
+        "_nanoseconds": 440000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "k72Zl8U8ndd2YhOTWGr5": {
+      "playerId": "5c5OEGNkAaMmb16f6lGm",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "nJx8yyNQ0k7PmcNiGeoa",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777970656,
+        "_nanoseconds": 938000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "kDOiDeX90g86w1u7mQcm": {
+      "playerId": "edBB4vR9bbjVaqMtvQO2",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "yRMGb1s55QS3FvvZoxdT",
+      "matchDay": 7,
+      "timestamp": {
+        "_seconds": 1776709088,
+        "_nanoseconds": 773000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ll95hupaCmvpiVTAxgih": {
+      "playerId": "UlCJ6bsrzlrXT93YTo47",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "oSKaxXj3U6aGDbLtvLrb",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779135780,
+        "_nanoseconds": 937000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "nrbUGv7cPycorr5UI3az": {
+      "playerId": "K9e4fNaudyXhNTSC8kiV",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "oZn7tC46SvY29g9lIaxy": {
+      "playerId": "XQTccdh6htWYJyoM3BA0",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "gEBzEte7eJcWATqheow9",
+      "matchDay": 13,
+      "timestamp": {
+        "_seconds": 1780939731,
+        "_nanoseconds": 887000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "po4cWnvYcAO0OROPld97": {
+      "playerId": "dEqim9gsd4C8KBksZSza",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "q4E2tT2pAgpHTNY3kGYl": {
+      "playerId": "O21IOvOmSAJ4688y5bta",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "jXYyCFxhXP2kL4qxn6eU",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772531073,
+        "_nanoseconds": 78000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "qyhUvTL9oTPrtdUfIBzs": {
+      "playerId": "JiFT2hzOK8QItvVpgYuA",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "MMhwJ8EDbYl6WB6JfyDE",
+      "matchDay": 5,
+      "timestamp": {
+        "_seconds": 1774882189,
+        "_nanoseconds": 800000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "sn68OtmGRATY45E4DO8D": {
+      "playerId": "SLUVevtGEhuSEi3J4ePP",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "rcr1DFHUe5OtbiavuNqJ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1773075677,
+        "_nanoseconds": 12000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "u0JcPcvrp8pCibuYxZiR": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "u5VM1X0qh9bZDuImcc7k": {
+      "playerId": "MzANxJq0ERRnSNvAb3Nl",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "S4bOocMGTY470iHlphZl",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783939818,
+        "_nanoseconds": 407000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "xvS7fwqBCB7ZP8DmYwKR": {
+      "playerId": "4srcKTYzlhmUuNKEcmaD",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "yE2CRKX6rkKlWycFZykC": {
+      "playerId": "MwXXxZdZjWngMXNLWEe2",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "oNIHRMFIZBhD3Htzii2E",
+      "matchDay": 3,
+      "timestamp": {
+        "_seconds": 1773347736,
+        "_nanoseconds": 8000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  },
+  "goals": {
+    "0mhDdoCdGFjQystSaKtJ": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "nX35j9s4vUycttMrE9kx",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931971,
+        "_nanoseconds": 97000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "65VAl1JaJycfShfnk32h": {
+      "playerId": "NW7w2JnFyIIDpuJ2cl3V",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "COhaH0vmbpvZfQjQV72K",
+      "matchDay": 16,
+      "timestamp": {
+        "_seconds": 1782764738,
+        "_nanoseconds": 319000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "6aYjZzf0GYS1SlZVOlTq": {
+      "playerId": "yeE9eFt8Zlkr6L2qBJBO",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "8BkHKO7ab62rl8uAqEwD",
+      "matchDay": 7,
+      "timestamp": {
+        "_seconds": 1781704330,
+        "_nanoseconds": 849000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "7FHU7ZRZM9YBZN5rT5ij": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8eJ4FW8o8cqMmOgY1JiT": {
+      "playerId": "C9d7cXIziVdfRxDIqoBN",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "MMhwJ8EDbYl6WB6JfyDE",
+      "matchDay": 5,
+      "timestamp": {
+        "_seconds": 1774882189,
+        "_nanoseconds": 800000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8kqV52yOBg88fRte7HjC": {
+      "playerId": "6PCpVs4y3kiH55e4FYPO",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8pIA9mCfDin4nF30RdaL": {
+      "playerId": "5c5OEGNkAaMmb16f6lGm",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "YXgLCcq8SghE1dtAuK7c",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777970976,
+        "_nanoseconds": 917000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "93n2SEmkRlyhJDBS8rHm": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "lPSGLLK6FsNAGgtBwOCo",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778072689,
+        "_nanoseconds": 705000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9AXrDZLhOuNyw2ElQMhv": {
+      "playerId": "ChLah35XjNydB7nKNnm8",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9GpTblagOVnraTKUqfsP": {
+      "playerId": "UlCJ6bsrzlrXT93YTo47",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "i3ULWFSz6YyIWvuuAL7y",
+      "matchDay": 12,
+      "timestamp": {
+        "_seconds": 1780340989,
+        "_nanoseconds": 128000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9UY6itWg8Pi15tXWixZF": {
+      "playerId": "nAx8vTek7VVGdvZ8poj5",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "AdwPMbcYXbCg5G3tJVMQ": {
+      "playerId": "pIQPdzMhlc8gXHwha5xg",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "UDV9he1F4g9YpHvphHKN",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783941673,
+        "_nanoseconds": 523000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "CVpWqfU5pDT7VxbQUUvF": {
+      "playerId": "ChLah35XjNydB7nKNnm8",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "lPSGLLK6FsNAGgtBwOCo",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778072689,
+        "_nanoseconds": 705000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "CqUnFkVO1Mg2svIZuwWM": {
+      "playerId": "eWyjfttnzFWJSFGVgwmB",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "jXYyCFxhXP2kL4qxn6eU",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772531073,
+        "_nanoseconds": 78000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "D4srrLHxyXa1WeAc4L7r": {
+      "playerId": "mn0EcVDODid5VdbBoMTs",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "UmYYBqfOHW931uv68vHm",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778060203,
+        "_nanoseconds": 595000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Ds5v5YlmPTnipls6i4Db": {
+      "playerId": "ijRbhBCsWRpFXckeXD1S",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Dy4TZvjXtv8Ny5iUvjcZ": {
+      "playerId": "VV2OMPRfvEyHmNZNp10m",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "YXgLCcq8SghE1dtAuK7c",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777970976,
+        "_nanoseconds": 917000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "EJb850XFcpdHlil4j5UN": {
+      "playerId": "XQTccdh6htWYJyoM3BA0",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "EUY9z5YFoRVJkY3u0lJo": {
+      "playerId": "W1MU2pRqL8yjwds1inui",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "FmAxJYZCSnGI4ol3NHXs": {
+      "playerId": "yeE9eFt8Zlkr6L2qBJBO",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "YmtS6wxKEfh6nmNb8cG9",
+      "matchDay": 13,
+      "timestamp": {
+        "_seconds": 1780939457,
+        "_nanoseconds": 885000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "H3lZkePM5zLJt4gpr6I5": {
+      "playerId": "97vzx1BaT7O1YhsHq0ih",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "ByfTj9aP16aDPrctVjCc",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776094923,
+        "_nanoseconds": 764000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "IGd27YJ4VnbzSvY8RfQe": {
+      "playerId": "Vj0feiskFCsguXvpnoET",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "oNIHRMFIZBhD3Htzii2E",
+      "matchDay": 3,
+      "timestamp": {
+        "_seconds": 1773347736,
+        "_nanoseconds": 8000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "KAPNUhesGEDU2dqgWRys": {
+      "playerId": "yeE9eFt8Zlkr6L2qBJBO",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "oSKaxXj3U6aGDbLtvLrb",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779135780,
+        "_nanoseconds": 937000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "L3AKT0CaQ7MKCoh7pyje": {
+      "playerId": "ZwggPnwiIwHvwuKcjW85",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "UmYYBqfOHW931uv68vHm",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778060203,
+        "_nanoseconds": 595000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "LHcEsfrTXCzk6XaFeJMu": {
+      "playerId": "pYKpLlDl8rVu7CXCkAF7",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "S4bOocMGTY470iHlphZl",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783939818,
+        "_nanoseconds": 407000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "M6v1BYBTQLF2pRcLgTt6": {
+      "playerId": "SLUVevtGEhuSEi3J4ePP",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "iBw6lwv9LlcoT2zs5zfb",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023743,
+        "_nanoseconds": 538000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "PPYCcp8AyUQQym1q8uj2": {
+      "playerId": "C9d7cXIziVdfRxDIqoBN",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "jXYyCFxhXP2kL4qxn6eU",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772531073,
+        "_nanoseconds": 78000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Py0JS6HWlcOK3ykxCDGv": {
+      "playerId": "ZwggPnwiIwHvwuKcjW85",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "xMowrahca4Wz1wKZLKpr",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776095273,
+        "_nanoseconds": 440000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "QWfMLimg4VD5JoFN4c8e": {
+      "playerId": "HtoI7dx8LYOzZKyzSGOd",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "R7vrp7GdzNiYmsUPLXzw": {
+      "playerId": "UfPW7MZEavBJ6mfanvcQ",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "WheJbPpECkD4bvaBoFWm",
+      "matchDay": 8,
+      "timestamp": {
+        "_seconds": 1776807243,
+        "_nanoseconds": 685000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "TywEXqPubowCXCT4dd2e": {
+      "playerId": "45vFmu436Hc4Qo7RUvWf",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "lPSGLLK6FsNAGgtBwOCo",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778072689,
+        "_nanoseconds": 705000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "UgNlGWBScbyd5tK67K2E": {
+      "playerId": "NW7w2JnFyIIDpuJ2cl3V",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "VTdT4iz3SuiqKUSTcf2J": {
+      "playerId": "zj8ePjsswOsVrd1lHRy7",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "i6mSzuFmJVq5Dku2frZg",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783941757,
+        "_nanoseconds": 4000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "WqbAMFktziGH4PtmeVrr": {
+      "playerId": "W1MU2pRqL8yjwds1inui",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YH077XUuhGuOEcFSqWzz": {
+      "playerId": "ZwggPnwiIwHvwuKcjW85",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YciwexFa23MhzesCZLBn": {
+      "playerId": "5c5OEGNkAaMmb16f6lGm",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Yr9agEa2ZbqmOnj5VMp3": {
+      "playerId": "6Gjx1JpoFORXshdkLIJL",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "bBNjyIF1Rjj5MurKQ4rp": {
+      "playerId": "NW7w2JnFyIIDpuJ2cl3V",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "4qCGtNbfnEZtIpTLgSzj",
+      "matchDay": 13,
+      "timestamp": {
+        "_seconds": 1780939412,
+        "_nanoseconds": 498000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "bcmTd1yjF5ExprAJj6Kw": {
+      "playerId": "R87VXmSIRzW33YC4gAFU",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "UDV9he1F4g9YpHvphHKN",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783941673,
+        "_nanoseconds": 523000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "eplkBIj68vycP1JjqNST": {
+      "playerId": "mn0EcVDODid5VdbBoMTs",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "gEBzEte7eJcWATqheow9",
+      "matchDay": 13,
+      "timestamp": {
+        "_seconds": 1780939731,
+        "_nanoseconds": 887000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "fwNQe65aqlPda56NzgZJ": {
+      "playerId": "61mDuQOEAWIX85a1F07m",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "matchDay": 14,
+      "timestamp": {
+        "_seconds": 1781701447,
+        "_nanoseconds": 525000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "g8LF3NU92vDxV1BguwYa": {
+      "playerId": "ChLah35XjNydB7nKNnm8",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "BF8s3zF2NqFY7uzuIhIO",
+      "matchDay": 18,
+      "timestamp": {
+        "_seconds": 1784058623,
+        "_nanoseconds": 308000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "gnuzZNjcEKrG5VAzIa3V": {
+      "playerId": "mn0EcVDODid5VdbBoMTs",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "gsOcCpiIOnxB9rVPVzMr": {
+      "playerId": "ijRbhBCsWRpFXckeXD1S",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "HJd2suRxgFg75kc6CABQ",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779136677,
+        "_nanoseconds": 580000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "gxaYD9iU9f4hNRZizmUV": {
+      "playerId": "Eg5tGdyGVyTzgvhVIQjh",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "nX35j9s4vUycttMrE9kx",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931971,
+        "_nanoseconds": 97000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "iQKtceRjP4MqlmyXuMzy": {
+      "playerId": "K9e4fNaudyXhNTSC8kiV",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "S4bOocMGTY470iHlphZl",
+      "matchDay": 17,
+      "timestamp": {
+        "_seconds": 1783939818,
+        "_nanoseconds": 407000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "jOuw4EVBINhhZFslBauI": {
+      "playerId": "pIQPdzMhlc8gXHwha5xg",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "jTaUcLEgvm2Xm9I7cCKR": {
+      "playerId": "8cdLf5IZ4E7TwhItWkuH",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "MMhwJ8EDbYl6WB6JfyDE",
+      "matchDay": 5,
+      "timestamp": {
+        "_seconds": 1774882189,
+        "_nanoseconds": 800000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "lx6phEaRtZa6zyBCMoMx": {
+      "playerId": "W1MU2pRqL8yjwds1inui",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "mnzgdwvuulWQANGGKEXv": {
+      "playerId": "ZwggPnwiIwHvwuKcjW85",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "NEAPJkE0qePSGA9TWhWy",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023840,
+        "_nanoseconds": 928000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "oAvdlDUQIZ4tnTVk6zEy": {
+      "playerId": "ZwggPnwiIwHvwuKcjW85",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "oSKaxXj3U6aGDbLtvLrb",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779135780,
+        "_nanoseconds": 937000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "od3iYXf60Cu5hNVbOzVl": {
+      "playerId": "zj8ePjsswOsVrd1lHRy7",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "i3ULWFSz6YyIWvuuAL7y",
+      "matchDay": 12,
+      "timestamp": {
+        "_seconds": 1780340989,
+        "_nanoseconds": 128000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "oj31ku6y3BYpIz9lYiSh": {
+      "playerId": "DxEDNLkmAHtAlsSk4XHD",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "0KmFrCM2lDfvd4pItcSd",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779135666,
+        "_nanoseconds": 43000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "qtVvz2MSsl4LZTojyarX": {
+      "playerId": "VV2OMPRfvEyHmNZNp10m",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "nJx8yyNQ0k7PmcNiGeoa",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777970656,
+        "_nanoseconds": 938000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "rLHZ8NCuZfWuqxjkFijc": {
+      "playerId": "SLUVevtGEhuSEi3J4ePP",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "us0MKolfTalekQDuygGg": {
+      "playerId": "fu8yEUgTTGkf0sCC1L0I",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "rcr1DFHUe5OtbiavuNqJ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1773075677,
+        "_nanoseconds": 12000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "xzw0PLUySYzvaRaHQTd8": {
+      "playerId": "mn0EcVDODid5VdbBoMTs",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "IEIPYrZl3rvC8TA3T3C2",
+      "matchDay": 15,
+      "timestamp": {
+        "_seconds": 1784060357,
+        "_nanoseconds": 223000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ymFozFKda1l5HgokXECF": {
+      "playerId": "aNEzzhDT0YSgVDhfs11O",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "DLYORtUwQLyZCLf6kEaG",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776094989,
+        "_nanoseconds": 217000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "zKlqua8LWkMbLjt6Sl17": {
+      "playerId": "61mDuQOEAWIX85a1F07m",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "yRMGb1s55QS3FvvZoxdT",
+      "matchDay": 7,
+      "timestamp": {
+        "_seconds": 1776709088,
+        "_nanoseconds": 773000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ztVOQ3KtmA3QSwkuKJ5Y": {
+      "playerId": "UlCJ6bsrzlrXT93YTo47",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "oSKaxXj3U6aGDbLtvLrb",
+      "matchDay": 11,
+      "timestamp": {
+        "_seconds": 1779135780,
+        "_nanoseconds": 937000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  },
+  "leagues": {
+    "MWFePlubN1q0O5WH0Ih3": {
+      "id": "MWFePlubN1q0O5WH0Ih3",
+      "leagueName": "Focus Baller",
+      "slug": "focus-baller",
+      "ownerId": "hzy09C0IGTWcHuE4BqW289n5g0G3",
+      "adminIds": [
+        "hzy09C0IGTWcHuE4BqW289n5g0G3"
+      ],
+      "logoUrl": "https://i.ibb.co/m5FV7jTs/Nidav-Logo.jpg",
+      "theme": {
+        "primary": "#3946f3",
+        "secondary": "#064e3b"
+      },
+      "settings": {
+        "pointsForWin": 3,
+        "maxTeams": 3
+      },
+      "subscription": {
+        "plan": "grassroots",
+        "active": true
+      },
+      "createdAt": {
+        "_seconds": 1771493685,
+        "_nanoseconds": 34000000
+      }
+    },
+    "mvBPnE7p0ytJPuJ1OwmZ": {
+      "id": "mvBPnE7p0ytJPuJ1OwmZ",
+      "leagueName": "Nidav Baller",
+      "slug": "nidav-baller",
+      "ownerId": "IfuQ9npQ4FUU0rJUj9pm6fAk5mN2",
+      "adminIds": [
+        "IfuQ9npQ4FUU0rJUj9pm6fAk5mN2"
+      ],
+      "logoUrl": "https://i.ibb.co/6cSQjcv1/Nidav-Logo.jpg",
+      "theme": {
+        "primary": "#cac41c",
+        "secondary": "#474506"
+      },
+      "settings": {
+        "pointsForWin": 3,
+        "maxTeams": 3
+      },
+      "subscription": {
+        "plan": "grassroots",
+        "active": true
+      },
+      "createdAt": {
+        "_seconds": 1771860213,
+        "_nanoseconds": 458000000
+      }
+    }
+  },
+  "matches": {
+    "0KmFrCM2lDfvd4pItcSd": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 11,
+      "scheduledDate": "2026-05-12",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "0KmFrCM2lDfvd4pItcSd",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1778454000,
+        "_nanoseconds": 0
+      },
+      "homeScore": 1,
+      "homeAssists": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "0bSeoRGSXW5tCoKuZay9": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 12,
+      "scheduledDate": "2026-05-19",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "0bSeoRGSXW5tCoKuZay9",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1780335953,
+        "_nanoseconds": 869000000
+      },
+      "awayScore": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "1LRwvKolMrGiZzaIA15N": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 8,
+      "time": "12:45",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775513122,
+        "_nanoseconds": 860000000
+      },
+      "date": {
+        "_seconds": 1776804305,
+        "_nanoseconds": 257000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "1LRwvKolMrGiZzaIA15N",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "1M4mTYBnCmY8NaF2L7KK": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "homeReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 2,
+      "createdAt": {
+        "_seconds": 1771581830,
+        "_nanoseconds": 386000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "1M4mTYBnCmY8NaF2L7KK",
+      "league": "The Academy Championship League",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "time": "10:45",
+      "awayYellows": 2,
+      "awayAssists": 1,
+      "homeScore": 1,
+      "awayScore": 1,
+      "homeAssists": 1,
+      "awayReds": 1,
+      "status": "played",
+      "homeYellows": 1,
+      "date": {
+        "_seconds": 1772915889,
+        "_nanoseconds": 613000000
+      }
+    },
+    "2KMOzLoDdklgAJfDu37t": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 20,
+      "scheduledDate": "2026-07-14",
+      "league": "2026/27 League",
+      "status": "upcoming",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1782169200,
+        "_nanoseconds": 0
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "2KMOzLoDdklgAJfDu37t",
+      "time": "09:30",
+      "keyMoments": "",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "2UW4y9nbdxcFGeGCTSiw": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 20,
+      "scheduledDate": "2026-07-14",
+      "league": "2026/27 League",
+      "status": "upcoming",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1782169200,
+        "_nanoseconds": 0
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "2UW4y9nbdxcFGeGCTSiw",
+      "time": "10:40",
+      "keyMoments": "",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "3qW9RC1TZLc5Uevsl9c9": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 8,
+      "scheduledDate": "2026-04-21",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512197,
+        "_nanoseconds": 626000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "3qW9RC1TZLc5Uevsl9c9",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1776804325,
+        "_nanoseconds": 104000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "4qCGtNbfnEZtIpTLgSzj": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 13,
+      "scheduledDate": "2026-05-26",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "4qCGtNbfnEZtIpTLgSzj",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1780939233,
+        "_nanoseconds": 965000000
+      },
+      "awayAssists": 1,
+      "awayScore": 1,
+      "report": "",
+      "awayPoints": 3,
+      "homePoints": 0,
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "66um0G5wewWCPWRO5PuQ": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "awayYellows": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 1,
+      "createdAt": {
+        "_seconds": 1771581827,
+        "_nanoseconds": 668000000
+      },
+      "league": "The Academy Championship League",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "66um0G5wewWCPWRO5PuQ",
+      "time": "10:35",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "status": "played",
+      "homeReds": 1,
+      "date": {
+        "_seconds": 1771962075,
+        "_nanoseconds": 499000000
+      },
+      "homeYellows": 2
+    },
+    "6NLrRph6yRQM0q1cQceY": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 20,
+      "scheduledDate": "2026-07-14",
+      "league": "2026/27 League",
+      "status": "upcoming",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1782169200,
+        "_nanoseconds": 0
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "6NLrRph6yRQM0q1cQceY",
+      "time": "11:50",
+      "keyMoments": "",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "7dNhYMpqoPOXfwBcasAC": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 19,
+      "scheduledDate": "2026-07-07",
+      "league": "2026/27 League",
+      "status": "upcoming",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1784588400,
+        "_nanoseconds": 0
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "7dNhYMpqoPOXfwBcasAC",
+      "time": "09:30",
+      "keyMoments": "",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8BkHKO7ab62rl8uAqEwD": {
+      "homeTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 7,
+      "scheduledDate": "2026-04-14",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512195,
+        "_nanoseconds": 742000000
+      },
+      "id": "8BkHKO7ab62rl8uAqEwD",
+      "time": "11:45",
+      "homeScore": 1,
+      "homeAssists": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played",
+      "date": {
+        "_seconds": 1781704304,
+        "_nanoseconds": 176000000
+      },
+      "report": "",
+      "keyMoments": "",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9URFWxCgWUIAkdKvR3lc": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 16,
+      "scheduledDate": "2026-06-16",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "9URFWxCgWUIAkdKvR3lc",
+      "time": "09:30",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1782764576,
+        "_nanoseconds": 308000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "AmavBnnfuQ8WBSzG4KxS": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "minutesPlayed": 90,
+      "matchDay": 9,
+      "scheduledDate": "2026-04-28",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512199,
+        "_nanoseconds": 531000000
+      },
+      "id": "AmavBnnfuQ8WBSzG4KxS",
+      "time": "11:45",
+      "date": {
+        "_seconds": 1777929901,
+        "_nanoseconds": 827000000
+      },
+      "awayYellows": 2,
+      "awayAssists": 2,
+      "homeScore": 1,
+      "homeYellows": 1,
+      "homeReds": 1,
+      "awayScore": 2,
+      "homeAssists": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "awayReds": 1,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "BF8s3zF2NqFY7uzuIhIO": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 18,
+      "scheduledDate": "2026-06-30",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "report": "",
+      "id": "BF8s3zF2NqFY7uzuIhIO",
+      "time": "09:30",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1784058485,
+        "_nanoseconds": 561000000
+      },
+      "homeScore": 5,
+      "homeAssists": 5,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "BexY6PVrqSefzUyfUoOs": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 19,
+      "scheduledDate": "2026-07-07",
+      "league": "2026/27 League",
+      "status": "upcoming",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1784588400,
+        "_nanoseconds": 0
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "BexY6PVrqSefzUyfUoOs",
+      "time": "10:40",
+      "keyMoments": "",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ByfTj9aP16aDPrctVjCc": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "homeReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 6,
+      "scheduledDate": "2026-04-07",
+      "createdAt": {
+        "_seconds": 1775512195,
+        "_nanoseconds": 145000000
+      },
+      "league": "The Academy Championship",
+      "id": "ByfTj9aP16aDPrctVjCc",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1776094803,
+        "_nanoseconds": 787000000
+      },
+      "awayYellows": 2,
+      "awayAssists": 1,
+      "awayScore": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "awayReds": 1,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "COhaH0vmbpvZfQjQV72K": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 16,
+      "scheduledDate": "2026-06-16",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "report": "",
+      "id": "COhaH0vmbpvZfQjQV72K",
+      "time": "10:40",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1782764711,
+        "_nanoseconds": 185000000
+      },
+      "homeScore": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "DLYORtUwQLyZCLf6kEaG": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 6,
+      "time": "12:45",
+      "league": "Seasonal League",
+      "awayPoints": 0,
+      "createdAt": {
+        "_seconds": 1775512399,
+        "_nanoseconds": 694000000
+      },
+      "date": {
+        "_seconds": 1776094931,
+        "_nanoseconds": 833000000
+      },
+      "homeScore": 1,
+      "homeAssists": 1,
+      "homePoints": 3,
+      "id": "DLYORtUwQLyZCLf6kEaG",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "HJd2suRxgFg75kc6CABQ": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 11,
+      "scheduledDate": "2026-05-12",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "HJd2suRxgFg75kc6CABQ",
+      "time": "10:40",
+      "awayAssists": 1,
+      "awayScore": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "date": {
+        "_seconds": 1779136661,
+        "_nanoseconds": 731000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "I1EEoMcbkshXKtloLExk": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 6,
+      "scheduledDate": "2026-04-07",
+      "createdAt": {
+        "_seconds": 1775512193,
+        "_nanoseconds": 592000000
+      },
+      "league": "The Academy Championship",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "I1EEoMcbkshXKtloLExk",
+      "time": "10:35",
+      "date": {
+        "_seconds": 1776094994,
+        "_nanoseconds": 548000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "IEIPYrZl3rvC8TA3T3C2": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 15,
+      "scheduledDate": "2026-06-09",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "IEIPYrZl3rvC8TA3T3C2",
+      "time": "09:30",
+      "awayAssists": 1,
+      "homeScore": 4,
+      "awayScore": 1,
+      "homeAssists": 3,
+      "report": "",
+      "awayPoints": 0,
+      "homePoints": 3,
+      "keyMoments": "",
+      "status": "played",
+      "date": {
+        "_seconds": 1784060259,
+        "_nanoseconds": 163000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "IxCfIeWC5E1ovZr0F8qs": {
+      "homeTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 5,
+      "createdAt": {
+        "_seconds": 1771581838,
+        "_nanoseconds": 836000000
+      },
+      "league": "The Academy Championship League",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "IxCfIeWC5E1ovZr0F8qs",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "time": "10:45",
+      "date": {
+        "_seconds": 1774881533,
+        "_nanoseconds": 786000000
+      },
+      "status": "played"
+    },
+    "LesAtkDVObPnU2qshQp8": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 7,
+      "scheduledDate": "2026-04-14",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512197,
+        "_nanoseconds": 7000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "LesAtkDVObPnU2qshQp8",
+      "time": "10:35",
+      "date": {
+        "_seconds": 1776708840,
+        "_nanoseconds": 79000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "MMhwJ8EDbYl6WB6JfyDE": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 5,
+      "createdAt": {
+        "_seconds": 1774035906,
+        "_nanoseconds": 822000000
+      },
+      "league": "The Academy Championship",
+      "id": "MMhwJ8EDbYl6WB6JfyDE",
+      "time": "09:30",
+      "awayYellows": 1,
+      "awayAssists": 2,
+      "awayScore": 2,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "date": {
+        "_seconds": 1774882091,
+        "_nanoseconds": 730000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "NEAPJkE0qePSGA9TWhWy": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 4,
+      "createdAt": {
+        "_seconds": 1771581836,
+        "_nanoseconds": 774000000
+      },
+      "league": "The Academy Championship League",
+      "id": "NEAPJkE0qePSGA9TWhWy",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "time": "10:45",
+      "date": {
+        "_seconds": 1773702000,
+        "_nanoseconds": 0
+      },
+      "homeScore": 1,
+      "homeYellows": 1,
+      "homeAssists": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played"
+    },
+    "NU84OPNnnLRZoQRV51yl": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 19,
+      "scheduledDate": "2026-07-07",
+      "league": "2026/27 League",
+      "status": "upcoming",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1784588400,
+        "_nanoseconds": 0
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "NU84OPNnnLRZoQRV51yl",
+      "time": "11:50",
+      "keyMoments": "",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "PZ6fDPmm8ECv5nxgFGup": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 15,
+      "scheduledDate": "2026-06-09",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "PZ6fDPmm8ECv5nxgFGup",
+      "time": "10:40",
+      "date": {
+        "_seconds": 1781701479,
+        "_nanoseconds": 972000000
+      },
+      "report": "",
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "S4bOocMGTY470iHlphZl": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 17,
+      "scheduledDate": "2026-06-23",
+      "time": "10:00",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1783939773,
+        "_nanoseconds": 133000000
+      },
+      "awayAssists": 1,
+      "homeScore": 1,
+      "awayScore": 1,
+      "homeAssists": 1,
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "S4bOocMGTY470iHlphZl",
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "SpHIXRhfHvQiFVHuos9R": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 7,
+      "scheduledDate": "2026-04-14",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512196,
+        "_nanoseconds": 427000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "SpHIXRhfHvQiFVHuos9R",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1776708852,
+        "_nanoseconds": 702000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "UDV9he1F4g9YpHvphHKN": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 17,
+      "scheduledDate": "2026-06-23",
+      "time": "12:00",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "date": {
+        "_seconds": 1783941502,
+        "_nanoseconds": 582000000
+      },
+      "awayAssists": 1,
+      "homeScore": 1,
+      "awayScore": 1,
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "UDV9he1F4g9YpHvphHKN",
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "UmYYBqfOHW931uv68vHm": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 10,
+      "scheduledDate": "2026-05-05",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512201,
+        "_nanoseconds": 616000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "UmYYBqfOHW931uv68vHm",
+      "time": "10:40",
+      "homeScore": 1,
+      "awayScore": 1,
+      "homeAssists": 1,
+      "status": "played",
+      "date": {
+        "_seconds": 1778060194,
+        "_nanoseconds": 486000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "VPulaqQlw5LDZHgLAKj7": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 14,
+      "scheduledDate": "2026-06-02",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "VPulaqQlw5LDZHgLAKj7",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1781681413,
+        "_nanoseconds": 605000000
+      },
+      "report": "",
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "WheJbPpECkD4bvaBoFWm": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 8,
+      "scheduledDate": "2026-04-21",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512198,
+        "_nanoseconds": 897000000
+      },
+      "id": "WheJbPpECkD4bvaBoFWm",
+      "time": "10:35",
+      "date": {
+        "_seconds": 1776804337,
+        "_nanoseconds": 97000000
+      },
+      "awayYellows": 1,
+      "homeScore": 1,
+      "homeYellows": 2,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "awayReds": 1,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YXgLCcq8SghE1dtAuK7c": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 9,
+      "time": "12:45",
+      "league": "Seasonal League",
+      "homePoints": 0,
+      "createdAt": {
+        "_seconds": 1775513199,
+        "_nanoseconds": 173000000
+      },
+      "awayScore": 2,
+      "awayPoints": 3,
+      "id": "YXgLCcq8SghE1dtAuK7c",
+      "status": "played",
+      "date": {
+        "_seconds": 1777970848,
+        "_nanoseconds": 903000000
+      },
+      "awayAssists": 2,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YmtS6wxKEfh6nmNb8cG9": {
+      "homeTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 13,
+      "scheduledDate": "2026-05-26",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "YmtS6wxKEfh6nmNb8cG9",
+      "time": "10:40",
+      "date": {
+        "_seconds": 1780939417,
+        "_nanoseconds": 687000000
+      },
+      "homeScore": 1,
+      "homeAssists": 1,
+      "report": "",
+      "awayPoints": 0,
+      "homePoints": 3,
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ZBhRP8UG0lcuBonLfNg7": {
+      "homeTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 8,
+      "scheduledDate": "2026-04-21",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512198,
+        "_nanoseconds": 228000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "ZBhRP8UG0lcuBonLfNg7",
+      "time": "11:45",
+      "date": {
+        "_seconds": 1776807248,
+        "_nanoseconds": 819000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ZhqUq1hi8w6dogsiEhIK": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 15,
+      "scheduledDate": "2026-06-09",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "ZhqUq1hi8w6dogsiEhIK",
+      "time": "11:50",
+      "report": "",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1781701490,
+        "_nanoseconds": 613000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "fGTV4H5ud0Q9TKVOGIzR": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 18,
+      "scheduledDate": "2026-06-30",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "fGTV4H5ud0Q9TKVOGIzR",
+      "time": "10:40",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1784058626,
+        "_nanoseconds": 597000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "gEBzEte7eJcWATqheow9": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 13,
+      "scheduledDate": "2026-05-26",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "gEBzEte7eJcWATqheow9",
+      "time": "11:50",
+      "date": {
+        "_seconds": 1780939462,
+        "_nanoseconds": 628000000
+      },
+      "homeScore": 1,
+      "homeAssists": 1,
+      "report": "",
+      "awayPoints": 0,
+      "homePoints": 3,
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "gkx15lc8hQHsgXwnxssg": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 16,
+      "scheduledDate": "2026-06-16",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "gkx15lc8hQHsgXwnxssg",
+      "time": "23:50",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1782764594,
+        "_nanoseconds": 443000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "i3ULWFSz6YyIWvuuAL7y": {
+      "homeTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 12,
+      "scheduledDate": "2026-05-19",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "i3ULWFSz6YyIWvuuAL7y",
+      "time": "10:40",
+      "homeScore": 1,
+      "awayScore": 1,
+      "homeAssists": 1,
+      "status": "played",
+      "date": {
+        "_seconds": 1780340917,
+        "_nanoseconds": 469000000
+      },
+      "awayAssists": 0,
+      "report": "",
+      "keyMoments": "",
+      "awayReds": 1,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "i6mSzuFmJVq5Dku2frZg": {
+      "homeTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 17,
+      "scheduledDate": "2026-06-23",
+      "time": "8:00",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "report": "",
+      "id": "i6mSzuFmJVq5Dku2frZg",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1783941734,
+        "_nanoseconds": 411000000
+      },
+      "awayAssists": 1,
+      "awayScore": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "iBw6lwv9LlcoT2zs5zfb": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 4,
+      "createdAt": {
+        "_seconds": 1771581835,
+        "_nanoseconds": 765000000
+      },
+      "league": "The Academy Championship League",
+      "id": "iBw6lwv9LlcoT2zs5zfb",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1773702000,
+        "_nanoseconds": 0
+      },
+      "awayYellows": 1,
+      "homeScore": 1,
+      "homeYellows": 2,
+      "homeReds": 1,
+      "homeAssists": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played"
+    },
+    "iFnjB2JHh3GxLMBcPi3L": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 10,
+      "scheduledDate": "2026-05-05",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512202,
+        "_nanoseconds": 809000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "iFnjB2JHh3GxLMBcPi3L",
+      "time": "09:30",
+      "date": {
+        "_seconds": 1778059660,
+        "_nanoseconds": 575000000
+      },
+      "homeReds": 1,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "jXYyCFxhXP2kL4qxn6eU": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 2,
+      "createdAt": {
+        "_seconds": 1771581831,
+        "_nanoseconds": 617000000
+      },
+      "league": "The Academy Championship League",
+      "id": "jXYyCFxhXP2kL4qxn6eU",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "time": "09:30",
+      "status": "played",
+      "homeScore": 1,
+      "date": {
+        "_seconds": 1772530919,
+        "_nanoseconds": 995000000
+      },
+      "awayScore": 1,
+      "homeAssists": 1,
+      "awayPoints": 1,
+      "homePoints": 1
+    },
+    "k3bVAk1gI30ddMh2Twfo": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 3,
+      "createdAt": {
+        "_seconds": 1771581834,
+        "_nanoseconds": 222000000
+      },
+      "league": "The Academy Championship League",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "k3bVAk1gI30ddMh2Twfo",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "time": "10:45",
+      "date": {
+        "_seconds": 1773152015,
+        "_nanoseconds": 40000000
+      },
+      "homeYellows": 2,
+      "status": "played"
+    },
+    "kry34fayoAveFUm0Y921": {
+      "homeTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 18,
+      "scheduledDate": "2026-06-30",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1781703598,
+        "_nanoseconds": 983000000
+      },
+      "report": "",
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "kry34fayoAveFUm0Y921",
+      "time": "11:50",
+      "keyMoments": "",
+      "date": {
+        "_seconds": 1784058637,
+        "_nanoseconds": 675000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "lPSGLLK6FsNAGgtBwOCo": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 10,
+      "scheduledDate": "2026-05-05",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512202,
+        "_nanoseconds": 222000000
+      },
+      "id": "lPSGLLK6FsNAGgtBwOCo",
+      "time": "11:40",
+      "date": {
+        "_seconds": 1778072593,
+        "_nanoseconds": 156000000
+      },
+      "awayAssists": 1,
+      "homeScore": 1,
+      "homeReds": 1,
+      "awayScore": 2,
+      "homeAssists": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "nJx8yyNQ0k7PmcNiGeoa": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 9,
+      "scheduledDate": "2026-04-28",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512200,
+        "_nanoseconds": 102000000
+      },
+      "id": "nJx8yyNQ0k7PmcNiGeoa",
+      "time": "09:30",
+      "awayAssists": 1,
+      "homeReds": 1,
+      "awayScore": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "date": {
+        "_seconds": 1777970561,
+        "_nanoseconds": 803000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "nX35j9s4vUycttMrE9kx": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 9,
+      "scheduledDate": "2026-04-28",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775512200,
+        "_nanoseconds": 753000000
+      },
+      "id": "nX35j9s4vUycttMrE9kx",
+      "time": "10:40",
+      "date": {
+        "_seconds": 1777931921,
+        "_nanoseconds": 218000000
+      },
+      "homeScore": 2,
+      "homeAssists": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "nqIOp1FXOrI65q2798lE": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "twQNFC08Ncz2Tazr70yy",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 12,
+      "scheduledDate": "2026-05-19",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "nqIOp1FXOrI65q2798lE",
+      "time": "11:50",
+      "date": {
+        "_seconds": 1780336503,
+        "_nanoseconds": 374000000
+      },
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "oNIHRMFIZBhD3Htzii2E": {
+      "homeTeamId": "MyGQrlIC22GwrGztXnvT",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 3,
+      "createdAt": {
+        "_seconds": 1771581832,
+        "_nanoseconds": 918000000
+      },
+      "league": "The Academy Championship League",
+      "id": "oNIHRMFIZBhD3Htzii2E",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "time": "09:30",
+      "awayAssists": 1,
+      "homeYellows": 2,
+      "awayScore": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "date": {
+        "_seconds": 1773347726,
+        "_nanoseconds": 26000000
+      }
+    },
+    "oSKaxXj3U6aGDbLtvLrb": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 11,
+      "scheduledDate": "2026-05-12",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "oSKaxXj3U6aGDbLtvLrb",
+      "time": "11:50",
+      "date": {
+        "_seconds": 1779135705,
+        "_nanoseconds": 759000000
+      },
+      "awayAssists": 1,
+      "homeScore": 1,
+      "awayScore": 2,
+      "homeAssists": 1,
+      "awayPoints": 3,
+      "homePoints": 0,
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "oYd6fmLWJNhzfPOF22Gc": {
+      "homeTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 10,
+      "time": "12:45",
+      "league": "Seasonal League",
+      "createdAt": {
+        "_seconds": 1775513356,
+        "_nanoseconds": 364000000
+      },
+      "date": {
+        "_seconds": 1778060180,
+        "_nanoseconds": 610000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "oYd6fmLWJNhzfPOF22Gc",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "qEeJ6ETl3rZ8ZDBFZ1RU": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 14,
+      "scheduledDate": "2026-06-02",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "id": "qEeJ6ETl3rZ8ZDBFZ1RU",
+      "time": "10:40",
+      "date": {
+        "_seconds": 1781700370,
+        "_nanoseconds": 3000000
+      },
+      "awayAssists": 3,
+      "homeScore": 2,
+      "awayScore": 3,
+      "homeAssists": 2,
+      "report": "",
+      "awayPoints": 3,
+      "homePoints": 0,
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "rcr1DFHUe5OtbiavuNqJ": {
+      "homeTeamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 1,
+      "createdAt": {
+        "_seconds": 1771581828,
+        "_nanoseconds": 973000000
+      },
+      "league": "The Academy Championship League",
+      "id": "rcr1DFHUe5OtbiavuNqJ",
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "awayYellows": 2,
+      "homeScore": 1,
+      "homeYellows": 1,
+      "homeAssists": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played",
+      "time": "09:32",
+      "date": {
+        "_seconds": 1773075640,
+        "_nanoseconds": 598000000
+      },
+      "awayReds": 1
+    },
+    "uZ2y2LUnBYSR0jFR7iSH": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "homeScore": 0,
+      "awayScore": 0,
+      "homeAssists": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 14,
+      "scheduledDate": "2026-06-02",
+      "league": "2026/27 League",
+      "createdAt": {
+        "_seconds": 1778074015,
+        "_nanoseconds": 289000000
+      },
+      "awayPoints": 1,
+      "homePoints": 1,
+      "id": "uZ2y2LUnBYSR0jFR7iSH",
+      "time": "11:50",
+      "date": {
+        "_seconds": 1781701460,
+        "_nanoseconds": 299000000
+      },
+      "report": "",
+      "keyMoments": "",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "xMowrahca4Wz1wKZLKpr": {
+      "homeTeamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "awayTeamId": "pn8Qxwx5S95bZVqDdB45",
+      "awayScore": 0,
+      "awayAssists": 0,
+      "homeYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 6,
+      "scheduledDate": "2026-04-07",
+      "createdAt": {
+        "_seconds": 1775512194,
+        "_nanoseconds": 447000000
+      },
+      "league": "The Academy Championship",
+      "id": "xMowrahca4Wz1wKZLKpr",
+      "time": "11:40",
+      "homeScore": 1,
+      "homeAssists": 1,
+      "awayPoints": 0,
+      "homePoints": 3,
+      "status": "played",
+      "date": {
+        "_seconds": 1776095251,
+        "_nanoseconds": 485000000
+      },
+      "awayYellows": 1,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "yRMGb1s55QS3FvvZoxdT": {
+      "homeTeamId": "twQNFC08Ncz2Tazr70yy",
+      "awayTeamId": "hI9Lufp1yRyBCjvS6dAt",
+      "homeScore": 0,
+      "homeAssists": 0,
+      "homeYellows": 0,
+      "awayYellows": 0,
+      "homeReds": 0,
+      "awayReds": 0,
+      "minutesPlayed": 90,
+      "matchDay": 7,
+      "time": "12:45",
+      "league": "Seasonal League",
+      "homePoints": 0,
+      "createdAt": {
+        "_seconds": 1775512827,
+        "_nanoseconds": 172000000
+      },
+      "date": {
+        "_seconds": 1776709065,
+        "_nanoseconds": 734000000
+      },
+      "awayAssists": 1,
+      "awayScore": 1,
+      "awayPoints": 3,
+      "id": "yRMGb1s55QS3FvvZoxdT",
+      "status": "played",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  },
+  "players": {
+    "0Q2TkdhYklr00dsc8oOR": {
+      "name": "David Solomon",
+      "position": "Defender (DF)",
+      "number": 0,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "linkedUserId": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "0RCegzEymXecr5Td6lRJ": {
+      "name": "Ifeanyi ",
+      "position": "Defender (DF)",
+      "number": 27,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "1oxWkMaB8tG0Pi2GjZ5l": {
+      "name": "Asala Sodiq",
+      "position": "Defender (DF)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "1ydfBs92Vu2ANNgTSVJP": {
+      "name": "Adepoju Toheeb (Teecode / Mr show)",
+      "position": "Defender (DF)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "photo": null,
+      "is_manager": true,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "1zinNXcxLMJ8ldlCxaSZ": {
+      "name": "Temitope alake",
+      "position": "Midfielder (MF)",
+      "number": 99,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "2LL9YhtgFBow8qrIVqOf": {
+      "name": "Franklin Obinezim",
+      "position": "⁠Right Wing (RW)",
+      "number": 21,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "2iXMgONnVZ8FbgFxIPlD": {
+      "name": "Wasiu",
+      "number": 25,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "position": "Defender (DF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "2rTRUWgxBWBoZte0NOxp": {
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 8,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "name": "Malik Azeez ",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "3dZgxAiOge8UMPeVv6RD": {
+      "name": "Kelly Chukwuma",
+      "position": "Defender (DF)",
+      "number": 80,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "3rNfIeE60yVlzzciGjjM": {
+      "name": "Emmanuel Olalekan",
+      "number": 25,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "position": "Defender (DF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "45vFmu436Hc4Qo7RUvWf": {
+      "name": "Falana Abiodun Abbey (Beewhyse)",
+      "position": "⁠⁠Left Wing (LW)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/pBvHMHP6/1000513172.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "4JIJaXcfELDpDKtOIfIT": {
+      "name": "Rahmon Azeez",
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 30,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/0ptKb6Sb/Whats-App-Image-2026-03-28-at-19-12-38.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "4lmEcsJvhnC5wYpkubqP": {
+      "name": "Ebuka Okonkwo ",
+      "position": "Defender (DF)",
+      "number": 5,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "4srcKTYzlhmUuNKEcmaD": {
+      "name": "Happiness Ernest",
+      "position": "Midfielder (MF)",
+      "number": 10,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/93k9KnBD/Whats-App-Image-2026-07-08-at-16-14-54.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "52ujwfTM2Dsu2R18teNS": {
+      "name": "Emmanuel  (Alonso)",
+      "position": "Forward",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/4wr09MP4/1000503343.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "5MGvAjSdiORGbNUxCJu2": {
+      "name": "Abiola Ogundipe (Sir Bioo / Bioo)",
+      "position": "⁠Striker (ST)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "5c5OEGNkAaMmb16f6lGm": {
+      "name": "Muyideen Azeez",
+      "position": "Forward (FW)",
+      "number": 8,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "61mDuQOEAWIX85a1F07m": {
+      "name": "Iyiola Kante",
+      "position": "Defender (DF)",
+      "number": 6,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "63zXpPeo3KSKLynrUTDM": {
+      "name": "Loba Babalola ",
+      "position": "Defender (DF)",
+      "number": 5,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "6Gjx1JpoFORXshdkLIJL": {
+      "name": "ADEBOWALE WILSON",
+      "position": "⁠Right Wing (RW)",
+      "number": 8,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ"
+    },
+    "6PCpVs4y3kiH55e4FYPO": {
+      "number": 12,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "name": "Samuel Ayanfe",
+      "position": "Midfielder (MF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "6bTZIvYlYGHX6gYlR9Zi": {
+      "name": "Samuel Tobi",
+      "position": "Defender (DF)",
+      "number": 5,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "716teLN05wudmkDx5K1x": {
+      "name": "GODSFRED ETIM",
+      "position": "Forward (FW)",
+      "number": 19,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "7IGbgGWm0jNs6l6CGz63": {
+      "name": "KINGSLEY ABIOLA",
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 30,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8GjPfWu0XjJXOKTs3EVk": {
+      "name": "Seyi Ogunggbaiye ( High Fashion)",
+      "position": "Defender (DF)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8cdLf5IZ4E7TwhItWkuH": {
+      "name": "JIDE ADEBOWALE",
+      "position": "Midfielder (MF)",
+      "number": 10,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "97vzx1BaT7O1YhsHq0ih": {
+      "name": "Oluwadamilare Akinwola",
+      "position": "Defender (DF)",
+      "number": 3,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9MFGugbxVxZEAsQsE3a3": {
+      "name": "Fortune Samuel (Big Sam)",
+      "position": "Defender",
+      "number": 2,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/9B89D6J/fortune.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9nLtK6voqEn2wXsinaMo": {
+      "name": "Mujeeb Ismail",
+      "position": "Defender (DF)",
+      "number": 20,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ARfaEY0O1JaWe0zLPc0b": {
+      "name": "Ganiu Abdulsalam",
+      "position": "⁠Defensive Midfielder (DM)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "BHgqDm4XESwxNSAWefFB": {
+      "name": "Samuel Olawoye",
+      "position": "Midfielder (MF)",
+      "number": 16,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "BS4hRsmESLYOBdoycuJd": {
+      "name": "Praise Joseph ",
+      "position": "Midfielder (MF)",
+      "number": 22,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "C9d7cXIziVdfRxDIqoBN": {
+      "name": "Eze Isaiah",
+      "position": "⁠⁠Central Defenders (CB)",
+      "number": 5,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "photo": "https://i.ibb.co/YqqpbFs/Screenshot-2026-02-12-140928.png",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "is_manager": true
+    },
+    "ChLah35XjNydB7nKNnm8": {
+      "name": "Adejinmi Nathaniel (Nathalizer",
+      "position": "Defender",
+      "number": 24,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/hRfqWspb/nat.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "DxEDNLkmAHtAlsSk4XHD": {
+      "name": "Benjamin ",
+      "number": 19,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "position": "Midfielder (MF)"
+    },
+    "Ec7KEVe1dhS8QCJsB7Bq": {
+      "name": "Johnson Oluwapelumi (Kito)",
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/jvQSVYLQ/1000604127.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Eg5tGdyGVyTzgvhVIQjh": {
+      "name": "Adetayo Ayobami Temitope(GMF)",
+      "position": "Forward",
+      "number": 82,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/21W5JBhV/ogo.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "HhnYTbjFEZ7hhkpMrY3v": {
+      "name": "Segun Badaru ",
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/W4xNnGjg/138045.jpg",
+      "number": 10,
+      "position": "⁠Attacking Midfielder (AM)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "HtoI7dx8LYOzZKyzSGOd": {
+      "name": "MONSURU ABIODUN IDOWU",
+      "position": "Midfielder (MF)",
+      "number": 10,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/0y2YHh96/mon.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "I3vX2bMTVS7ExHPY8c8d": {
+      "name": "Jackson Otoyo",
+      "number": 44,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": null,
+      "position": "⁠Defensive Midfielder (DM)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "JvSu6nDdctWszpr0e4sV": {
+      "name": "Paulo",
+      "number": 3,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "position": "Defender (DF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "K9e4fNaudyXhNTSC8kiV": {
+      "name": "JOSHUA CAPOGAN",
+      "position": "Left Back (LB)",
+      "number": 6,
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "team_id": "twQNFC08Ncz2Tazr70yy"
+    },
+    "KOTZlxoribijL5sxgxdx": {
+      "name": "Muyiwa Ladega ",
+      "position": "⁠Striker (ST)",
+      "number": 9,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "KP74rRDtbQAvoPwdQJ8A": {
+      "name": "ABEY IBRAHIM",
+      "position": "Midfielder (MF)",
+      "number": 35,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "KhRBBRqfqM3N6wb1Xlal": {
+      "name": "Bright Marvellous ",
+      "position": "⁠Striker (ST)",
+      "number": 9,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "KxZxym5lpxsGuIplgZQQ": {
+      "name": "Talabi Kolawole",
+      "position": "Defender",
+      "number": 5,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "photo": "https://i.ibb.co/R4pqXPGw/pk.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "is_manager": true
+    },
+    "L1RNsVl6TmAmdpFoPX2n": {
+      "name": "Foluso Ogunfile ",
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "photo": null,
+      "position": "Central Midfielder (CM)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "is_manager": true,
+      "number": 6
+    },
+    "M32zyC5bMuB3bRUSrCzh": {
+      "name": "Opemipo Adekunle (HOPMAN)",
+      "position": "⁠Right Wing (RW)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/FL5jfqGv/1000518121.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "MwXXxZdZjWngMXNLWEe2": {
+      "name": "Kingsley Peter ",
+      "number": 2,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "position": "⁠Attacking Midfielder (AM)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "MzANxJq0ERRnSNvAb3Nl": {
+      "name": "Peter Seropot",
+      "position": "Forward (FW)",
+      "number": 9,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/Z1FCSTtf/Whats-App-Image-2026-07-13-at-11-19-54.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "NW7w2JnFyIIDpuJ2cl3V": {
+      "name": "Andy Eze",
+      "position": "⁠Striker (ST)",
+      "number": 16,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ"
+    },
+    "O21IOvOmSAJ4688y5bta": {
+      "name": "ADEGBOLA OLUWASEUN (APASE)",
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "OBMpQ2EfM8uJZziVEmFV": {
+      "name": "Samuel Babo",
+      "position": "⁠Striker (ST)",
+      "number": 9,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "OemruBpqd01yarsZv8Y0": {
+      "name": "Deji Paul(Anderson)",
+      "position": "Midfielder (MF)",
+      "number": 18,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/Pz6CCFJ2/Whats-App-Image-2026-03-20-at-20-28-12.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "PQKsPylvotyCV7Bj2fp2": {
+      "name": "Seyi Agboola",
+      "position": "Midfielder (MF)",
+      "number": 77,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "QGc1VdhzB7rmPm5qpTF6": {
+      "name": "Adeleke Gbenga",
+      "position": "⁠Striker (ST)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "QxUQOhvc0C9XDUHRxQSa": {
+      "name": "Bolaji Abdulsamod (Ceo garri)",
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "R87VXmSIRzW33YC4gAFU": {
+      "name": "Taiwo Anuke",
+      "position": "⁠⁠Left Wing (LW)",
+      "number": 11,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Rr6LUKVjToSn8oXlUamZ": {
+      "name": "Emmanuel Akinleye",
+      "number": 19,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "position": "Central Midfielder (CM)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "SLUVevtGEhuSEi3J4ePP": {
+      "position": "⁠⁠Left Wing (LW)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "name": "Shola Abdullateef Eniafe (Kante)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "T6ghwJQ95a5gvFUicOZI": {
+      "position": "Defender (DF)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "name": "Sogunro Ayomide Emmanuel (ay)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "TwTTPBoW5oyBatRKm4nS": {
+      "name": "Gabriel",
+      "position": "Forward",
+      "number": 24,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "UfPW7MZEavBJ6mfanvcQ": {
+      "position": "Midfielder",
+      "number": 8,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/nNHybv12/ope.jpg",
+      "name": "ATANDA FARUQ OPEYEMI",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "UlCJ6bsrzlrXT93YTo47": {
+      "name": "Bright Irozuru",
+      "position": "⁠Striker (ST)",
+      "number": 9,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "VV2OMPRfvEyHmNZNp10m": {
+      "name": "Olamilekan Sodiq",
+      "position": "Forward (FW)",
+      "number": 9,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "VYN54V8T4ioAcgn2T7mS": {
+      "name": "Sucesss Oganyin",
+      "position": "Defender (DF)",
+      "number": 14,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Vj0feiskFCsguXvpnoET": {
+      "name": "Godspower Enya ",
+      "position": "⁠Striker (ST)",
+      "number": 12,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "W1MU2pRqL8yjwds1inui": {
+      "name": "Energy Peter",
+      "position": "Forward",
+      "number": 9,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "WGeWGuZvqANvubr2eHqU": {
+      "name": "Tunde Beto",
+      "position": "Defender (DF)",
+      "number": 5,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "photo": null,
+      "is_manager": true,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "WMErGiPsLqDrkSuXFzp7": {
+      "name": "Precious Udofia",
+      "position": "⁠⁠Left Wing (LW)",
+      "number": 66,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "WX8lwZxe2VtaPVapStw9": {
+      "name": "Emmanuel Akpan (Techi)",
+      "position": "⁠Right Wing (RW)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/4wn2gwQP/1000512525.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "XQTccdh6htWYJyoM3BA0": {
+      "name": "Machala ",
+      "number": 11,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "position": "Midfielder (MF)"
+    },
+    "XYwvdeq4pAenwWTkb5mO": {
+      "name": "Izuchukwu Ikechukwu ",
+      "position": "⁠⁠Central Defenders (CB)",
+      "number": 3,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Xi4BM4DPVFY3dgfANjju": {
+      "name": "Peter Aseroma ",
+      "position": "Defender (DF)",
+      "number": 1,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/mgkSL3X/107252.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YD1y79B5xWW5cV3os078": {
+      "name": "Damilare Ayeni",
+      "position": "Defender (DF)",
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "number": 8,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YHLsobTylmFWAC5Wi1ob": {
+      "name": "PIUS",
+      "position": "Defender (DF)",
+      "number": 3,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Z2rnu8HFuf7dA0pZLdXJ": {
+      "name": "Richard Olaiya Ilori ",
+      "position": "⁠Striker (ST)",
+      "number": 7,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ZwggPnwiIwHvwuKcjW85": {
+      "name": "WILSON EZE",
+      "position": "⁠⁠Left Wing (LW)",
+      "number": 9,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ"
+    },
+    "aNEzzhDT0YSgVDhfs11O": {
+      "name": "Bamidele Lazebee",
+      "position": "Defender (DF)",
+      "number": 2,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "aidPOiksNUaywAWmEUFe": {
+      "name": "Tochukwu Obetta",
+      "position": "Defender (DF)",
+      "number": 5,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/rf2nsRvJ/43971.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "akObbWmd2Te5fi08oZ5W": {
+      "name": "Miracle Umeh",
+      "position": "Forward",
+      "number": 5,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "baqmA2RplO8E67akkgRh": {
+      "name": "SEGUN ODEJA",
+      "position": "⁠⁠Right Back (RB)",
+      "number": 80,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "bs76nLhkQhZP93SbI6wL": {
+      "name": "Sporonto ",
+      "position": "Defender (DF)",
+      "number": 31,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "c5A3b2GkTnqhTLdIBTUZ": {
+      "name": "Samuel Anthony",
+      "position": "Forward",
+      "number": 0,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "cs3yG4ArKx87tGxWwtXc": {
+      "name": "Femi Adesope",
+      "position": "Defender (DF)",
+      "number": 4,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/8L07RGhj/44110.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "cx2U4XLvEBUdGT0Z7jZV": {
+      "name": "Jubril",
+      "number": 2,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "position": "Defender (DF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "dCDI4wkJncU5bWkCvPKd": {
+      "name": "Dayo Cunho",
+      "number": 7,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "position": "Midfielder (MF)"
+    },
+    "dCbe2l56guHbIfqJZSha": {
+      "name": "Emmanuel Michael ",
+      "position": "Defender (DF)",
+      "number": 5,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/dsGvpy5q/107241.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "dEqim9gsd4C8KBksZSza": {
+      "name": "Folorunsho Omojola",
+      "position": "Forward",
+      "number": 10,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "is_manager": true
+    },
+    "dHzNlMOkrPaRHC8d1oDC": {
+      "name": "Joseph Uzo ",
+      "position": "Midfielder (MF)",
+      "number": 4,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "dRdnix2NQSrLxsOZYY3u": {
+      "name": "Christian Sunday ",
+      "position": "Defender (DF)",
+      "number": 5,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "dSURLYxMDlkT04dn4u3P": {
+      "name": "Yemiola Olumartins (Yhemo / Olumartins)",
+      "position": "⁠⁠Central Defenders (CB)",
+      "number": 5,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "e95EnIaOzziAPU5143bG": {
+      "name": "Soadiq Oyekunle",
+      "number": 4,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "position": "Midfielder (MF)"
+    },
+    "eVYyKwmfJL0TW2oUYA8m": {
+      "name": "Olasukanmi (Suko)",
+      "position": "Defender (DF)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "eWyjfttnzFWJSFGVgwmB": {
+      "number": 4,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/JjkSDkNL/1000422208.jpg",
+      "position": "Midfielder",
+      "name": "Peter Tobiloba Ayotola (Candy)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "edBB4vR9bbjVaqMtvQO2": {
+      "name": "Bidemi",
+      "position": "⁠Striker (ST)",
+      "number": 99,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "f0EU4Aa0ytbkzTO7AFsC": {
+      "name": "Cakpogan Ezekiel (mayor)",
+      "position": "Defender",
+      "number": 3,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/1twr0FK5/capo.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "fAhWBiObOZq3fwkv30EV": {
+      "name": "Michael ",
+      "number": 16,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "position": "Midfielder (MF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "fKltVB3cqLKSuQYn44ty": {
+      "name": "Oriyomi Abayomi ",
+      "position": "Forward (FW)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "fu8yEUgTTGkf0sCC1L0I": {
+      "name": "Sogunro Oladipupo Opeyemi (Ladi)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "position": "Midfielder",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "gJcyi7RyO4c5Gisuu4k1": {
+      "name": "ABRAHAM",
+      "position": "Midfielder (MF)",
+      "number": 16,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "hBIIO6QawltA9FpzHOrM": {
+      "name": "Adeniran Olaitan ",
+      "position": "Defender (DF)",
+      "number": 27,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/W4jP9Vrx/Whats-App-Image-2026-03-05-at-12-02-04.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "hIlz4Bs8TXSS2ITyom9G": {
+      "name": "IFEANYI EZE",
+      "position": "Forward (FW)",
+      "number": 14,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "hWp7IWKb0AoyezDk0q2n": {
+      "name": "DANIEL OLUKUNLE",
+      "position": "⁠⁠Left Wing (LW)",
+      "number": 18,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ijRbhBCsWRpFXckeXD1S": {
+      "name": "Basit Oladosu",
+      "position": "⁠Right Wing (RW)",
+      "number": 7,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "jjypGD6zFuyXrTkPll5O": {
+      "name": "Ajayi Dare (Cuban)",
+      "position": "⁠Striker (ST)",
+      "number": 15,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "jq6uVSenXP9yLpyu6Gwv": {
+      "name": "MADUEKE",
+      "position": "Defender (DF)",
+      "number": 2,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "mn0EcVDODid5VdbBoMTs": {
+      "name": "Ay forever ",
+      "position": "Forward",
+      "number": 21,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "muaHi8hzY3C1FyGjXutt": {
+      "name": "OLAJIDE AMUSAT",
+      "position": "Midfielder (MF)",
+      "number": 10,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ"
+    },
+    "n1G9LpL9RMkejlUFlvgG": {
+      "name": "Onipede Tunde",
+      "position": "⁠Defensive Midfielder (DM)",
+      "number": 4,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "nAx8vTek7VVGdvZ8poj5": {
+      "name": "OBIORA FAVOUR (MACO)",
+      "position": "Forward",
+      "number": 20,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/C3XpJ29F/maco.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "nya9mXOTvAtEsdo7XSnt": {
+      "name": "Damilola David",
+      "position": "⁠Right Wing (RW)",
+      "number": 0,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "o3NHVuG4Lvkcq86Q1WoE": {
+      "position": "Midfielder",
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/Nd5rY0c2/sam.jpg",
+      "name": "Enyene Samuel ",
+      "number": 11,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "o5kdcJiJEQBQookw6jsg": {
+      "name": "Bayo Awoyale",
+      "position": "Forward (FW)",
+      "number": 19,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "pIQPdzMhlc8gXHwha5xg": {
+      "name": "Arowolo Mayowa",
+      "position": "Forward",
+      "number": 9,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/RkX3mWh0/mayo.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "pUTYT4bYJjst13iVPLBM": {
+      "name": "Seji (Ejo",
+      "position": "Midfielder (MF)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "pYKpLlDl8rVu7CXCkAF7": {
+      "number": 8,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/99ppP2mw/1000422178.jpg",
+      "name": "Michael Ben (Teddy)",
+      "position": "Midfielder (MF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "prUes4ggd5oLi42jG40Z": {
+      "name": "Morife Jebutu",
+      "number": 6,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "position": "Defender (DF)"
+    },
+    "qAXtVjG2i0ZVDWz8B0LT": {
+      "name": "Christopher ",
+      "number": 22,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "position": "Midfielder (MF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "rn7GTfWaDDHFlctTN82T": {
+      "name": "Yakub",
+      "position": "Forward",
+      "number": 52,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "sS9apDNNlkoflKQqX3fA": {
+      "name": "Temidara",
+      "position": "Defender (DF)",
+      "number": 98,
+      "team_id": "twQNFC08Ncz2Tazr70yy",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "sg8MMeC7JOBirG9QfpKX": {
+      "name": "Emmanuel Bewaji ",
+      "number": 5,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "position": "Defender (DF)"
+    },
+    "sqML7ZSlugKdO5PYHzxs": {
+      "name": "MR SAMUEL",
+      "position": "Defender (DF)",
+      "number": 7,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "tcgAHasmJE9J6Wn9sRfw": {
+      "name": "Marvins ",
+      "position": "Forward",
+      "number": 1,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "v5MrFXyGxu66aHboUHHU": {
+      "name": "Kazeem",
+      "number": 17,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "position": "Midfielder (MF)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "vi4XTcUEsZzmsuI7clTf": {
+      "name": "Dolapo",
+      "position": "⁠⁠Right Back (RB)",
+      "number": 15,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "wGvI1iEqrvREubgXvkaS": {
+      "name": "Sativa",
+      "position": "Defender (DF)",
+      "number": 28,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "wxQjWdT2WrpZeH1M8uTu": {
+      "name": "Samuel Elechi",
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 8,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "wxaEOQQ3Z72IqF9s74Io": {
+      "name": "MORRIS MALAS",
+      "position": "Defender (DF)",
+      "number": 2,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ"
+    },
+    "xSoTiquMJ997ga3VxRCH": {
+      "name": "Olakunle Abiodun",
+      "position": "Central Midfielder (CM)",
+      "number": 10,
+      "team_id": "hI9Lufp1yRyBCjvS6dAt",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "xu0VzrMn6a2u0mz9CcCT": {
+      "name": "Cb",
+      "position": "Defender (DF)",
+      "number": 35,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "yeE9eFt8Zlkr6L2qBJBO": {
+      "name": "Dapo Ayeni",
+      "position": "Left Back (LB)",
+      "number": 3,
+      "team_id": "pn8Qxwx5S95bZVqDdB45",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ysgo204bBeIexjdyDIUn": {
+      "name": "Aramu Samuel ",
+      "position": "Defender (DF)",
+      "number": 26,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "yvSMhUFkGYCb5LAq6E7O": {
+      "name": "Bakare Olasunkanmi (Lax)",
+      "position": "⁠Attacking Midfielder (AM)",
+      "number": 0,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/S7cG4Hp4/1000544434.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "z7CW0B8ESZp44p5prYtf": {
+      "name": "DANIEL OLUKUNLE",
+      "position": "Midfielder (MF)",
+      "number": 88,
+      "team_id": "RdiwZ6ZDGfpAX0gDE9rO",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "zj8ePjsswOsVrd1lHRy7": {
+      "name": "Ola",
+      "position": "Forward",
+      "number": 18,
+      "team_id": "MyGQrlIC22GwrGztXnvT",
+      "is_manager": false,
+      "photo": null,
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "zvMjio4qUddbks6DgOkm": {
+      "name": "Azeez Ayomide Yusuf (Black Nylon)",
+      "number": 7,
+      "team_id": "eSeLMlfGL8yHkXOoVJ8h",
+      "is_manager": false,
+      "photo": "https://i.ibb.co/qMMVb64C/1000422239.jpg",
+      "position": "⁠Right Wing (RW)",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  },
+  "red_cards": {
+    "3i2LpuZMgLUX3PgOb5be": {
+      "playerId": "dSURLYxMDlkT04dn4u3P",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "iBw6lwv9LlcoT2zs5zfb",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023743,
+        "_nanoseconds": 538000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "6ZXLbd1vaOL4FnFsLTMn": {
+      "playerId": "K9e4fNaudyXhNTSC8kiV",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "nJx8yyNQ0k7PmcNiGeoa",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777970656,
+        "_nanoseconds": 938000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "7xXSVI4eehAnjb1bmVDl": {
+      "playerId": "JiFT2hzOK8QItvVpgYuA",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "66um0G5wewWCPWRO5PuQ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1771962142,
+        "_nanoseconds": 444000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "9wN00zXpDsW1jMUcKl4a": {
+      "playerId": "pYKpLlDl8rVu7CXCkAF7",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "BXvn8EnSk9QZD69YFbVL": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "I2MvNVgv2dGIcSLWIgDy": {
+      "playerId": "1ydfBs92Vu2ANNgTSVJP",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "lPSGLLK6FsNAGgtBwOCo",
+      "matchDay": 10,
+      "timestamp": {
+        "_seconds": 1778072689,
+        "_nanoseconds": 705000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "SKgj3NSYRxmL8FwEcTNt": {
+      "playerId": "xu0VzrMn6a2u0mz9CcCT",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "i3ULWFSz6YyIWvuuAL7y",
+      "matchDay": 12,
+      "timestamp": {
+        "_seconds": 1780340989,
+        "_nanoseconds": 128000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "UWEgSFZoKcWQhhQrdzT5": {
+      "playerId": "tvZPrz1TCypnzz0hnzKp",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "rcr1DFHUe5OtbiavuNqJ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1773075677,
+        "_nanoseconds": 12000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "WF9Eql0jBZCIeDvdJ7gf": {
+      "playerId": "61mDuQOEAWIX85a1F07m",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "ByfTj9aP16aDPrctVjCc",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776094923,
+        "_nanoseconds": 764000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "dYxy2xakBDBBNIaI2GLZ": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "tb6c5skmMEdqQJ13B3Wt": {
+      "playerId": "K9e4fNaudyXhNTSC8kiV",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "WheJbPpECkD4bvaBoFWm",
+      "matchDay": 8,
+      "timestamp": {
+        "_seconds": 1776807243,
+        "_nanoseconds": 685000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  },
+  "settings": {
+    "league": {
+      "matchDay": "Tuesday",
+      "yellowsPerBan": 3,
+      "pointsLoss": 0,
+      "pointsWin": 3,
+      "defaultTime": "10:00",
+      "leagueVenue": "Surulere Stadium",
+      "pointsDraw": 1,
+      "seasonName": "2026/27 League",
+      "inviteDeadline": "2026-07-16T23:59:00",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  },
+  "suspensions": {
+    "sNB8x5GjvtklqOY8g6IG": {
+      "playerId": "xu0VzrMn6a2u0mz9CcCT",
+      "reason": "red_card",
+      "triggerMatchId": "i3ULWFSz6YyIWvuuAL7y",
+      "matchesBanned": 1,
+      "matchesServed": 0,
+      "active": true,
+      "status": "active",
+      "createdAt": {
+        "_seconds": 1780340989,
+        "_nanoseconds": 769000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  },
+  "teams": {
+    "MyGQrlIC22GwrGztXnvT": {
+      "name": "Big6",
+      "primary_color": "#3b82f6",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "stadium": "National Stadium, Surulere",
+      "id": "MyGQrlIC22GwrGztXnvT",
+      "founded": "2023",
+      "logo": "https://i.ibb.co/Df4sBqQp/1000218356.jpg"
+    },
+    "RdiwZ6ZDGfpAX0gDE9rO": {
+      "name": "EXPOUNDIA FC",
+      "stadium": "National Stadium, Surulere",
+      "founded": "2020",
+      "primary_color": "#00ff33",
+      "logo": "https://i.ibb.co/b5TkQQrk/Screenshot-2026-02-12-135712.png",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "eSeLMlfGL8yHkXOoVJ8h": {
+      "name": "BOLISTIC FC",
+      "stadium": "National Stadium, Surulere",
+      "founded": "2020",
+      "primary_color": "#3b82f6",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "logo": "https://i.ibb.co/8nsfRPHy/LOGO-BOLISTIC-FC.png"
+    },
+    "hI9Lufp1yRyBCjvS6dAt": {
+      "name": "SHELTER FC",
+      "stadium": "",
+      "founded": "",
+      "primary_color": "#3b82f6",
+      "logo": "https://i.ibb.co/xKcVwKGc/Whats-App-Image-2026-06-23-at-08-34-18.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "pn8Qxwx5S95bZVqDdB45": {
+      "name": "FOZ FC ",
+      "primary_color": "#00ff00",
+      "founded": "2020",
+      "id": "pn8Qxwx5S95bZVqDdB45",
+      "stadium": "National Stadium, Surulere ",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "logo": "https://i.ibb.co/DDMgPHK1/Whats-App-Image-2026-03-19-at-12-36-56.jpg"
+    },
+    "twQNFC08Ncz2Tazr70yy": {
+      "name": "Page3Pro FC",
+      "founded": "2018",
+      "primary_color": "#f73b3b",
+      "id": "twQNFC08Ncz2Tazr70yy",
+      "logo": "https://i.ibb.co/MyKX0yF5/logop3.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "stadium": "National Stadium, Surulere"
+    }
+  },
+  "user_invites": {
+    "4A7EOAHMQ": {
+      "email": "badaruoluwasegun@gmail.com",
+      "role": "admin",
+      "createdByAdminId": "iQ5BlBzr0xahJAV9Y1MobSx766w1",
+      "createdAt": {
+        "_seconds": 1770818996,
+        "_nanoseconds": 429000000
+      },
+      "usedAt": {
+        "_seconds": 1770819268,
+        "_nanoseconds": 938000000
+      },
+      "used": true,
+      "usedBy": "eBvxTxDQGHN1dCM58wiop1lW1ak1",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "85TJHI7U2": {
+      "email": "oluwaseyii.bewaji@gmail.com",
+      "role": "admin",
+      "createdByAdminId": "iQ5BlBzr0xahJAV9Y1MobSx766w1",
+      "createdAt": {
+        "_seconds": 1770891587,
+        "_nanoseconds": 516000000
+      },
+      "usedAt": {
+        "_seconds": 1770894364,
+        "_nanoseconds": 114000000
+      },
+      "used": true,
+      "usedBy": "Ftl3zqrhh3av72bGk2byt4j7iAL2",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "97S751DDE": {
+      "email": "kingsleylawani@gmail.com",
+      "role": "admin",
+      "createdByAdminId": "TDcFreejBQbtB4ww5KjFcrsxP0C2",
+      "createdAt": {
+        "_seconds": 1770813726,
+        "_nanoseconds": 158000000
+      },
+      "usedAt": {
+        "_seconds": 1770814013,
+        "_nanoseconds": 669000000
+      },
+      "used": true,
+      "usedBy": "iQ5BlBzr0xahJAV9Y1MobSx766w1",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "LA74GHCCY": {
+      "email": "adepojutayyib@gmail.com",
+      "role": "admin",
+      "createdByAdminId": "iQ5BlBzr0xahJAV9Y1MobSx766w1",
+      "createdAt": {
+        "_seconds": 1770899808,
+        "_nanoseconds": 522000000
+      },
+      "usedAt": {
+        "_seconds": 1770899944,
+        "_nanoseconds": 635000000
+      },
+      "used": true,
+      "usedBy": "z572yVTez6ZUGiSyugAdvGsBweO2",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "PQ55YXPMW": {
+      "email": "folusoogunfile@yahoo.com",
+      "role": "admin",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "createdByAdminId": "hzy09C0IGTWcHuE4BqW289n5g0G3",
+      "createdAt": {
+        "_seconds": 1772523886,
+        "_nanoseconds": 6000000
+      },
+      "usedAt": {
+        "_seconds": 1772524961,
+        "_nanoseconds": 904000000
+      },
+      "used": true,
+      "usedBy": "sQL6MBONKQQt2niEesQGI9jElww1"
+    },
+    "U5GGWHEND": {
+      "email": "expoundia@gmail.com",
+      "role": "admin",
+      "createdByAdminId": "TDcFreejBQbtB4ww5KjFcrsxP0C2",
+      "createdAt": {
+        "_seconds": 1770825441,
+        "_nanoseconds": 242000000
+      },
+      "usedAt": {
+        "_seconds": 1770901079,
+        "_nanoseconds": 508000000
+      },
+      "used": true,
+      "usedBy": "tRdiBGSYqLYrN52rn0353QIIiUm1",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "XPZLSVMY8": {
+      "email": "talabikola@gmail.com",
+      "role": "admin",
+      "createdByAdminId": "iQ5BlBzr0xahJAV9Y1MobSx766w1",
+      "createdAt": {
+        "_seconds": 1770823167,
+        "_nanoseconds": 190000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "usedAt": {
+        "_seconds": 1772452353,
+        "_nanoseconds": 576000000
+      },
+      "used": true,
+      "usedBy": "7ARK7eNXQWhJlJ8llz35bN2fW1p2"
+    }
+  },
+  "user_roles": {
+    "7ARK7eNXQWhJlJ8llz35bN2fW1p2": {
+      "createdAt": {
+        "_seconds": 1772452353,
+        "_nanoseconds": 233000000
+      },
+      "teamId": null,
+      "playerId": null,
+      "role": "player",
+      "updatedAt": {
+        "_seconds": 1780061647,
+        "_nanoseconds": 169000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "Ftl3zqrhh3av72bGk2byt4j7iAL2": {
+      "createdAt": {
+        "_seconds": 1770894363,
+        "_nanoseconds": 753000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "teamId": null,
+      "playerId": null,
+      "role": "league_manager",
+      "updatedAt": {
+        "_seconds": 1783336314,
+        "_nanoseconds": 34000000
+      }
+    },
+    "IfuQ9npQ4FUU0rJUj9pm6fAk5mN2": {
+      "createdAt": {
+        "_seconds": 1771860173,
+        "_nanoseconds": 84000000
+      },
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "teamId": null,
+      "playerId": null,
+      "updatedAt": {
+        "_seconds": 1779836617,
+        "_nanoseconds": 198000000
+      },
+      "role": "league_manager"
+    },
+    "eBvxTxDQGHN1dCM58wiop1lW1ak1": {
+      "createdAt": {
+        "_seconds": 1770819268,
+        "_nanoseconds": 627000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "teamId": null,
+      "playerId": null,
+      "role": "league_manager",
+      "updatedAt": {
+        "_seconds": 1783336288,
+        "_nanoseconds": 112000000
+      }
+    },
+    "h5aiMwfkVUPKRKMaXGc1MNxluuw2": {
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ",
+      "role": "league_manager",
+      "createdAt": {
+        "_seconds": 1784127611,
+        "_nanoseconds": 0
+      },
+      "updatedAt": {
+        "_seconds": 1784127648,
+        "_nanoseconds": 0
+      },
+      "teamId": null,
+      "playerId": null
+    },
+    "hzy09C0IGTWcHuE4BqW289n5g0G3": {
+      "createdAt": {
+        "_seconds": 1771493640,
+        "_nanoseconds": 805000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "role": "league_manager",
+      "teamId": null,
+      "playerId": null,
+      "updatedAt": {
+        "_seconds": 1779836617,
+        "_nanoseconds": 198000000
+      }
+    },
+    "iQ5BlBzr0xahJAV9Y1MobSx766w1": {
+      "createdAt": {
+        "_seconds": 1770814013,
+        "_nanoseconds": 278000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "role": "league_manager",
+      "teamId": null,
+      "playerId": null,
+      "updatedAt": {
+        "_seconds": 1779836617,
+        "_nanoseconds": 198000000
+      }
+    },
+    "sQL6MBONKQQt2niEesQGI9jElww1": {
+      "createdAt": {
+        "_seconds": 1772524961,
+        "_nanoseconds": 484000000
+      },
+      "teamId": null,
+      "playerId": null,
+      "role": "league_manager",
+      "updatedAt": {
+        "_seconds": 1783336298,
+        "_nanoseconds": 823000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "tRdiBGSYqLYrN52rn0353QIIiUm1": {
+      "createdAt": {
+        "_seconds": 1770901079,
+        "_nanoseconds": 197000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "teamId": null,
+      "playerId": null,
+      "role": "league_manager",
+      "updatedAt": {
+        "_seconds": 1783336295,
+        "_nanoseconds": 318000000
+      }
+    },
+    "z572yVTez6ZUGiSyugAdvGsBweO2": {
+      "createdAt": {
+        "_seconds": 1770899944,
+        "_nanoseconds": 250000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "teamId": null,
+      "playerId": null,
+      "role": "league_manager",
+      "updatedAt": {
+        "_seconds": 1783938841,
+        "_nanoseconds": 810000000
+      }
+    }
+  },
+  "users": {
+    "7ARK7eNXQWhJlJ8llz35bN2fW1p2": {
+      "email": "talabikola@gmail.com",
+      "displayName": "Talabi kolawole ",
+      "photoUrl": null,
+      "createdAt": {
+        "_seconds": 1772452352,
+        "_nanoseconds": 728000000
+      }
+    },
+    "Ftl3zqrhh3av72bGk2byt4j7iAL2": {
+      "email": "oluwaseyii.bewaji@gmail.com",
+      "displayName": "Big6",
+      "photoUrl": null,
+      "createdAt": {
+        "_seconds": 1770894363,
+        "_nanoseconds": 182000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "IfuQ9npQ4FUU0rJUj9pm6fAk5mN2": {
+      "email": "owoyeminiyi@gmail.com",
+      "displayName": "Niyi Owoyemi",
+      "photoUrl": "https://i.ibb.co/PGKCwQpN/My-image.jpg",
+      "createdAt": {
+        "_seconds": 1771860172,
+        "_nanoseconds": 684000000
+      },
+      "leagueId": "mvBPnE7p0ytJPuJ1OwmZ"
+    },
+    "eBvxTxDQGHN1dCM58wiop1lW1ak1": {
+      "email": "badaruoluwasegun@gmail.com",
+      "displayName": "Badaru Oluwasegun ",
+      "createdAt": {
+        "_seconds": 1770819268,
+        "_nanoseconds": 310000000
+      },
+      "photoUrl": "https://i.ibb.co/W4xNnGjg/138045.jpg",
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "hzy09C0IGTWcHuE4BqW289n5g0G3": {
+      "email": "owoyeminiyi2@gmail.com",
+      "displayName": "Niyi Owoyemi",
+      "photoUrl": "https://i.ibb.co/LXQ00FLF/My-image.jpg",
+      "createdAt": {
+        "_seconds": 1771493640,
+        "_nanoseconds": 363000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "iQ5BlBzr0xahJAV9Y1MobSx766w1": {
+      "email": "kingsleylawani@gmail.com",
+      "displayName": "abiolaks",
+      "photoUrl": "https://i.ibb.co/My5QvJdM/IMG-20240708-092636.jpg",
+      "createdAt": {
+        "_seconds": 1770814012,
+        "_nanoseconds": 909000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "sQL6MBONKQQt2niEesQGI9jElww1": {
+      "email": "folusoogunfile@yahoo.com",
+      "displayName": "Foluso",
+      "photoUrl": null,
+      "createdAt": {
+        "_seconds": 1772524961,
+        "_nanoseconds": 7000000
+      }
+    },
+    "tRdiBGSYqLYrN52rn0353QIIiUm1": {
+      "email": "expoundia@gmail.com",
+      "displayName": "Expoundia FC",
+      "photoUrl": "https://i.ibb.co/b5TkQQrk/Screenshot-2026-02-12-135712.png",
+      "createdAt": {
+        "_seconds": 1770901078,
+        "_nanoseconds": 865000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "z572yVTez6ZUGiSyugAdvGsBweO2": {
+      "email": "adepojutayyib@gmail.com",
+      "displayName": "Bolistic Fc ",
+      "createdAt": {
+        "_seconds": 1770899943,
+        "_nanoseconds": 895000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3",
+      "photoUrl": "https://i.ibb.co/1tNgRFqS/1000408002.png"
+    }
+  },
+  "yellow_cards": {
+    "4UnC3X9PohrOKXEE1dt0": {
+      "playerId": "tvZPrz1TCypnzz0hnzKp",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "rcr1DFHUe5OtbiavuNqJ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1773075677,
+        "_nanoseconds": 12000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "8p98BFuEPHoFS1Omsf4k": {
+      "playerId": "C9d7cXIziVdfRxDIqoBN",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "WheJbPpECkD4bvaBoFWm",
+      "matchDay": 8,
+      "timestamp": {
+        "_seconds": 1776807243,
+        "_nanoseconds": 685000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "C35qQtEurJ8YbP0TdDyB": {
+      "playerId": "dSURLYxMDlkT04dn4u3P",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "iBw6lwv9LlcoT2zs5zfb",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023743,
+        "_nanoseconds": 538000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ED2yRB4kkauMuTnuhY5c": {
+      "playerId": "tvZPrz1TCypnzz0hnzKp",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "xMowrahca4Wz1wKZLKpr",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776095273,
+        "_nanoseconds": 440000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "N3UXDT4hCaz4OO0IVrX1": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "NuawbLNRjSoD8lwXL34f": {
+      "playerId": "UfPW7MZEavBJ6mfanvcQ",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "k3bVAk1gI30ddMh2Twfo",
+      "matchDay": 3,
+      "timestamp": {
+        "_seconds": 1773152121,
+        "_nanoseconds": 238000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "OmzylY6M2Zaodr4cgnqk": {
+      "playerId": "tvZPrz1TCypnzz0hnzKp",
+      "teamId": "pn8Qxwx5S95bZVqDdB45",
+      "matchId": "rcr1DFHUe5OtbiavuNqJ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1773075677,
+        "_nanoseconds": 12000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "QaxW3sSqDLb1dRECpISQ": {
+      "playerId": "dSURLYxMDlkT04dn4u3P",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "S2rJTVHRI3QFbJMBJrP0": {
+      "playerId": "jq6uVSenXP9yLpyu6Gwv",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "NEAPJkE0qePSGA9TWhWy",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023840,
+        "_nanoseconds": 928000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "ToEvZJ8Lt5icRotl7f3o": {
+      "playerId": "pIQPdzMhlc8gXHwha5xg",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "WsvoT6IKAcMWYvpnT78l": {
+      "playerId": "SLUVevtGEhuSEi3J4ePP",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "rcr1DFHUe5OtbiavuNqJ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1773075677,
+        "_nanoseconds": 12000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YV4hQQ2AbbaDNqc81TvW": {
+      "playerId": "C9d7cXIziVdfRxDIqoBN",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "66um0G5wewWCPWRO5PuQ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1771962142,
+        "_nanoseconds": 444000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "YX4c41IQ4BDAd4lXAJ8i": {
+      "playerId": "Eg5tGdyGVyTzgvhVIQjh",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "WheJbPpECkD4bvaBoFWm",
+      "matchDay": 8,
+      "timestamp": {
+        "_seconds": 1776807243,
+        "_nanoseconds": 685000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "cxydYF4ZPKKADeusX9Lm": {
+      "playerId": "6Gjx1JpoFORXshdkLIJL",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "66um0G5wewWCPWRO5PuQ",
+      "matchDay": 1,
+      "timestamp": {
+        "_seconds": 1771962142,
+        "_nanoseconds": 444000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "kqJSO1ieS3eYWxHUqcOT": {
+      "playerId": "DxEDNLkmAHtAlsSk4XHD",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "oNIHRMFIZBhD3Htzii2E",
+      "matchDay": 3,
+      "timestamp": {
+        "_seconds": 1773347736,
+        "_nanoseconds": 8000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "oIPpF3HLGdB5ivjMfhx7": {
+      "playerId": "dSURLYxMDlkT04dn4u3P",
+      "teamId": "eSeLMlfGL8yHkXOoVJ8h",
+      "matchId": "iBw6lwv9LlcoT2zs5zfb",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023743,
+        "_nanoseconds": 538000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "oPXC1grQspszyx9pzqqG": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "1M4mTYBnCmY8NaF2L7KK",
+      "matchDay": 2,
+      "timestamp": {
+        "_seconds": 1772915980,
+        "_nanoseconds": 713000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "opWhckxcrcJr4anSeBeN": {
+      "playerId": "ChLah35XjNydB7nKNnm8",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "k3bVAk1gI30ddMh2Twfo",
+      "matchDay": 3,
+      "timestamp": {
+        "_seconds": 1773152121,
+        "_nanoseconds": 238000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "opbUDIS9rM8rlzFMTVlN": {
+      "playerId": "JvSu6nDdctWszpr0e4sV",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "iBw6lwv9LlcoT2zs5zfb",
+      "matchDay": 4,
+      "timestamp": {
+        "_seconds": 1774023743,
+        "_nanoseconds": 538000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "pT3flKq7OnFGVRTAaeHl": {
+      "playerId": "WGeWGuZvqANvubr2eHqU",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "ByfTj9aP16aDPrctVjCc",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776094923,
+        "_nanoseconds": 764000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "uWge4VUzywujAjO05Sm4": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "xEgSKAHo9D7LGcShQ6Vs": {
+      "playerId": "C9d7cXIziVdfRxDIqoBN",
+      "teamId": "RdiwZ6ZDGfpAX0gDE9rO",
+      "matchId": "MMhwJ8EDbYl6WB6JfyDE",
+      "matchDay": 5,
+      "timestamp": {
+        "_seconds": 1774882189,
+        "_nanoseconds": 800000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "xOvcxRYjnMNWvIm5LOkf": {
+      "playerId": "VV2OMPRfvEyHmNZNp10m",
+      "teamId": "hI9Lufp1yRyBCjvS6dAt",
+      "matchId": "ByfTj9aP16aDPrctVjCc",
+      "matchDay": 6,
+      "timestamp": {
+        "_seconds": 1776094923,
+        "_nanoseconds": 764000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "zP1HdzUfFeyodGn6PlKU": {
+      "playerId": "3rNfIeE60yVlzzciGjjM",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "oNIHRMFIZBhD3Htzii2E",
+      "matchDay": 3,
+      "timestamp": {
+        "_seconds": 1773347736,
+        "_nanoseconds": 8000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "zUgbiyNrLLobF0TbeQ9I": {
+      "playerId": "hBIIO6QawltA9FpzHOrM",
+      "teamId": "twQNFC08Ncz2Tazr70yy",
+      "matchId": "WheJbPpECkD4bvaBoFWm",
+      "matchDay": 8,
+      "timestamp": {
+        "_seconds": 1776807243,
+        "_nanoseconds": 685000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    },
+    "zn2A5XZGemx5DMoIjlCl": {
+      "playerId": "e95EnIaOzziAPU5143bG",
+      "teamId": "MyGQrlIC22GwrGztXnvT",
+      "matchId": "AmavBnnfuQ8WBSzG4KxS",
+      "matchDay": 9,
+      "timestamp": {
+        "_seconds": 1777931879,
+        "_nanoseconds": 216000000
+      },
+      "leagueId": "MWFePlubN1q0O5WH0Ih3"
+    }
+  }
+}
