@@ -57,9 +57,9 @@ export function useMyLinkedPlayer() {
 // Admin — all requests
 // ─────────────────────────────────────────────
 export function useAllLinkRequests() {
-  return useQuery({
+  return useQuery<LinkRequest[]>({
     queryKey: LINK_KEYS.all,
-    queryFn:  getAllLinkRequests,
+    queryFn:  () => getAllLinkRequests(),
     staleTime: 1000 * 60 * 1,
   });
 }
@@ -68,9 +68,9 @@ export function useAllLinkRequests() {
 // Admin — pending requests only
 // ─────────────────────────────────────────────
 export function usePendingLinkRequests() {
-  return useQuery({
+  return useQuery<LinkRequest[]>({
     queryKey: LINK_KEYS.pending,
-    queryFn:  getPendingLinkRequests,
+    queryFn:  () => getPendingLinkRequests(),
     staleTime: 1000 * 60 * 1,
   });
 }
