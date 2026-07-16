@@ -1,9 +1,9 @@
 // scripts/auditAndBackfill.ts
-// Audits leagueId coverage and backfills missing values.
-// Uses Firestore directly to avoid importing the app's firebase.ts (which initializes Auth).
-import { getFirestore } from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
-import { writeBatch, doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
+// Audits leagueId coverage and backfills missing values using Firebase Admin SDK.
+// Uses service-account credentials from .env (no API key / Auth initialization needed).
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import type { Firestore } from 'firebase-admin/firestore';
 
 const LEAGUE_COLLECTIONS = [
   'teams',
@@ -20,39 +20,37 @@ const LEAGUE_COLLECTIONS = [
   'user_invites',
 ] as const;
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+const serviceAccount = {
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? '',
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL ?? '',
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '',
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app = initializeApp({ credential: cert(serviceAccount) });
+const db: Firestore = getFirestore(app);
 
 async function ensureLeagueId(): Promise<string> {
-  const settingsRef = doc(db, 'settings', 'league');
-  const settingsSnap = await getDoc(settingsRef);
-  const existingLeagueId = settingsSnap.exists() ? (settingsSnap.data() as any)?.leagueId : null;
+  const settingsRef = db.collection('settings').doc('league');
+  const settingsSnap = await settingsRef.get();
+  const data = settingsSnap.data() as any | undefined;
+  const existingLeagueId = settingsSnap.exists ? data?.leagueId : null;
   if (existingLeagueId) return existingLeagueId as string;
   const defaultLeagueId = 'default';
-  await setDoc(settingsRef, { leagueId: defaultLeagueId }, { merge: true });
+  await settingsRef.set({ leagueId: defaultLeagueId }, { merge: true });
   return defaultLeagueId;
 }
 
 async function countMissingLeagueId(collectionName: string): Promise<number> {
-  const snap = await getDocs(collection(db, collectionName));
+  const snap = await db.collection(collectionName).get();
   return snap.docs.filter((d) => !('leagueId' in d.data()) || (d.data() as any).leagueId == null).length;
 }
 
 async function backfillCollection(collectionName: string, leagueId: string): Promise<number> {
-  const snap = await getDocs(collection(db, collectionName));
+  const snap = await db.collection(collectionName).get();
   const docs = snap.docs.filter((docSnap) => !('leagueId' in docSnap.data()) || (docSnap.data() as any).leagueId == null);
   const chunkSize = 400;
   for (let i = 0; i < docs.length; i += chunkSize) {
-    const batch = writeBatch(db);
+    const batch = db.batch();
     docs.slice(i, i + chunkSize).forEach((docSnap) => {
       batch.set(docSnap.ref, { leagueId }, { merge: true });
     });
