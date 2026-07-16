@@ -169,7 +169,7 @@ async function fetchPlayers(leagueId?: string | null): Promise<Player[]> {
     constraints.push(where("leagueId", "==", leagueId));
   }
   const snap = await getDocs(query(collection(db, "players"), ...constraints));
-  return snap.docs.map((d) => {
+  const players = snap.docs.map((d) => {
     const p = d.data();
     return {
       id: d.id,
@@ -183,6 +183,8 @@ async function fetchPlayers(leagueId?: string | null): Promise<Player[]> {
       leagueId: p.leagueId ?? null,
     };
   });
+  console.log('[DEBUG] Players collection data:', players);
+  return players;
 }
 
 async function fetchMatches(leagueId?: string | null): Promise<Match[]> {
@@ -191,7 +193,9 @@ async function fetchMatches(leagueId?: string | null): Promise<Match[]> {
     constraints.unshift(where("leagueId", "==", leagueId));
   }
   const snap = await getDocs(query(collection(db, "matches"), ...constraints));
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Match));
+  const matches = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Match));
+  console.log('[DEBUG] Matches collection data:', matches);
+  return matches;
 }
 
 async function fetchEvents(colName: string, leagueId?: string | null): Promise<PlayerEvent[]> {
@@ -586,17 +590,17 @@ export function useAppData() {
 
   // ── Delete all matches in a batch (scoped to current league) ───────────
   const deleteAllMatches = async () => {
+    if (!leagueId) {
+      toast({ title: "Error", description: "Cannot clear records: no league context available", variant: "destructive" });
+      return { error: "No leagueId available" };
+    }
+
     try {
       const eventCollections = ["goals", "assists", "yellow_cards", "red_cards", "match_attendance"];
 
-      // Build leagueId-filtered queries for every collection
-      const matchQuery = ENABLE_LEAGUE_FILTERING && leagueId
-        ? query(collection(db, "matches"), where("leagueId", "==", leagueId))
-        : collection(db, "matches");
+      const matchQuery = query(collection(db, "matches"), where("leagueId", "==", leagueId));
       const eventQueries = eventCollections.map((col) =>
-        ENABLE_LEAGUE_FILTERING && leagueId
-          ? query(collection(db, col), where("leagueId", "==", leagueId))
-          : collection(db, col)
+        query(collection(db, col), where("leagueId", "==", leagueId))
       );
 
       // Collect all match refs + all event refs in parallel

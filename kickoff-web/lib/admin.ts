@@ -241,24 +241,32 @@ export async function getAllUsersWithRoles(leagueId?: string): Promise<any[]> {
     ? [where('status', '==', 'approved'), where('leagueId', '==', leagueId)]
     : [where('status', '==', 'approved')];
 
-  const [rolesSnap, usersSnap, linkSnap] = await Promise.all([
+  const [rolesSnap, linkSnap] = await Promise.all([
     getDocs(query(collection(db, 'user_roles'), ...rolesConstraints)),
-    getDocs(collection(db, 'users')),
     getDocs(query(collection(db, 'link_requests'), ...linkConstraints)),
   ]);
-  console.log('Fetched user roles:', rolesSnap.docs);
-  console.log('Fetched users:', usersSnap.docs);
-  console.log('Fetched link requests:', linkSnap.docs);
-  return usersSnap.docs.map(d => {
-    const userData = d.data();
+
+  const roleUids = rolesSnap.docs.map(d => d.id);
+  const uidsByLeague = roleUids;
+
+  const BATCH_SIZE = 30;
+  const userDocs: any[] = [];
+  for (let i = 0; i < uidsByLeague.length; i += BATCH_SIZE) {
+    const batch = uidsByLeague.slice(i, i + BATCH_SIZE);
+    const refs = batch.map(uid => doc(db, 'users', uid));
+    const snaps = await Promise.all(refs.map(r => getDoc(r)));
+    userDocs.push(...snaps.filter(s => s.exists()).map(s => ({ id: s.id, ...s.data() })));
+  }
+
+  return userDocs.map(d => {
     const roleData = rolesSnap.docs.find(r => r.id === d.id)?.data();
     const linkData = linkSnap.docs.find(l => l.data().userId === d.id)?.data();
     return {
       userId: d.id,
-      email: userData.email,
-      displayName: userData.displayName,
+      email: d.email,
+      displayName: d.displayName,
       role: roleData?.role ?? 'player',
-      createdAt: userData.createdAt ?? null,
+      createdAt: d.createdAt ?? null,
       linkedPlayerId: linkData?.playerId ?? null,
       linkedPlayerName: linkData?.playerName ?? null,
     };

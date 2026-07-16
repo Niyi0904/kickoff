@@ -40,7 +40,6 @@ import { db } from "@/lib/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ENABLE_LEAGUE_FILTERING } from "@/lib/config";
 
 type Team = {
   id: string;
@@ -200,7 +199,7 @@ const faqs = [
 async function fetchPublicLeagueData(leagueSlug?: string): Promise<PublicLeagueData> {
   let leagueId: string | null = null;
 
-  if (ENABLE_LEAGUE_FILTERING && leagueSlug) {
+  if (leagueSlug) {
     const slugSnap = await getDocs(query(collection(db, "leagues"), where("slug", "==", leagueSlug)));
     if (!slugSnap.empty) {
       leagueId = slugSnap.docs[0].id;
