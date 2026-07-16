@@ -499,7 +499,7 @@ function SettingsContent() {
                 </SettingRow>
             </SettingsSection>
 
-            {/* ── Section 6: Data Migration ─────────────────────────────── */}
+            {/* ── Section 6: Data Migration ───────────────────────────────
             <SettingsSection
                 icon={RefreshCw}
                 title="Data Migration"
@@ -520,7 +520,7 @@ function SettingsContent() {
                         {migrating ? 'Migrating...' : 'Run Role Migration'}
                     </Button>
                 </SettingRow>
-            </SettingsSection>
+            </SettingsSection> */}
 
             {/* ── Bottom save bar ─────────────────────────────────────────── */}
             <AnimatePresence>
