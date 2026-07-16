@@ -98,11 +98,14 @@ export async function createUserInvite(
       linkedPlayerId = newPlayerRef.id;
     }
 
+    const creatorLeagueId = await getUserLeagueId(createdByAdminId);
+
     batch.set(doc(db, 'user_invites', inviteCode), {
       email, role, createdByAdminId,
       createdAt: serverTimestamp(),
       used: false, usedBy: null, usedAt: null,
       playerMode, linkedPlayerId,
+      leagueId: creatorLeagueId,
     });
 
     await batch.commit();
@@ -211,8 +214,9 @@ export async function markInviteAsUsed(inviteCode: string, userId: string): Prom
   await updateDoc(doc(db, 'user_invites', inviteCode), { used: true, usedBy: userId, usedAt: serverTimestamp() });
 }
 
-export async function getPendingInvites(): Promise<any[]> {
-  const snap = await getDocs(query(collection(db, 'user_invites'), where('used', '==', false)));
+export async function getPendingInvites(leagueId?: string): Promise<any[]> {
+  const constraints = leagueId ? [where('used', '==', false), where('leagueId', '==', leagueId)] : [where('used', '==', false)];
+  const snap = await getDocs(query(collection(db, 'user_invites'), ...constraints));
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
@@ -231,11 +235,16 @@ export async function setUserRole(userId: string, role: 'league_manager' | 'team
   await setDoc(doc(db, 'user_roles', userId), { role, leagueId: LEAGUE_ID, updatedAt: serverTimestamp() }, { merge: true });
 }
 
-export async function getAllUsersWithRoles(): Promise<any[]> {
+export async function getAllUsersWithRoles(leagueId?: string): Promise<any[]> {
+  const rolesConstraints = leagueId ? [where('leagueId', '==', leagueId)] : [];
+  const linkConstraints = leagueId
+    ? [where('status', '==', 'approved'), where('leagueId', '==', leagueId)]
+    : [where('status', '==', 'approved')];
+
   const [rolesSnap, usersSnap, linkSnap] = await Promise.all([
-    getDocs(collection(db, 'user_roles')),
+    getDocs(query(collection(db, 'user_roles'), ...rolesConstraints)),
     getDocs(collection(db, 'users')),
-    getDocs(query(collection(db, 'link_requests'), where('status', '==', 'approved'))),
+    getDocs(query(collection(db, 'link_requests'), ...linkConstraints)),
   ]);
   console.log('Fetched user roles:', rolesSnap.docs);
   console.log('Fetched users:', usersSnap.docs);

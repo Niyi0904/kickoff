@@ -65,12 +65,11 @@ export async function checkPlayerSuspension(playerId: string): Promise<Suspensio
 // ─────────────────────────────────────────────
 // Get all active suspensions (for admin panel)
 // ─────────────────────────────────────────────
-export async function getActiveSuspensions(): Promise<Suspension[]> {
-  const q = query(
-    collection(db, 'suspensions'),
-    where('active', '==', true),
-    orderBy('createdAt', 'desc'),
-  );
+export async function getActiveSuspensions(leagueId?: string): Promise<Suspension[]> {
+  const constraints = leagueId
+    ? [where('active', '==', true), where('leagueId', '==', leagueId), orderBy('createdAt', 'desc')]
+    : [where('active', '==', true), orderBy('createdAt', 'desc')];
+  const q = query(collection(db, 'suspensions'), ...constraints);
   const snap = await getDocs(q);
   return snap.docs.map(d => ({ id: d.id, ...d.data() }) as Suspension);
 }

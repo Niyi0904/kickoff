@@ -15,6 +15,8 @@ const LEAGUE_COLLECTIONS = [
   'match_attendance',
   'suspensions',
   'match_records',
+  'link_requests',
+  'user_invites',
 ] as const;
 
 async function ensureLeagueId(): Promise<string> {

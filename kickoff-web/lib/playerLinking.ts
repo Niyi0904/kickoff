@@ -71,6 +71,9 @@ export async function submitLinkRequest(
       return { error: { code: 'PENDING_EXISTS', message: 'Another user has already requested this profile. Please wait for admin review.' } };
     }
 
+    const playerSnapForLeague = await getDoc(doc(db, 'players', playerId));
+    const leagueId = playerSnapForLeague.exists() ? (playerSnapForLeague.data()?.leagueId ?? null) : null;
+
     const ref = await addDoc(collection(db, 'link_requests'), {
       userId,
       playerId,
@@ -80,6 +83,7 @@ export async function submitLinkRequest(
       teamName,
       status:    'pending' as LinkRequestStatus,
       createdAt: serverTimestamp(),
+      leagueId,
     });
 
     return { id: ref.id, error: null };
@@ -92,8 +96,11 @@ export async function submitLinkRequest(
 // ─────────────────────────────────────────────
 // Get all pending link requests (admin panel)
 // ─────────────────────────────────────────────
-export async function getPendingLinkRequests(): Promise<LinkRequest[]> {
-  const q    = query(collection(db, 'link_requests'), where('status', '==', 'pending'));
+export async function getPendingLinkRequests(leagueId?: string): Promise<LinkRequest[]> {
+  const constraints = leagueId
+    ? [where('status', '==', 'pending'), where('leagueId', '==', leagueId)]
+    : [where('status', '==', 'pending')];
+  const q = query(collection(db, 'link_requests'), ...constraints);
   const snap = await getDocs(q);
   return snap.docs.map(d => ({ id: d.id, ...d.data() }) as LinkRequest);
 }
@@ -101,8 +108,11 @@ export async function getPendingLinkRequests(): Promise<LinkRequest[]> {
 // ─────────────────────────────────────────────
 // Get all link requests (admin panel — all statuses)
 // ─────────────────────────────────────────────
-export async function getAllLinkRequests(): Promise<LinkRequest[]> {
-  const snap = await getDocs(collection(db, 'link_requests'));
+export async function getAllLinkRequests(leagueId?: string): Promise<LinkRequest[]> {
+  const constraints = leagueId ? [where('leagueId', '==', leagueId)] : [];
+  const snap = leagueId
+    ? await getDocs(query(collection(db, 'link_requests'), ...constraints))
+    : await getDocs(collection(db, 'link_requests'));
   return snap.docs
     .map(d => ({ id: d.id, ...d.data() }) as LinkRequest)
     .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));

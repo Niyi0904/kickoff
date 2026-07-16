@@ -584,15 +584,25 @@ export function useAppData() {
     }
   };
 
-  // ── Delete all matches in a batch ─────────────────────────────────────
+  // ── Delete all matches in a batch (scoped to current league) ───────────
   const deleteAllMatches = async () => {
     try {
       const eventCollections = ["goals", "assists", "yellow_cards", "red_cards", "match_attendance"];
 
+      // Build leagueId-filtered queries for every collection
+      const matchQuery = ENABLE_LEAGUE_FILTERING && leagueId
+        ? query(collection(db, "matches"), where("leagueId", "==", leagueId))
+        : collection(db, "matches");
+      const eventQueries = eventCollections.map((col) =>
+        ENABLE_LEAGUE_FILTERING && leagueId
+          ? query(collection(db, col), where("leagueId", "==", leagueId))
+          : collection(db, col)
+      );
+
       // Collect all match refs + all event refs in parallel
       const [matchSnap, ...eventSnaps] = await Promise.all([
-        getDocs(collection(db, "matches")),
-        ...eventCollections.map((col) => getDocs(collection(db, col))),
+        getDocs(matchQuery),
+        ...eventQueries.map((q) => getDocs(q)),
       ]);
 
       // Firestore batch limit is 500 — chunk if needed

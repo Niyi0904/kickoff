@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query, where } from "firebase/firestore";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -40,6 +40,7 @@ import { db } from "@/lib/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ENABLE_LEAGUE_FILTERING } from "@/lib/config";
 
 type Team = {
   id: string;
@@ -196,16 +197,30 @@ const faqs = [
   },
 ];
 
-async function fetchPublicLeagueData(): Promise<PublicLeagueData> {
+async function fetchPublicLeagueData(leagueSlug?: string): Promise<PublicLeagueData> {
+  let leagueId: string | null = null;
+
+  if (ENABLE_LEAGUE_FILTERING && leagueSlug) {
+    const slugSnap = await getDocs(query(collection(db, "leagues"), where("slug", "==", leagueSlug)));
+    if (!slugSnap.empty) {
+      leagueId = slugSnap.docs[0].id;
+    }
+  }
+
+  const baseConstraints = leagueId ? [where("leagueId", "==", leagueId)] : [];
+  const matchConstraints = leagueId
+    ? [where("leagueId", "==", leagueId), orderBy("matchDay", "desc")]
+    : [orderBy("matchDay", "desc")];
+
   const [teamsSnap, playersSnap, matchesSnap, goalsSnap, assistsSnap, yellowsSnap, redsSnap, settingsSnap] =
     await Promise.all([
-      getDocs(collection(db, "teams")),
-      getDocs(collection(db, "players")),
-      getDocs(query(collection(db, "matches"), orderBy("matchDay", "desc"))),
-      getDocs(collection(db, "goals")),
-      getDocs(collection(db, "assists")),
-      getDocs(collection(db, "yellow_cards")),
-      getDocs(collection(db, "red_cards")),
+      getDocs(query(collection(db, "teams"), ...baseConstraints)),
+      getDocs(query(collection(db, "players"), ...baseConstraints)),
+      getDocs(query(collection(db, "matches"), ...matchConstraints)),
+      getDocs(query(collection(db, "goals"), ...baseConstraints)),
+      getDocs(query(collection(db, "assists"), ...baseConstraints)),
+      getDocs(query(collection(db, "yellow_cards"), ...baseConstraints)),
+      getDocs(query(collection(db, "red_cards"), ...baseConstraints)),
       getDoc(doc(db, "settings", "league")),
     ]);
 
@@ -284,14 +299,14 @@ function countByPlayer(records: EventRecord[]) {
   return counts;
 }
 
-export function PublicLeagueExperience() {
+export function PublicLeagueExperience({ leagueSlug }: { leagueSlug?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const { user, loading: authLoading } = useAuth();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["public-league"],
-    queryFn: fetchPublicLeagueData,
+    queryKey: ["public-league", leagueSlug],
+    queryFn: () => fetchPublicLeagueData(leagueSlug),
     staleTime: 1000 * 60 * 2,
   });
 
@@ -1348,7 +1363,7 @@ function PublicFooter({ navItems, profileHref }: { navItems: PublicNavItem[]; pr
             </a>
           ))}
         </nav>
-        <Button asChild className="h-11 rounded-md bg-[#f5c84b] font-bold text-[#102018] hover:bg-[#ffd869]">
+        <Button asChild className="h-11 w-full rounded-md bg-[#f5c84b] font-bold text-[#102018] hover:bg-[#ffd869]">
           <Link href={profileHref}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             Profile Dashboard
