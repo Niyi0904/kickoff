@@ -235,7 +235,7 @@ export async function setUserRole(userId: string, role: 'league_manager' | 'team
   await setDoc(doc(db, 'user_roles', userId), { role, leagueId: LEAGUE_ID, updatedAt: serverTimestamp() }, { merge: true });
 }
 
-export async function getAllUsersWithRoles(leagueId?: string): Promise<any[]> {
+export async function getAllUsersWithRoles(leagueId: string | null): Promise<any[]> {
   const rolesConstraints = leagueId ? [where('leagueId', '==', leagueId)] : [];
   const linkConstraints = leagueId
     ? [where('status', '==', 'approved'), where('leagueId', '==', leagueId)]

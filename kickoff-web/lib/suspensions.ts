@@ -65,7 +65,7 @@ export async function checkPlayerSuspension(playerId: string): Promise<Suspensio
 // ─────────────────────────────────────────────
 // Get all active suspensions (for admin panel)
 // ─────────────────────────────────────────────
-export async function getActiveSuspensions(leagueId?: string): Promise<Suspension[]> {
+export async function getActiveSuspensions(leagueId: string | null): Promise<Suspension[]> {
   const constraints = leagueId
     ? [where('active', '==', true), where('leagueId', '==', leagueId), orderBy('createdAt', 'desc')]
     : [where('active', '==', true), orderBy('createdAt', 'desc')];

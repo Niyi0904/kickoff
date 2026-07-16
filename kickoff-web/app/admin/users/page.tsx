@@ -22,7 +22,7 @@ export default function UsersPage() {
 }
 
 function UsersContent() {
-  const { isAdmin } = useAppContext();
+  const { isAdmin, leagueId } = useAppContext();
   const { toast } = useToast();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ function UsersContent() {
   const fetchUsers = async () => {
     try {
       console.log('Fetching users with roles...');
-      const usersData = await getAllUsersWithRoles();
+      const usersData = await getAllUsersWithRoles(leagueId);
       console.log('Fetched users:', usersData);
       setUsers(usersData);
     } catch (err) {

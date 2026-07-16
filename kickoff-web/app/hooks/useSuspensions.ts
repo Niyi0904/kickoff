@@ -27,10 +27,19 @@ export const SUSPENSION_KEYS = {
 // ─────────────────────────────────────────────
 // All active suspensions — used in admin panel
 // ─────────────────────────────────────────────
+// export function useActiveSuspensions() {
+//   return useQuery<Suspension[]>({
+//     queryKey: SUSPENSION_KEYS.all,
+//     queryFn:  () => getActiveSuspensions(),
+//     staleTime: 1000 * 60 * 2,
+//   });
+// }
+
 export function useActiveSuspensions() {
+  const { leagueId } = useAuthContext();
   return useQuery<Suspension[]>({
-    queryKey: SUSPENSION_KEYS.all,
-    queryFn:  () => getActiveSuspensions(),
+    queryKey: [...SUSPENSION_KEYS.all, leagueId],
+    queryFn:  () => getActiveSuspensions(leagueId),
     staleTime: 1000 * 60 * 2,
   });
 }
