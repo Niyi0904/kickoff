@@ -211,6 +211,10 @@ async function fetchPublicLeagueData(leagueSlug?: string): Promise<PublicLeagueD
     ? [where("leagueId", "==", leagueId), orderBy("matchDay", "desc")]
     : [orderBy("matchDay", "desc")];
 
+  // Use the league-scoped settings document if we have a leagueId, fall back to the old singleton
+  const settingsDocId = leagueId ?? "league";
+  const settingsCollection = "settings";
+
   const [teamsSnap, playersSnap, matchesSnap, goalsSnap, assistsSnap, yellowsSnap, redsSnap, settingsSnap] =
     await Promise.all([
       getDocs(query(collection(db, "teams"), ...baseConstraints)),
@@ -220,7 +224,7 @@ async function fetchPublicLeagueData(leagueSlug?: string): Promise<PublicLeagueD
       getDocs(query(collection(db, "assists"), ...baseConstraints)),
       getDocs(query(collection(db, "yellow_cards"), ...baseConstraints)),
       getDocs(query(collection(db, "red_cards"), ...baseConstraints)),
-      getDoc(doc(db, "settings", "league")),
+      getDoc(doc(db, settingsCollection, settingsDocId)),
     ]);
 
   const teams: Team[] = teamsSnap.docs.map((d) => {

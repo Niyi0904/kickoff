@@ -3,10 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import {
-  ENABLE_LEAGUES_COLLECTION,
-  CURRENT_LEAGUE_ID,
-} from "@/lib/config";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export interface LeagueSettings {
   seasonName:     string;
@@ -59,27 +56,24 @@ function normalizeSettings(d: Record<string, any>): LeagueSettings {
   };
 }
 
-async function fetchLeagueSettings(): Promise<LeagueSettings> {
-  if (ENABLE_LEAGUES_COLLECTION) {
-    const snap = await getDoc(doc(db, 'leagues', CURRENT_LEAGUE_ID));
-    if (!snap.exists()) return DEFAULT_SETTINGS;
-    return normalizeSettings(snap.data());
-  }
-
-  const snap = await getDoc(doc(db, 'settings', 'league'));
+async function fetchSettingsByLeagueId(leagueId: string): Promise<LeagueSettings> {
+  // Always read from the new settings/{leagueId} collection
+  const snap = await getDoc(doc(db, 'settings', leagueId));
   if (!snap.exists()) return DEFAULT_SETTINGS;
   return normalizeSettings(snap.data());
 }
 
-export function useLeagueSettings() {
-  const queryKey = ENABLE_LEAGUES_COLLECTION
-    ? ['leagues', CURRENT_LEAGUE_ID]
-    : ['settings', 'league'];
+export function useLeagueSettings(leagueId?: string) {
+  const { leagueId: userLeagueId, loading: isAuthLoading } = useAuth();
+  const effectiveLeagueId = leagueId ?? userLeagueId ?? 'default';
+
+  const queryKey = ['settings', effectiveLeagueId];
 
   const { data, isLoading } = useQuery({
     queryKey,
-    queryFn: fetchLeagueSettings,
+    queryFn: () => fetchSettingsByLeagueId(effectiveLeagueId),
     staleTime: 1000 * 60 * 10,
+    enabled: !isAuthLoading && !!effectiveLeagueId,
   });
 
   const settings = data ?? DEFAULT_SETTINGS;
@@ -88,16 +82,17 @@ export function useLeagueSettings() {
 
   return {
     settings,
-    isLoading,
+    isLoading: isLoading || isAuthLoading,
     deadlineMs,
     isDeadlinePassed,
     seasonName:    settings.seasonName,
     matchDay:      settings.matchDay,
     defaultTime:   settings.defaultTime,
     yellowsPerBan: settings.yellowsPerBan,
+    leagueId:      effectiveLeagueId,
   };
 }
 
-export function useLeague() {
-  return useLeagueSettings();
+export function useLeague(leagueId?: string) {
+  return useLeagueSettings(leagueId);
 }

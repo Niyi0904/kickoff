@@ -128,9 +128,14 @@ describe("Single-league — league_manager access", () => {
       email: "test@test.com",
       leagueId: LEAGUE_A,
     });
-    await seedDocument("settings", "league", {
+    // New per-league settings path
+    await seedDocument("settings", LEAGUE_A, {
       seasonName: "S1",
-      leagueId: LEAGUE_A,
+    });
+    // Subscriptions collection
+    await seedDocument("subscriptions", LEAGUE_A, {
+      plan: "free",
+      status: "trial",
     });
     lm = authContext("lm1");
   });
@@ -244,13 +249,29 @@ describe("Single-league — league_manager access", () => {
     );
   });
 
-  it("can write settings within their league", async () => {
+  it("can write settings within their league (new per-league path)", async () => {
     await assertSucceeds(
       setDoc(
-        doc(lm.firestore(), "settings", "league"),
-        { seasonName: "S2", leagueId: LEAGUE_A },
+        doc(lm.firestore(), "settings", LEAGUE_A),
+        { seasonName: "S2" },
         { merge: true },
       ),
+    );
+  });
+
+  it("can read settings within their league (new per-league path)", async () => {
+    await assertSucceeds(getDoc(doc(lm.firestore(), "settings", LEAGUE_A)));
+  });
+
+  it("can read subscriptions within their league", async () => {
+    await assertSucceeds(getDoc(doc(lm.firestore(), "subscriptions", LEAGUE_A)));
+  });
+
+  it("CANNOT write subscriptions (server-side only)", async () => {
+    await assertFails(
+      setDoc(doc(lm.firestore(), "subscriptions", LEAGUE_A), {
+        plan: "premium",
+      }),
     );
   });
 
@@ -426,11 +447,14 @@ describe("Single-league — team_manager access", () => {
 
   it("CANNOT write settings", async () => {
     await assertFails(
-      setDoc(doc(tm.firestore(), "settings", "league"), {
+      setDoc(doc(tm.firestore(), "settings", LEAGUE_A), {
         seasonName: "Hacked",
-        leagueId: LEAGUE_A,
       }),
     );
+  });
+
+  it("CANNOT read subscriptions", async () => {
+    await assertFails(getDoc(doc(tm.firestore(), "subscriptions", LEAGUE_A)));
   });
 });
 
@@ -508,18 +532,16 @@ describe("Single-league — player access", () => {
   });
 
   it("can read settings (public)", async () => {
-    await seedDocument("settings", "league", {
+    await seedDocument("settings", LEAGUE_A, {
       seasonName: "S1",
-      leagueId: LEAGUE_A,
     });
-    await assertSucceeds(getDoc(doc(pl.firestore(), "settings", "league")));
+    await assertSucceeds(getDoc(doc(pl.firestore(), "settings", LEAGUE_A)));
   });
 
   it("CANNOT write settings", async () => {
     await assertFails(
-      setDoc(doc(pl.firestore(), "settings", "league"), {
+      setDoc(doc(pl.firestore(), "settings", LEAGUE_A), {
         seasonName: "Hacked",
-        leagueId: LEAGUE_A,
       }),
     );
   });
@@ -589,9 +611,8 @@ describe("Single-league — unauthenticated access", () => {
 
   it("CANNOT do any write", async () => {
     await assertFails(
-      setDoc(doc(ua.firestore(), "settings", "league"), {
+      setDoc(doc(ua.firestore(), "settings", LEAGUE_A), {
         seasonName: "X",
-        leagueId: LEAGUE_A,
       }),
     );
     await assertFails(
@@ -638,9 +659,8 @@ describe("Two-league isolation", () => {
       matchId: "matchA1",
       leagueId: LEAGUE_A,
     });
-    await seedDocument("settings", "league", {
+    await seedDocument("settings", LEAGUE_A, {
       seasonName: "League A Settings",
-      leagueId: LEAGUE_A,
     });
     await seedDocument("suspensions", "suspA1", {
       playerId: "playerA1",
@@ -712,11 +732,10 @@ describe("Two-league isolation", () => {
       await assertFails(deleteDoc(doc(lmB.firestore(), "goals", "goalA1")));
     });
 
-    it("CANNOT write League A settings", async () => {
+    it("CANNOT write League A settings (new per-league path)", async () => {
       await assertFails(
-        setDoc(doc(lmB.firestore(), "settings", "league"), {
+        setDoc(doc(lmB.firestore(), "settings", LEAGUE_A), {
           seasonName: "Hacked",
-          leagueId: LEAGUE_A,
         }),
       );
     });

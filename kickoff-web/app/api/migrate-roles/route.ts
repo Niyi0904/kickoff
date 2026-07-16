@@ -20,12 +20,16 @@ const LEAGUE_COLLECTIONS = [
 ] as const;
 
 async function ensureLeagueId(): Promise<string> {
+  // Try to get leagueId from the old settings/league singleton first (backward compat)
   const settingsRef = doc(db, 'settings', 'league');
   const settingsSnap = await getDoc(settingsRef);
   const existingLeagueId = settingsSnap.exists() ? settingsSnap.data()?.leagueId : null;
   if (existingLeagueId) return existingLeagueId;
+  // Fall back to the new per-league settings path
   const defaultLeagueId = 'default';
+  // Write to both old singleton (for backward compat) and new path
   await setDoc(settingsRef, { leagueId: defaultLeagueId }, { merge: true });
+  await setDoc(doc(db, 'settings', defaultLeagueId), {}, { merge: true });
   return defaultLeagueId;
 }
 

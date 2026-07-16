@@ -200,12 +200,19 @@ service cloud.firestore {
       allow delete: if isLeagueManagerOf(resource.data.leagueId);
     }
 
-    // League Settings
-    match /settings/{docId} {
+    // League Settings — per-league season config
+    // docId is the leagueId, so we use isLeagueManagerOf(docId)
+    match /settings/{leagueId} {
       allow read:  if true;
-      allow create: if isLeagueManagerOf(request.resource.data.leagueId);
-      allow update: if isLeagueManagerOf(resource.data.leagueId);
-      allow delete: if isLeagueManagerOf(resource.data.leagueId);
+      allow create: if isLeagueManagerOf(leagueId);
+      allow update: if isLeagueManagerOf(leagueId);
+      allow delete: if isLeagueManagerOf(leagueId);
+    }
+
+    // Subscriptions — billing state, write denied to all clients (server-side only)
+    match /subscriptions/{leagueId} {
+      allow read:  if isLeagueManagerOf(leagueId);
+      allow write: if false;
     }
 
     // ─────────────────────────────────────────────────────────

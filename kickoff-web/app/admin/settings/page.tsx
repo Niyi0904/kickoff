@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLeagueSettings } from '@/app/hooks/use-leagueSettings';
+import { useAuth } from '@/app/hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -121,6 +122,7 @@ function SaveStatus({ status }: { status: 'idle' | 'saving' | 'saved' | 'error' 
 // ─────────────────────────────────────────────
 function SettingsContent() {
     const { isAdmin } = useAppContext();
+    const { leagueId: userLeagueId } = useAuth();
     const { settings, isLoading } = useLeagueSettings();
     const queryClient = useQueryClient();
     const { toast } = useToast();
@@ -181,8 +183,9 @@ function SettingsContent() {
     // ── Save to Firestore ──────────────────────────────────────────────────
     const handleSave = async () => {
         setSaveStatus('saving');
+        const targetLeagueId = userLeagueId ?? settings?.leagueId ?? 'default';
         try {
-            await setDoc(doc(db, 'settings', 'league'), {
+            await setDoc(doc(db, 'settings', targetLeagueId), {
                 seasonName,
                 // Store as full ISO string for consistency
                 inviteDeadline: inviteDeadline ? `${inviteDeadline}:00` : '',
@@ -193,11 +196,10 @@ function SettingsContent() {
                 pointsDraw: Number(pointsDraw),
                 pointsLoss: Number(pointsLoss),
                 yellowsPerBan: Number(yellowsPerBan),
-                leagueId: settings?.leagueId ?? 'default',
             }, { merge: true });
 
             // Invalidate the settings cache so all components get fresh values
-            queryClient.invalidateQueries({ queryKey: ['settings', 'league'] });
+            queryClient.invalidateQueries({ queryKey: ['settings', targetLeagueId] });
 
             setSaveStatus('saved');
             setHasChanges(false);

@@ -23,9 +23,10 @@ export async function getUserLeagueId(userId: string): Promise<string | null> {
   }
 }
 
-async function getInviteDeadlineMs(): Promise<number> {
+async function getInviteDeadlineMs(leagueId?: string): Promise<number> {
   try {
-    const snap = await getDoc(doc(db, 'settings', 'league'));
+    const targetLeagueId = leagueId ?? LEAGUE_ID;
+    const snap = await getDoc(doc(db, 'settings', targetLeagueId));
     if (snap.exists() && snap.data().inviteDeadline) {
       return new Date(snap.data().inviteDeadline).getTime();
     }
@@ -348,11 +349,19 @@ export async function createLeagueDocument(): Promise<{ success: boolean; error?
     const leagueId = LEAGUE_ID;
     const now = new Date().toISOString();
 
+    // 1. Write registry fields to leagues/{leagueId}
     await setDoc(doc(db, 'leagues', leagueId), {
-      id:             leagueId,
-      slug:           'default',
-      name:           s.seasonName || 'Default League',
-      createdAt:      now,
+      id:        leagueId,
+      slug:      'default',
+      name:      s.seasonName || 'Default League',
+      ownerId:   null,
+      adminIds:  [],
+      logoUrl:   null,
+      createdAt: now,
+    }, { merge: true });
+
+    // 2. Write season config to settings/{leagueId}
+    await setDoc(doc(db, 'settings', leagueId), {
       seasonName:     s.seasonName     ?? 'Current Season',
       inviteDeadline: s.inviteDeadline ?? '2099-12-31T23:59:59',
       leagueVenue:    s.leagueVenue    ?? '',
@@ -362,6 +371,13 @@ export async function createLeagueDocument(): Promise<{ success: boolean; error?
       pointsDraw:     s.pointsDraw     ?? 1,
       pointsLoss:     s.pointsLoss     ?? 0,
       yellowsPerBan:  s.yellowsPerBan  ?? 3,
+    }, { merge: true });
+
+    // 3. Write default subscription state to subscriptions/{leagueId}
+    await setDoc(doc(db, 'subscriptions', leagueId), {
+      plan:             'free',
+      status:           'trial',
+      currentPeriodEnd: null,
     }, { merge: true });
 
     return { success: true };
