@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Plus, Mail, Copy, Trash2, Check, X, Link2, UserPlus, ChevronsUpDown } from 'lucide-react';
 import { useAppContext } from '@/app/context/AppDataContext';
@@ -70,7 +70,7 @@ function ModeCard({
 }
 
 function OnboardingContent() {
-  const { isAdmin, user, players, teams } = useAppContext();
+  const { isAdmin, user, players, teams, leagueId } = useAppContext();
   const { toast }                         = useToast();
   const { deadlineMs, isDeadlinePassed }  = useLeagueSettings();
 
@@ -106,12 +106,12 @@ function OnboardingContent() {
   const selectedPlayer = players.find((p: any) => p.id === selectedPlayerId);
   const selectedTeam   = selectedPlayer ? teams.find((t: any) => t.id === selectedPlayer.teamId) : null;
 
+  const fetchPendingInvites = useCallback(async () => setPendingInvites(await getPendingInvites()), []);
+  const fetchUsers          = useCallback(async () => setUsers(await getAllUsersWithRoles(leagueId ?? null)), []);
+
   useEffect(() => {
     if (isAdmin) { fetchPendingInvites(); fetchUsers(); }
-  }, [isAdmin]);
-
-  const fetchPendingInvites = async () => setPendingInvites(await getPendingInvites());
-  const fetchUsers          = async () => setUsers(await getAllUsersWithRoles());
+  }, [isAdmin, fetchPendingInvites, fetchUsers]);
 
   if (!isAdmin) {
     return (
