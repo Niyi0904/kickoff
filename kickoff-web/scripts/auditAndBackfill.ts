@@ -1,92 +1,109 @@
-// scripts/auditAndBackfill.ts
-// Audits leagueId coverage and backfills missing values using Firebase Admin SDK.
-// Uses service-account credentials from .env (no API key / Auth initialization needed).
+// scripts/fixWrongLeagueId.ts
+// Corrects documents that were mistakenly backfilled with leagueId = 'default'
+// to the actual correct leagueId. Verifies the count matches expectations
+// before writing anything, as a safety check.
+
+import { config } from 'dotenv';
+config();
+
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import type { Firestore } from 'firebase-admin/firestore';
 
-const LEAGUE_COLLECTIONS = [
-  'teams',
-  'players',
-  'matches',
-  'goals',
-  'assists',
-  'yellow_cards',
-  'red_cards',
-  'match_attendance',
-  'suspensions',
-  'match_records',
-  'link_requests',
-  'user_invites',
-] as const;
+const WRONG_LEAGUE_ID = 'default';
+const CORRECT_LEAGUE_ID = 'MWFePlubN1q0O5WH0Ih3';
+
+// Expected counts from the previous run's BACKFILLED output — used as a
+// safety check, not a filter. If actual counts don't match these, the
+// script stops and prints a warning instead of writing anything, since
+// that would mean something else also has leagueId = 'default' for a
+// different, legitimate reason, and blindly overwriting it would be wrong.
+const EXPECTED_COUNTS: Record<string, number> = {
+  teams: 1,
+  players: 96,
+  matches: 51,
+  goals: 60,
+  assists: 50,
+  yellow_cards: 26,
+  red_cards: 11,
+  match_attendance: 0,
+  suspensions: 1,
+  match_records: 0,
+  link_requests: 0,
+  user_invites: 0,
+};
 
 const serviceAccount = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? '',
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL ?? '',
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '',
+  privateKey: (process.env.FIREBASE_PRIVATE_KEY ?? '')
+    .replace(/^"|"$/g, '')
+    .replace(/\\n/g, '\n'),
 };
 
 const app = initializeApp({ credential: cert(serviceAccount) });
 const db: Firestore = getFirestore(app);
 
-async function ensureLeagueId(): Promise<string> {
-  const settingsRef = db.collection('settings').doc('league');
-  const settingsSnap = await settingsRef.get();
-  const data = settingsSnap.data() as any | undefined;
-  const existingLeagueId = settingsSnap.exists ? data?.leagueId : null;
-  if (existingLeagueId) return existingLeagueId as string;
-  const defaultLeagueId = 'default';
-  await settingsRef.set({ leagueId: defaultLeagueId }, { merge: true });
-  return defaultLeagueId;
-}
+async function fixCollection(collectionName: string): Promise<{ found: number; fixed: number }> {
+  const snap = await db
+    .collection(collectionName)
+    .where('leagueId', '==', WRONG_LEAGUE_ID)
+    .get();
 
-async function countMissingLeagueId(collectionName: string): Promise<number> {
-  const snap = await db.collection(collectionName).get();
-  return snap.docs.filter((d) => !('leagueId' in d.data()) || (d.data() as any).leagueId == null).length;
-}
+  const found = snap.docs.length;
+  const expected = EXPECTED_COUNTS[collectionName] ?? 0;
 
-async function backfillCollection(collectionName: string, leagueId: string): Promise<number> {
-  const snap = await db.collection(collectionName).get();
-  const docs = snap.docs.filter((docSnap) => !('leagueId' in docSnap.data()) || (docSnap.data() as any).leagueId == null);
+  if (found !== expected) {
+    console.log(
+      `⚠️  SKIPPING ${collectionName}: found ${found} docs with leagueId='default', ` +
+      `expected ${expected}. Not touching this collection — investigate before re-running.`,
+    );
+    return { found, fixed: 0 };
+  }
+
+  if (found === 0) {
+    console.log(`${collectionName}: 0 docs to fix, skipping.`);
+    return { found: 0, fixed: 0 };
+  }
+
   const chunkSize = 400;
+  const docs = snap.docs;
   for (let i = 0; i < docs.length; i += chunkSize) {
     const batch = db.batch();
     docs.slice(i, i + chunkSize).forEach((docSnap) => {
-      batch.set(docSnap.ref, { leagueId }, { merge: true });
+      batch.update(docSnap.ref, { leagueId: CORRECT_LEAGUE_ID });
     });
     await batch.commit();
   }
-  return docs.length;
+
+  console.log(`✓ FIXED ${collectionName}: ${found} docs → leagueId='${CORRECT_LEAGUE_ID}'`);
+  return { found, fixed: found };
 }
 
 (async () => {
-  console.log('=== leagueId Audit ===');
-  const leagueId = await ensureLeagueId();
-  console.log('Using leagueId:', leagueId);
+  console.log('=== Correcting wrong leagueId ===');
+  console.log(`From: '${WRONG_LEAGUE_ID}'  To: '${CORRECT_LEAGUE_ID}'\n`);
 
-  const before: Record<string, number> = {};
-  for (const col of LEAGUE_COLLECTIONS) {
-    const count = await countMissingLeagueId(col);
-    before[col] = count;
-    console.log(`BEFORE ${col}: ${count} missing`);
+  const collections = Object.keys(EXPECTED_COUNTS);
+  let totalFixed = 0;
+
+  for (const col of collections) {
+    const result = await fixCollection(col);
+    totalFixed += result.fixed;
   }
 
-  console.log('\n=== Backfilling ===');
-  const totalBackfilled: Record<string, number> = {};
-  for (const col of LEAGUE_COLLECTIONS) {
-    const count = await backfillCollection(col, leagueId);
-    totalBackfilled[col] = count;
-    console.log(`BACKFILLED ${col}: ${count} docs`);
+  // Also fix the settings/league singleton, which the original script
+  // wrote 'default' into via ensureLeagueId().
+  const settingsRef = db.collection('settings').doc('league');
+  const settingsSnap = await settingsRef.get();
+  const settingsLeagueId = settingsSnap.data()?.leagueId;
+  if (settingsLeagueId === WRONG_LEAGUE_ID) {
+    await settingsRef.set({ leagueId: CORRECT_LEAGUE_ID }, { merge: true });
+    console.log(`✓ FIXED settings/league: leagueId → '${CORRECT_LEAGUE_ID}'`);
+  } else {
+    console.log(`settings/league already has leagueId='${settingsLeagueId}', left untouched.`);
   }
 
-  console.log('\n=== After Audit ===');
-  let totalAfter = 0;
-  for (const col of LEAGUE_COLLECTIONS) {
-    const count = await countMissingLeagueId(col);
-    totalAfter += count;
-    console.log(`AFTER ${col}: ${count} missing`);
-  }
-  console.log(`\nTotal missing leagueId across all collections: ${totalAfter}`);
-
+  console.log(`\nTotal documents corrected: ${totalFixed}`);
   process.exit(0);
 })();
