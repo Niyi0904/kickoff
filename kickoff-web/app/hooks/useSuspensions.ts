@@ -28,9 +28,9 @@ export const SUSPENSION_KEYS = {
 // All active suspensions — used in admin panel
 // ─────────────────────────────────────────────
 export function useActiveSuspensions() {
-  return useQuery({
+  return useQuery<Suspension[]>({
     queryKey: SUSPENSION_KEYS.all,
-    queryFn:  getActiveSuspensions,
+    queryFn:  () => getActiveSuspensions(),
     staleTime: 1000 * 60 * 2,
   });
 }
