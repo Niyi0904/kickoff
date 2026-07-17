@@ -96,9 +96,23 @@ export async function initializeTransaction(
   };
 }
 
+export interface PaystackTransactionData {
+  id: number;
+  status: string;
+  amount: number;
+  currency: string;
+  reference: string;
+  customer?: {
+    id: number;
+    email: string;
+    customer_code: string;
+  };
+  metadata?: Record<string, unknown>;
+}
+
 export async function verifyTransaction(
   reference: string,
-): Promise<Record<string, unknown>> {
+): Promise<PaystackTransactionData> {
   const data = await paystackGet(`/transaction/verify/${encodeURIComponent(reference)}`);
   return data.data;
 }

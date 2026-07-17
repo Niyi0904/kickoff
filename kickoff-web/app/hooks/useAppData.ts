@@ -35,6 +35,7 @@ export interface Player {
   position: string;
   number: number;
   teamId: string;
+  leagueId?: string | null;
   isManager: boolean;
   photo?: string | null;
   linkedUserId?: string | null;

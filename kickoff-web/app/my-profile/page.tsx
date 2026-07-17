@@ -18,6 +18,7 @@ import {
   Clock, UserCheck, ArrowRight, Target,
   Shield, Activity, UserX, CreditCard, Loader2
 } from 'lucide-react';
+import { useState } from 'react';
 import { auth } from '@/lib/firebase';
 
 export default function MyProfilePage() {

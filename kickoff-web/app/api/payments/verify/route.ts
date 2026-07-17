@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const amount = txnData.amount;
     const currency = txnData.currency;
     const payerEmail = txnData.customer?.email;
-    const metadata = txnData.metadata || {};
+    const metadata = (txnData.metadata || {}) as Record<string, string | undefined>;
 
     const adminDb = getFirestore(getAdminApp());
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (status === 'success') {
-      const leagueId = metadata.leagueId;
+      const leagueId = metadata.leagueId ?? '';
       const relatedPlayerId = metadata.relatedPlayerId ?? null;
 
       await adminDb
