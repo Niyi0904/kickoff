@@ -476,6 +476,7 @@ export function PublicLeagueExperience({ leagueSlug }: { leagueSlug?: string }) 
         navItems={navItems}
         profileHref={profileHref}
         authLoading={authLoading}
+        user={user}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
       />
@@ -714,12 +715,14 @@ function PublicHeader({
   navItems,
   profileHref,
   authLoading,
+  user,
   mobileOpen,
   setMobileOpen,
 }: {
   navItems: PublicNavItem[];
   profileHref: string;
   authLoading: boolean;
+  user: import("firebase/auth").User | null;
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
 }) {
@@ -739,6 +742,13 @@ function PublicHeader({
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          {!user && !authLoading && (
+            <Button asChild variant="outline" className="h-10 rounded-md border-white/25 bg-white/10 px-4 font-bold text-white hover:bg-white/18 hover:text-white">
+              <Link href="/auth">
+                Get Started
+              </Link>
+            </Button>
+          )}
           <Button asChild className="h-10 rounded-md bg-[#f5c84b] px-4 font-bold text-[#102018] hover:bg-[#ffd869]">
             <Link href={profileHref}>
               {authLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LayoutDashboard className="mr-2 h-4 w-4" />}
@@ -771,12 +781,21 @@ function PublicHeader({
               </a>
             ))}
           </nav>
-          <Button asChild className="mt-4 h-11 w-full rounded-md bg-[#f5c84b] font-bold text-[#102018] hover:bg-[#ffd869]">
-            <Link href={profileHref} onClick={() => setMobileOpen(false)}>
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              Profile Dashboard
-            </Link>
-          </Button>
+          <div className="mt-4 flex flex-col gap-2">
+            {!user && !authLoading && (
+              <Button asChild className="h-11 w-full rounded-md border-white/25 bg-white/10 font-bold text-white hover:bg-white/18">
+                <Link href="/auth" onClick={() => setMobileOpen(false)}>
+                  Get Started
+                </Link>
+              </Button>
+            )}
+            <Button asChild className="h-11 w-full rounded-md bg-[#f5c84b] font-bold text-[#102018] hover:bg-[#ffd869]">
+              <Link href={profileHref} onClick={() => setMobileOpen(false)}>
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Profile Dashboard
+              </Link>
+            </Button>
+          </div>
         </div>
       )}
     </header>

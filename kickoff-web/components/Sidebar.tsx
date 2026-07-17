@@ -19,7 +19,8 @@ import {
   UserCheck,
   Globe2,
   BarChart2,
-  Radio
+  Radio,
+  CreditCard
 } from "lucide-react";
 import { useMyLinkedPlayer } from '@/app/hooks/usePlayerLinking';
 import { useAppContext } from "@/app/context/AppDataContext";
@@ -41,6 +42,7 @@ const navItems = [
 const adminNavItems = [
   { path: "/admin/onboarding", label: "User Management", icon: Users },
   { path: "/admin/users", label: "All Users", icon: Users },
+  { path: "/admin/billing", label: "Billing", icon: CreditCard },
   { path: "/admin/settings", label: "Settings", icon: Settings },
   { path: "/admin/suspensions",  label: "Suspensions", icon: ShieldAlert },
   { path: "/admin/link-requests", label: "Profile Requests",  icon: UserCheck  }

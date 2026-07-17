@@ -16,8 +16,9 @@ import { Badge } from '@/components/ui/badge';
 import { getInitials } from '@/lib/utils';
 import {
   Clock, UserCheck, ArrowRight, Target,
-  Shield, Activity, UserX
+  Shield, Activity, UserX, CreditCard, Loader2
 } from 'lucide-react';
+import { auth } from '@/lib/firebase';
 
 export default function MyProfilePage() {
   return (
@@ -163,6 +164,15 @@ function MyProfileContent() {
         <SuspensionBadge playerId={fullPlayer.id} variant="full" />
       )}
 
+      {/* ── Registration fee status ─────────────────────────── */}
+      {fullPlayer && (fullPlayer.registrationFeeStatus === 'unpaid' || fullPlayer.registrationFeeStatus === 'pending') && (
+        <PayRegistrationFee
+          playerId={fullPlayer.id}
+          leagueId={fullPlayer.leagueId || linkedPlayer.leagueId || ''}
+          status={fullPlayer.registrationFeeStatus}
+        />
+      )}
+
       {/* ── Season stats ───────────────────────────────────── */}
       {stats && (
         <motion.div
@@ -246,5 +256,88 @@ function MyProfileContent() {
         </motion.div>
       )}
     </div>
+  );
+}
+
+function PayRegistrationFee({
+  playerId,
+  leagueId,
+  status,
+}: {
+  playerId: string;
+  leagueId: string;
+  status: 'unpaid' | 'pending';
+}) {
+  const [paying, setPaying] = useState(false);
+  const router = useRouter();
+
+  const handlePay = async () => {
+    if (!leagueId || !playerId) return;
+    setPaying(true);
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch('/api/payments/initialize', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ leagueId, relatedPlayerId: playerId }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setPaying(false);
+        return;
+      }
+
+      const callbackUrl = `${window.location.origin}/payment/callback?reference=${data.reference}&leagueId=${leagueId}&playerId=${playerId}`;
+      const paystackUrl = `${data.authorizationUrl}&redirect_url=${encodeURIComponent(callbackUrl)}`;
+
+      window.location.href = paystackUrl;
+    } catch {
+      setPaying(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-card border border-border rounded-2xl p-5"
+    >
+      <div className="flex items-start gap-4">
+        <div className="p-2.5 rounded-xl bg-accent/10 border border-accent/20 shrink-0">
+          <CreditCard className="w-5 h-5 text-accent" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-foreground text-sm">
+            {status === 'pending' ? 'Registration Fee Processing' : 'Registration Fee Required'}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            {status === 'pending'
+              ? 'Your payment is being processed. You will be updated once confirmed.'
+              : 'Pay your registration fee to complete your enrollment.'}
+          </p>
+        </div>
+        {status === 'unpaid' && (
+          <Button
+            onClick={handlePay}
+            disabled={paying}
+            size="sm"
+            className="gap-2 shrink-0"
+          >
+            {paying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CreditCard className="w-3.5 h-3.5" />}
+            {paying ? 'Redirecting...' : 'Pay Now'}
+          </Button>
+        )}
+        {status === 'pending' && (
+          <div className="flex items-center gap-2 text-xs text-accent font-semibold shrink-0">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            Pending
+          </div>
+        )}
+      </div>
+    </motion.div>
   );
 }

@@ -37,7 +37,8 @@ export interface Player {
   teamId: string;
   isManager: boolean;
   photo?: string | null;
-  linkedUserId?: string | null
+  linkedUserId?: string | null;
+  registrationFeeStatus?: 'unpaid' | 'pending' | 'paid';
 }
 
 export interface Team {
@@ -409,6 +410,7 @@ export function useAppData() {
         is_manager: player.isManager,
         photo: player.photo ?? null,
         leagueId: userInfo?.leagueId ?? null,
+        registrationFeeStatus: 'unpaid',
       });
       invalidate("players");
       toast({ title: "Success", description: "Player added successfully" });

@@ -66,7 +66,11 @@ service cloud.firestore {
 
     match /leagues/{leagueId} {
       allow read:  if true;
-      allow write: if isLeagueManagerOf(leagueId);
+      // paystackSubaccountCode and subaccountStatus are server-only (Admin SDK).
+      // Client writes must never include these fields.
+      allow write: if isLeagueManagerOf(leagueId) &&
+        !request.resource.data.containsKey('paystackSubaccountCode') &&
+        !request.resource.data.containsKey('subaccountStatus');
     }
 
     // ─────────────────────────────────────────────────────────
@@ -89,12 +93,16 @@ service cloud.firestore {
 
     match /players/{playerId} {
       allow read:  if true;
-      allow create: if isLeagueManagerOf(request.resource.data.leagueId) || 
+      // registrationFeeStatus is server-only (Admin SDK / webhook).
+      // Clients may set it to 'unpaid' on create only; updates must never include it.
+      allow create: if (isLeagueManagerOf(request.resource.data.leagueId) || 
                     isTeamManagerOf(request.resource.data.leagueId, request.resource.data.team_id) || 
-                    isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId);
-      allow update: if isLeagueManagerOf(resource.data.leagueId) || 
+                    isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId)) &&
+                    (!request.resource.data.containsKey('registrationFeeStatus') || request.resource.data.registrationFeeStatus == 'unpaid');
+      allow update: if (isLeagueManagerOf(resource.data.leagueId) || 
                     ((isTeamManagerOf(resource.data.leagueId, resource.data.team_id) || isTeamManagerOf(resource.data.leagueId, resource.data.teamId)) && 
-                     (isTeamManagerOf(request.resource.data.leagueId, request.resource.data.team_id) || isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId)));
+                     (isTeamManagerOf(request.resource.data.leagueId, request.resource.data.team_id) || isTeamManagerOf(request.resource.data.leagueId, request.resource.data.teamId)))) &&
+                    !request.resource.data.containsKey('registrationFeeStatus');
       allow delete: if isLeagueManagerOf(resource.data.leagueId) || 
                     isTeamManagerOf(resource.data.leagueId, resource.data.team_id) || 
                     isTeamManagerOf(resource.data.leagueId, resource.data.teamId);
@@ -207,6 +215,14 @@ service cloud.firestore {
       allow create: if isLeagueManagerOf(leagueId);
       allow update: if isLeagueManagerOf(leagueId);
       allow delete: if isLeagueManagerOf(leagueId);
+    }
+
+    // Payment Transactions — registration fee payments, server-side writes only.
+    // Reads scoped to league manager of the transaction's league, or the individual payer.
+    match /payment_transactions/{transactionId} {
+      allow read: if isLeagueManagerOf(resource.data.leagueId) ||
+        (isAuthenticated() && resource.data.payerEmail == request.auth.token.email);
+      allow write: if false;
     }
 
     // Subscriptions — billing state, write denied to all clients (server-side only)

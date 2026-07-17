@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Plus, Target, AlertTriangle, Edit2, X, Mail } from "lucide-react";
+import { Users, Plus, Target, AlertTriangle, Edit2, X, Mail, CreditCard } from "lucide-react";
 import { uploadProfileImage } from "@/lib/uploadImage";
 import { useAppContext } from "../context/AppDataContext";
 import { Button } from "@/components/ui/button";
@@ -241,6 +241,21 @@ function PlayersContent() {
                 {player.isManager && (
                   <span className="text-[10px] uppercase tracking-wider bg-accent/15 text-accent px-2 py-1 rounded-full font-semibold">
                     Manager
+                  </span>
+                )}
+                {player.registrationFeeStatus === 'paid' && (
+                  <span className="text-[10px] uppercase tracking-wider bg-green-500/15 text-green-500 px-2 py-1 rounded-full font-semibold whitespace-nowrap">
+                    Paid
+                  </span>
+                )}
+                {player.registrationFeeStatus === 'pending' && (
+                  <span className="text-[10px] uppercase tracking-wider bg-amber-500/15 text-amber-500 px-2 py-1 rounded-full font-semibold whitespace-nowrap">
+                    Pending
+                  </span>
+                )}
+                {(!player.registrationFeeStatus || player.registrationFeeStatus === 'unpaid') && (
+                  <span className="text-[10px] uppercase tracking-wider bg-destructive/10 text-destructive px-2 py-1 rounded-full font-semibold whitespace-nowrap">
+                    Unpaid
                   </span>
                 )}
                 <SuspensionBadge playerId={player.id} variant="compact" />
