@@ -56,22 +56,22 @@ function normalizeSettings(d: Record<string, any>): LeagueSettings {
   };
 }
 
-async function fetchSettingsByLeagueId(leagueId: string): Promise<LeagueSettings> {
+async function fetchSettingsByLeagueId(leagueId: string | null): Promise<LeagueSettings> {
   // Always read from the new settings/{leagueId} collection
   const snap = await getDoc(doc(db, 'settings', leagueId));
   if (!snap.exists()) return DEFAULT_SETTINGS;
   return normalizeSettings(snap.data());
 }
 
-export function useLeagueSettings(leagueId?: string) {
-  const { leagueId: userLeagueId, loading: isAuthLoading } = useAuth();
-  const effectiveLeagueId = leagueId ?? userLeagueId ?? 'default';
+  export function useLeagueSettings(leagueId?: string) {
+    const { leagueId: userLeagueId, loading: isAuthLoading } = useAuth();
+    const effectiveLeagueId = leagueId ?? userLeagueId ?? null;
 
   const queryKey = ['settings', effectiveLeagueId];
 
   const { data, isLoading } = useQuery({
     queryKey,
-    queryFn: () => fetchSettingsByLeagueId(effectiveLeagueId),
+    queryFn: () => fetchSettingsByLeagueId(effectiveLeagueId!),
     staleTime: 1000 * 60 * 10,
     enabled: !isAuthLoading && !!effectiveLeagueId,
   });

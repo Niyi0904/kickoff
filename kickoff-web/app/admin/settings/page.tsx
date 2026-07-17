@@ -183,7 +183,12 @@ function SettingsContent() {
     // ── Save to Firestore ──────────────────────────────────────────────────
     const handleSave = async () => {
         setSaveStatus('saving');
-        const targetLeagueId = userLeagueId ?? settings?.leagueId ?? 'default';
+        const targetLeagueId = userLeagueId ?? settings?.leagueId ?? null;
+        if (!targetLeagueId) {
+            setSaveStatus('idle');
+            toast({ title: 'Error', description: 'Cannot save settings: no league context available', variant: 'destructive' });
+            return;
+        }
         try {
             await setDoc(doc(db, 'settings', targetLeagueId), {
                 seasonName,
