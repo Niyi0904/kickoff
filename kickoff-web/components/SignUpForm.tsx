@@ -26,9 +26,10 @@ interface SignUpFormProps {
   onSuccess?: () => void;
   onSwitchToLogin?: () => void;
   initialInviteCode?: string;
+  requireInviteCode?: boolean;
 }
 
-export function SignUpForm({ onSuccess, onSwitchToLogin, initialInviteCode }: SignUpFormProps) {
+export function SignUpForm({ onSuccess, onSwitchToLogin, initialInviteCode, requireInviteCode = true }: SignUpFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -65,7 +66,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin, initialInviteCode }: Si
       toast({ title: "Error", description: "Passwords do not match", variant: "destructive" });
       return false;
     }
-    if (!inviteCode.trim()) {
+    if (requireInviteCode && !inviteCode.trim()) {
       toast({ title: "Error", description: "Invite code is required", variant: "destructive" });
       return false;
     }
@@ -82,22 +83,26 @@ export function SignUpForm({ onSuccess, onSwitchToLogin, initialInviteCode }: Si
     setIsSubmitting(true);
 
     try {
-      // Validate invite code (required)
-      const inviteData = await getInvite(inviteCode);
-      if (!inviteData) {
-        toast({ title: "Error", description: "Invalid or expired invite code", variant: "destructive" });
-        setIsSubmitting(false);
-        return;
-      }
-      const roleFromInvite = inviteData.role as 'admin' | 'user';
+      let userId: string | null = null;
 
-      const { error, userId } = await signUp(email, password, displayName, file);
+      if (requireInviteCode) {
+        const inviteData = await getInvite(inviteCode);
+        if (!inviteData) {
+          toast({ title: "Error", description: "Invalid or expired invite code", variant: "destructive" });
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      const result = await signUp(email, password, displayName, file);
+      const error = result.error;
+      userId = result.userId;
       if (error) {
         const errorCode = (error as any).code || 'unknown';
         const errorMessage = getFirebaseErrorMessage(errorCode);
         toast({ title: "Signup failed", description: errorMessage, variant: "destructive" });
       } else {
-        if (userId) {
+        if (requireInviteCode && userId) {
           await completeRegistration(inviteCode, userId);
         }
 
@@ -156,14 +161,16 @@ export function SignUpForm({ onSuccess, onSwitchToLogin, initialInviteCode }: Si
         minLength={6}
         required
       />
-      <Input
-        type="text"
-        placeholder="Invite Code"
-        value={inviteCode}
-        onChange={(e) => setInviteCode(e.target.value)}
-        className="bg-secondary border-border"
-        required
-      />
+      {requireInviteCode && (
+        <Input
+          type="text"
+          placeholder="Invite Code"
+          value={inviteCode}
+          onChange={(e) => setInviteCode(e.target.value)}
+          className="bg-secondary border-border"
+          required
+        />
+      )}
       <div>
         <label className="text-sm text-muted-foreground block mb-2">Profile Image (optional)</label>
         <input

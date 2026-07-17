@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppDataContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -91,7 +92,33 @@ export default function Dashboard() {
 
 function DashboardContent() {
   const { seasonName } = useLeagueSettings();
-  const { teams, players, goals, assists, yellowCards, redCards, matches, topScorers, standings, attendance } = useAppContext();
+  const { teams, players, goals, assists, yellowCards, redCards, matches, topScorers, standings, attendance, leagueId, authLoading } = useAppContext();
+
+  if (!authLoading && !leagueId) {
+    return (
+      <div className="px-4 min-w-0 pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-center min-h-[60vh]"
+        >
+          <div className="glass-card rounded-2xl p-12 w-full max-w-lg text-center">
+            <Trophy className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-30" />
+            <h1 className="font-display text-2xl font-bold mb-3">You're not part of a league yet</h1>
+            <p className="text-muted-foreground mb-8">
+              Create your own league to get started, or ask a league admin for an invite code.
+            </p>
+            <Button asChild className="min-h-[44px]">
+              <Link href="/onboarding/create-league">
+                <Shield className="w-4 h-4" />
+                Create your league
+              </Link>
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   const playedMatches = matches.filter(m => m.status === 'played');
   const upcomingMatches = matches.filter(m => m.status === 'upcoming');
