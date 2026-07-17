@@ -31,9 +31,9 @@ export async function createUserDocument(userId: string, email: string, displayN
       createdAt: serverTimestamp(),
     });
 
-    // Create user role entry (default to 'user')
+    // Create user role entry (default to 'player')
     await setDoc(doc(db, 'user_roles', userId), {
-      role: 'user',
+      role: 'player',
       leagueId: LEAGUE_ID,
       createdAt: serverTimestamp(),
     });
