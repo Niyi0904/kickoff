@@ -58,7 +58,7 @@ function normalizeSettings(d: Record<string, any>): LeagueSettings {
 
 async function fetchSettingsByLeagueId(leagueId: string | null): Promise<LeagueSettings> {
   if (!leagueId) return DEFAULT_SETTINGS;
-  const snap = await getDoc(doc(db, 'settings', leagueId));
+  const snap = await getDoc(doc(db, 'settings', leagueId!));
   if (!snap.exists()) return DEFAULT_SETTINGS;
   return normalizeSettings(snap.data());
 }
