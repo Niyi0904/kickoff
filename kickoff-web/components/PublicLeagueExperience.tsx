@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { collection, doc, getDoc, getDocs, orderBy, query, where } from "firebase/firestore";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -40,91 +39,8 @@ import { db } from "@/lib/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-type Team = {
-  id: string;
-  name: string;
-  logo?: string | null;
-  primaryColor: string;
-  stadium?: string | null;
-  founded?: string | null;
-};
-
-type Player = {
-  id: string;
-  name: string;
-  teamId: string;
-  photo?: string | null;
-  number?: string | number | null;
-  position?: string | null;
-};
-
-type MatchStatus = "upcoming" | "played";
-
-type Match = {
-  id: string;
-  matchDay: number;
-  homeTeamId: string;
-  awayTeamId: string;
-  homeScore?: number;
-  awayScore?: number;
-  status: MatchStatus;
-  scheduledDate?: string;
-  time?: string;
-  league?: string;
-  venue?: string;
-  minutesPlayed?: number;
-};
-
-type EventRecord = {
-  id: string;
-  playerId: string;
-  teamId: string;
-  matchId?: string;
-  timestamp?: { seconds?: number };
-};
-
-type StandingRow = {
-  id: string;
-  name: string;
-  logo?: string | null;
-  color: string;
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  gf: number;
-  ga: number;
-  gd: number;
-  pts: number;
-  form: string[];
-};
-
-type LeagueSettings = {
-  seasonName: string;
-  leagueVenue: string;
-  pointsWin: number;
-  pointsDraw: number;
-  pointsLoss: number;
-  matchDay?: string;
-  defaultTime?: string;
-};
-
-type PublicLeagueData = {
-  teams: Team[];
-  players: Player[];
-  matches: Match[];
-  goals: EventRecord[];
-  assists: EventRecord[];
-  yellowCards: EventRecord[];
-  redCards: EventRecord[];
-  settings: LeagueSettings;
-};
-
-type PublicNavItem = {
-  label: string;
-  href: string;
-};
+import { fetchPublicLeagueData } from "@/lib/fetchPublicLeagueData";
+import type { Team, Player, Match, EventRecord, StandingRow, LeagueSettings, PublicLeagueData, PublicNavItem } from "@/lib/public-league-types";
 
 const DEFAULT_SETTINGS: LeagueSettings = {
   seasonName: "Current Season",
@@ -138,17 +54,6 @@ const EMPTY_TEAMS: Team[] = [];
 const EMPTY_PLAYERS: Player[] = [];
 const EMPTY_MATCHES: Match[] = [];
 const EMPTY_EVENTS: EventRecord[] = [];
-
-const navItems: PublicNavItem[] = [
-  { label: "Home", href: "#home" },
-  { label: "Leagues", href: "#leagues" },
-  { label: "Fixtures", href: "#fixtures" },
-  { label: "Standings", href: "#standings" },
-  { label: "Teams", href: "#teams" },
-  { label: "Players", href: "#players" },
-  { label: "Statistics", href: "#statistics" },
-  { label: "About", href: "#about" },
-];
 
 const platformFeatures = [
   { title: "League Management", text: "Season setup, clubs, managers, and role-aware league control.", icon: Trophy },
@@ -195,73 +100,6 @@ const faqs = [
     answer: "Yes. Public team, player, fixture, and performance data is surfaced automatically as the season progresses.",
   },
 ];
-
-async function fetchPublicLeagueData(leagueSlug?: string): Promise<PublicLeagueData> {
-  let leagueId: string | null = null;
-
-  if (leagueSlug) {
-    const slugSnap = await getDocs(query(collection(db, "leagues"), where("slug", "==", leagueSlug)));
-    if (!slugSnap.empty) {
-      leagueId = slugSnap.docs[0].id;
-    }
-  }
-
-  const baseConstraints = leagueId ? [where("leagueId", "==", leagueId)] : [];
-  const matchConstraints = leagueId
-    ? [where("leagueId", "==", leagueId), orderBy("matchDay", "desc")]
-    : [orderBy("matchDay", "desc")];
-
-  // Use the league-scoped settings document if we have a leagueId, fall back to the old singleton
-  const settingsDocId = leagueId ?? "league";
-  const settingsCollection = "settings";
-
-  const [teamsSnap, playersSnap, matchesSnap, goalsSnap, assistsSnap, yellowsSnap, redsSnap, settingsSnap] =
-    await Promise.all([
-      getDocs(query(collection(db, "teams"), ...baseConstraints)),
-      getDocs(query(collection(db, "players"), ...baseConstraints)),
-      getDocs(query(collection(db, "matches"), ...matchConstraints)),
-      getDocs(query(collection(db, "goals"), ...baseConstraints)),
-      getDocs(query(collection(db, "assists"), ...baseConstraints)),
-      getDocs(query(collection(db, "yellow_cards"), ...baseConstraints)),
-      getDocs(query(collection(db, "red_cards"), ...baseConstraints)),
-      getDoc(doc(db, settingsCollection, settingsDocId)),
-    ]);
-
-  const teams: Team[] = teamsSnap.docs.map((d) => {
-    const team = d.data();
-    return {
-      id: d.id,
-      name: team.name ?? "Unnamed Team",
-      logo: team.logo ?? null,
-      primaryColor: team.primary_color ?? team.primaryColor ?? "#22c55e",
-      stadium: team.stadium ?? null,
-      founded: team.founded ?? null,
-    };
-  });
-
-  const players: Player[] = playersSnap.docs.map((d) => {
-    const player = d.data();
-    return {
-      id: d.id,
-      name: player.name ?? "Unnamed Player",
-      teamId: player.team_id ?? player.teamId ?? "",
-      photo: player.photo ?? null,
-      number: player.number ?? null,
-      position: player.position ?? null,
-    };
-  });
-
-  const matches: Match[] = matchesSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Match));
-  const goals: EventRecord[] = goalsSnap.docs.map((d) => ({ id: d.id, ...d.data() } as EventRecord));
-  const assists: EventRecord[] = assistsSnap.docs.map((d) => ({ id: d.id, ...d.data() } as EventRecord));
-  const yellowCards: EventRecord[] = yellowsSnap.docs.map((d) => ({ id: d.id, ...d.data() } as EventRecord));
-  const redCards: EventRecord[] = redsSnap.docs.map((d) => ({ id: d.id, ...d.data() } as EventRecord));
-  const settings = settingsSnap.exists()
-    ? ({ ...DEFAULT_SETTINGS, ...settingsSnap.data() } as LeagueSettings)
-    : DEFAULT_SETTINGS;
-
-  return { teams, players, matches, goals, assists, yellowCards, redCards, settings };
-}
 
 function teamInitials(name = "") {
   return name
@@ -321,6 +159,15 @@ export function PublicLeagueExperience({ leagueSlug }: { leagueSlug?: string }) 
   const yellowCards = data?.yellowCards ?? EMPTY_EVENTS;
   const redCards = data?.redCards ?? EMPTY_EVENTS;
   const settings = data?.settings ?? DEFAULT_SETTINGS;
+
+  const base = leagueSlug ? `/public-league/${leagueSlug}` : '';
+  const navItems: PublicNavItem[] = [
+    { label: "Home", href: `${base}` },
+    { label: "Matches", href: `${base}/matches` },
+    { label: "Standings", href: `${base}/standings` },
+    { label: "Teams", href: `${base}/teams` },
+    { label: "Stats", href: `${base}/stats` },
+  ];
 
   const teamsById = useMemo(() => new Map(teams.map((team) => [team.id, team])), [teams]);
   const playersById = useMemo(() => new Map(players.map((player) => [player.id, player])), [players]);
@@ -735,9 +582,9 @@ function PublicHeader({
 
         <nav className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="rounded-md px-3 py-2 text-sm font-semibold text-white/70 transition hover:bg-white/8 hover:text-white">
+            <Link key={item.href} href={item.href} className="rounded-md px-3 py-2 text-sm font-semibold text-white/70 transition hover:bg-white/8 hover:text-white">
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -771,14 +618,14 @@ function PublicHeader({
         <div className="border-t border-white/10 bg-[#07130f] px-4 py-4 lg:hidden">
           <nav className="grid gap-1">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className="rounded-md px-3 py-3 text-sm font-semibold text-white/78 hover:bg-white/8 hover:text-white"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
           <div className="mt-4 flex flex-col gap-2">
@@ -1380,9 +1227,9 @@ function PublicFooter({ navItems, profileHref }: { navItems: PublicNavItem[]; pr
         </div>
         <nav className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="text-sm font-semibold text-white/58 hover:text-white">
+            <Link key={item.href} href={item.href} className="text-sm font-semibold text-white/58 hover:text-white">
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <Button asChild className="h-11 w-full rounded-md bg-[#f5c84b] font-bold text-[#102018] hover:bg-[#ffd869]">
