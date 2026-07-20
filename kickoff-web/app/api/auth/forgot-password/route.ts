@@ -94,6 +94,12 @@ export async function POST(request: NextRequest) {
       actionCodeSettings
     );
 
+    console.log({
+      VERCEL_URL: process.env.VERCEL_URL,
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      actionCodeSettings,
+    });
+
     const logoUrl = productionUrl ? `${productionUrl}/kickoff-logo-wordmark.png` : '';
 
     const html = `
