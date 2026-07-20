@@ -79,10 +79,7 @@ export async function POST(request: NextRequest) {
     // Only pass actionCodeSettings.url when we have a real production URL;
     // Firebase rejects localhost as an unauthorised continueUrl.
     // On Vercel, prefer VERCEL_URL (auto-provided) over NEXT_PUBLIC_APP_URL.
-    const productionUrl =
-      process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : process.env.NEXT_PUBLIC_APP_URL;
+    const productionUrl = process.env.NEXT_PUBLIC_APP_URL;
     const actionCodeSettings =
       productionUrl && !isLocalhostUrl(productionUrl)
         ? { url: `${productionUrl}/auth` }
