@@ -33,6 +33,15 @@ function getAdminApp(): App {
   return initializeApp();
 }
 
+function isLocalhostUrl(url: string): boolean {
+  try {
+    const hostname = new URL(url).hostname;
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
+  } catch {
+    return false;
+  }
+}
+
 function getTransporter() {
   return nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -69,10 +78,15 @@ export async function POST(request: NextRequest) {
     // Generate password reset link using Firebase Admin SDK.
     // Only pass actionCodeSettings.url when we have a real production URL;
     // Firebase rejects localhost as an unauthorised continueUrl.
-    const productionUrl = process.env.NEXT_PUBLIC_APP_URL;
-    const actionCodeSettings = productionUrl
-      ? { url: `${productionUrl}/auth` }
-      : undefined;
+    // On Vercel, prefer VERCEL_URL (auto-provided) over NEXT_PUBLIC_APP_URL.
+    const productionUrl =
+      process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : process.env.NEXT_PUBLIC_APP_URL;
+    const actionCodeSettings =
+      productionUrl && !isLocalhostUrl(productionUrl)
+        ? { url: `${productionUrl}/auth` }
+        : undefined;
 
     const app = getAdminApp();
     const resetLink = await getAuth(app).generatePasswordResetLink(
@@ -233,8 +247,19 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
-    const msg = error?.message || 'Failed to process password reset request';
-    console.error('[forgot-password] Error:', msg, error);
+    let msg = error?.message || 'Failed to process password reset request';
+    console.error('[forgot-password] Error:', msg, error?.code, error);
+
+    // Surface common Firebase configuration issues with actionable guidance
+    if (msg.includes('INTERNAL ASSERT FAILED')) {
+      msg =
+        'Failed to generate password reset link. ' +
+        'Please ensure Email/Password sign-in is enabled in Firebase Console (Authentication > Sign-in method) ' +
+        'and that the service account key is valid (Firebase Console > Project Settings > Service Accounts).';
+    } else if (msg.includes('EMAIL_NOT_FOUND') || msg.includes('auth/user-not-found')) {
+      msg = 'No account found with this email address.';
+    }
+
     return NextResponse.json(
       { error: msg },
       { status: 500 }
