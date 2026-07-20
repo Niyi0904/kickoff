@@ -25,6 +25,8 @@ kickoff-mobile/node_modules/
 # production
 /build
 
+**/serviceAccountKey.json
+
 # misc
 .DS_Store
 *.pem

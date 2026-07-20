@@ -113,9 +113,9 @@ export async function POST(request: NextRequest) {
               box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             }
             .header {
-              background-color: #0d111a;
+              background-color: #07130f;
               border-bottom: 1px solid #1f293d;
-              padding: 30px;
+              padding: 40px 30px;
               text-align: center;
             }
             .content {
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
           <div class="wrapper">
             <div class="container">
               <div class="header">
-                ${logoUrl ? `<img src="${logoUrl}" alt="KICKOFF" style="height: 40px; width: auto;" />` : '<h1 style="font-family: \'Oswald\', \'Arial Black\', sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 0.05em; color: #1fad66; text-transform: uppercase; margin: 0;">KICKOFF</h1>'}
+                ${logoUrl ? `<img src="${logoUrl}" alt="KICKOFF" style="height: 80px; width: auto;" />` : '<h1 style="font-family: \'Oswald\', \'Arial Black\', sans-serif; font-size: 32px; font-weight: 900; letter-spacing: 0.05em; color: #1fad66; text-transform: uppercase; margin: 0;">KICKOFF</h1>'}
               </div>
               <div class="content">
                 <h2>Reset Your Password</h2>
