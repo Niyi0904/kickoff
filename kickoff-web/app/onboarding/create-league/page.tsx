@@ -32,6 +32,10 @@ function CreateLeagueContent() {
   const { user, leagueId } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
+  const [slugEditedManually, setSlugEditedManually] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (leagueId) {
     return (
@@ -61,11 +65,6 @@ function CreateLeagueContent() {
       </div>
     );
   }
-
-  const [name, setName] = useState('');
-  const [slug, setSlug] = useState('');
-  const [slugEditedManually, setSlugEditedManually] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNameChange = useCallback((value: string) => {
     setName(value);

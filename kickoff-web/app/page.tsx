@@ -401,7 +401,7 @@ function LeagueCard({ league }: { league: LeagueDirectoryItem }) {
           </p>
           <div className="mt-3 flex items-center gap-4">
             {league.metrics
-              .filter((metric) => ["Teams", "Players", "Goals"].includes(metric.label))
+              .filter((metric) => ["Teams", "Players", "Played", "Goals"].includes(metric.label))
               .map((metric) => (
                 <MiniStatCompact key={metric.label} label={metric.label} value={metric.value} />
               ))}
