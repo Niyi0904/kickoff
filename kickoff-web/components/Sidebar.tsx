@@ -262,7 +262,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 min-w-0 overflow-x-hidden font-display">
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 min-w-0 overflow-x-hidden">
         <div className="p-6 lg:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
     </div>

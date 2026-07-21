@@ -1,12 +1,13 @@
 import { Metadata } from "next";
 import { PublicTeamDetail } from "./client";
 
-type Props = { params: { slug: string; teamId: string } };
+type Props = { params: Promise<{ slug: string; teamId: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug, teamId } = await params;
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"}/api/public/team/${params.teamId}?slug=${params.slug}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"}/api/public/team/${teamId}?slug=${slug}`,
       { next: { revalidate: 60 } },
     );
     if (res.ok) {
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function TeamDetailPage(props: Props) {
-  return <PublicTeamDetail slug={props.params.slug} teamId={props.params.teamId} />;
+export default async function TeamDetailPage(props: Props) {
+  const { slug, teamId } = await props.params;
+  return <PublicTeamDetail slug={slug} teamId={teamId} />;
 }

@@ -36,6 +36,16 @@ function CreateLeagueContent() {
   const [slug, setSlug] = useState('');
   const [slugEditedManually, setSlugEditedManually] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleNameChange = useCallback((value: string) => {
+    setName(value);
+    if (!slugEditedManually) {
+      setSlug(slugify(value));
+    }
+  }, [slugEditedManually]);
+  const handleSlugChange = useCallback((value: string) => {
+    setSlugEditedManually(true);
+    setSlug(value);
+  }, []);
 
   if (leagueId) {
     return (
@@ -65,18 +75,6 @@ function CreateLeagueContent() {
       </div>
     );
   }
-
-  const handleNameChange = useCallback((value: string) => {
-    setName(value);
-    if (!slugEditedManually) {
-      setSlug(slugify(value));
-    }
-  }, [slugEditedManually]);
-
-  const handleSlugChange = useCallback((value: string) => {
-    setSlugEditedManually(true);
-    setSlug(value);
-  }, []);
 
   const handleSubmit = async () => {
     const trimmedName = name.trim();

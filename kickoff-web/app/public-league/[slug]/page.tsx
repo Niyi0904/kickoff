@@ -1,5 +1,6 @@
 import { PublicLeagueExperience } from "@/components/PublicLeagueExperience";
 
-export default function PublicLeagueSlugPage({ params }: { params: { slug: string } }) {
-  return <PublicLeagueExperience leagueSlug={params.slug} />;
+export default async function PublicLeagueSlugPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  return <PublicLeagueExperience leagueSlug={slug} />;
 }

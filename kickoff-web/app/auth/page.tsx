@@ -10,7 +10,7 @@ import { ForgotPasswordForm } from "@/components/ForgotPasswordForm";
 import { Button } from "@/components/ui/button";
 
 function getSafeRedirect(value: string | null) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/onboarding/create-league";
   return value;
 }
 
@@ -31,8 +31,19 @@ function AuthContent() {
         animate={{ opacity: 1, y: 0 }}
         className="glass-card rounded-2xl p-8 w-full max-w-md"
       >
-        <div className="flex items-center gap-3 mb-8 justify-center">
-          <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-10 w-auto" />
+        <div className="flex items-center justify-between mb-8">
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back
+          </button>
+          <div className="flex-1 flex justify-center">
+            <img src="/kickoff-logo-wordmark.png" alt="KICKOFF" className="h-10 w-auto" />
+          </div>
+          <div className="w-14" />
         </div>
 
         {mode === 'choose-path' && (
@@ -105,7 +116,7 @@ function AuthContent() {
             )}
             <h2 className="font-display text-xl font-bold text-center mb-6">Create Account</h2>
             <SignUpForm
-              onSuccess={() => router.push(signupNeedsInvite ? redirectTo : '/onboarding/create-league')}
+              onSuccess={() => router.push(redirectTo)}
               onSwitchToLogin={() => { setMode('login'); setSignupNeedsInvite(false); }}
               initialInviteCode={signupNeedsInvite ? (inviteCode || undefined) : undefined}
               requireInviteCode={signupNeedsInvite}
