@@ -40,6 +40,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { fetchPublicLeagueData } from "@/lib/fetchPublicLeagueData";
+import { buildSeasonMetrics } from "@/lib/public-league-metrics";
 import type { Team, Player, Match, EventRecord, StandingRow, LeagueSettings, PublicLeagueData, PublicNavItem } from "@/lib/public-league-types";
 
 const DEFAULT_SETTINGS: LeagueSettings = {
@@ -738,15 +739,7 @@ function LeagueCard({
   matches: Match[];
   goals: EventRecord[];
 }) {
-  const played = matches.filter((match) => match.status === "played").length;
-  const upcoming = matches.filter((match) => match.status !== "played").length;
-  const seasonMetrics = [
-    { label: "Teams", value: teams.length },
-    { label: "Players", value: players.length },
-    { label: "Played", value: played },
-    { label: "Upcoming", value: upcoming },
-    { label: "Goals", value: goals.length },
-  ];
+  const seasonMetrics = buildSeasonMetrics({ teams, players, matches, goals });
 
   return (
     <article className="overflow-hidden rounded-md border border-white/10 bg-white/[0.05]">

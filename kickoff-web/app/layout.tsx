@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Teko, Inter } from "next/font/google";
 import "./globals.css";
 import { RootLayoutClient } from "./RootLayoutClient";
 
@@ -11,6 +11,24 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Teko — display typeface for league names, big numbers, scoreboard
+// Chosen for its semi-condensed, signage-ready character that evokes
+// African stadium scoreboards and hand-painted Lagos match posters.
+const teko = Teko({
+  variable: "--font-teko",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Inter — clean, highly legible body face with real tabular figures
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${teko.variable} ${inter.variable} antialiased`}
       >
         <RootLayoutClient>
           {children}
