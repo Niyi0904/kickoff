@@ -138,8 +138,11 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
 
   const teams: TeamRecord[] = teamsSnap.docs.map((teamDoc) => ({ id: teamDoc.id, ...teamDoc.data() } as TeamRecord));
   const matches: MatchRecord[] = matchesSnap.docs.map((matchDoc) => ({ id: matchDoc.id, ...matchDoc.data() } as MatchRecord));
-  const players: { id: string; teamId?: string | null }[] = playersSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
-  const goals: { id: string }[] = goalsSnap.docs.map((goalDoc) => ({ id: goalDoc.id }));
+  const players: { id: string; teamId?: string | null }[] = playersSnap.docs.map((d) => {
+    const p = d.data();
+    return { id: d.id, teamId: p.team_id ?? p.teamId ?? null };
+  });
+  const goals: { id: string; teamId?: string | null }[] = goalsSnap.docs.map((goalDoc) => ({ id: goalDoc.id, ...goalDoc.data() }));
 
   const teamsByLeague = new Map<string, TeamRecord[]>();
   teams.forEach((team) => {
@@ -208,7 +211,8 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
       const teamObjects = teamsByLeague.get(league.id) ?? [];
       const playerObjects = playersByLeague.get(league.id) ?? [];
       const leagueGoals = goals.filter((goal) => {
-        const team = teams.find((t) => t.id === goal.id);
+        if (!goal.teamId) return false;
+        const team = teams.find((t) => t.id === goal.teamId);
         if (!team) return false;
         return getLeagueId(team) === league.id;
       });
