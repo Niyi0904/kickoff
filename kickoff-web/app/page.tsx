@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 type LeagueRecord = {
   id: string;
-  name?: string | null;
+  leagueName?: string | null;
   slug?: string | null;
   logo?: string | null;
   logoUrl?: string | null;
@@ -31,6 +31,7 @@ type LeagueDirectoryItem = LeagueRecord & {
   teamCount: number;
   seasonName?: string | null;
   recentResult?: RecentResult | null;
+  formGuide: LeagueFormMark[];
 };
 
 type TeamRecord = {
@@ -62,9 +63,15 @@ type RecentResult = {
   matchDay?: number | null;
 };
 
+type LeagueFormMark = {
+  id: string;
+  result: "W" | "D" | "L" | null;
+  label: string;
+};
+
 const directoryNav = [
   { label: "Browse Leagues", href: "#browse-leagues" },
-  { label: "Start a League", href: "/onboarding/create-league" },
+  { label: "Start a League", href: "/organizers" },
   { label: "Sign In", href: "/auth" },
 ];
 
@@ -93,6 +100,12 @@ function formatResultDate(result: RecentResult) {
   return result.matchDay == null ? "Match date not published" : `Match Week ${result.matchDay}`;
 }
 
+function getResultMark(match: MatchRecord): LeagueFormMark["result"] {
+  if (match.homeScore == null || match.awayScore == null) return null;
+  if (match.homeScore === match.awayScore) return "D";
+  return match.homeScore > match.awayScore ? "W" : "L";
+}
+
 async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
   const [leaguesSnap, teamsSnap, matchesSnap] = await Promise.all([
     getDocs(collection(db, "leagues")),
@@ -104,7 +117,7 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
     const data = leagueDoc.data();
     return {
       id: leagueDoc.id,
-      name: typeof data.name === "string" ? data.name : null,
+      leagueName: typeof data.leagueName === "string" ? data.leagueName : null,
       slug: typeof data.slug === "string" ? data.slug : null,
       logo: typeof data.logo === "string" ? data.logo : null,
       logoUrl: typeof data.logoUrl === "string" ? data.logoUrl : null,
@@ -144,8 +157,10 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
 
   return leagues
     .map((league) => {
-      const recentMatch = (resultsByLeague.get(league.id) ?? [])
-        .sort((a, b) => safeDateValue(b.scheduledDate) - safeDateValue(a.scheduledDate) || (b.matchDay ?? 0) - (a.matchDay ?? 0))[0];
+      const playedMatches = [...(resultsByLeague.get(league.id) ?? [])].sort(
+        (a, b) => safeDateValue(b.scheduledDate) - safeDateValue(a.scheduledDate) || (b.matchDay ?? 0) - (a.matchDay ?? 0),
+      );
+      const recentMatch = playedMatches[0];
 
       const recentResult: RecentResult | null = recentMatch
         ? {
@@ -158,16 +173,27 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
           }
         : null;
 
+      const formGuide = playedMatches.slice(0, 5).map((match) => {
+        const homeName = match.homeTeamId ? teamNames.get(match.homeTeamId) ?? "Home team name missing" : "Home team name missing";
+        const awayName = match.awayTeamId ? teamNames.get(match.awayTeamId) ?? "Away team name missing" : "Away team name missing";
+        return {
+          id: match.id,
+          result: getResultMark(match),
+          label: `${homeName} vs ${awayName}`,
+        };
+      });
+
       return {
         ...league,
         teamCount: teamsByLeague.get(league.id)?.length ?? 0,
         seasonName: seasonNames.get(league.id) ?? null,
         recentResult,
+        formGuide,
       };
     })
     .sort((a, b) => {
-      const aName = a.name?.trim();
-      const bName = b.name?.trim();
+      const aName = a.leagueName?.trim();
+      const bName = b.leagueName?.trim();
       if (aName && bName) return aName.localeCompare(bName);
       if (aName) return -1;
       if (bName) return 1;
@@ -246,7 +272,7 @@ function DirectoryNav({
         </nav>
 
         <Button asChild className="hidden h-10 rounded-md bg-[#f5c84b] px-4 font-bold text-[#102018] hover:bg-[#ffd869] lg:inline-flex">
-          <Link href="/onboarding/create-league">Start a League</Link>
+          <Link href="/organizers">Start a League</Link>
         </Button>
 
         <button
@@ -304,30 +330,27 @@ function LeagueCard({ league }: { league: LeagueDirectoryItem }) {
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/10 bg-[#102018]">
           {logo ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logo} alt={league.name ? `${league.name} logo` : "League logo"} className="h-full w-full object-cover" />
+            <img src={logo} alt={league.leagueName ? `${league.leagueName} logo` : "League logo"} className="h-full w-full object-cover" />
           ) : (
             <span className="px-2 text-center text-xs font-black text-white/38">No logo</span>
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-2xl font-black text-white">{league.name?.trim() || "League name missing"}</h2>
+          <h2 className="truncate text-2xl font-black text-white">{league.leagueName?.trim() || "League name missing"}</h2>
           <p className="mt-1 truncate text-sm font-semibold text-white/48">
             {league.seasonName?.trim() || "Season settings not published"}
           </p>
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-2">
+      <div className="mt-6 grid gap-2">
         <SnapshotTile icon={Users} label="Teams" value={league.teamCount} />
-        <SnapshotTile icon={CalendarDays} label="Recent Result" value={league.recentResult ? "Available" : "None recorded"} />
       </div>
 
+      <FormGuide marks={league.formGuide} />
+
       <div className="mt-4 flex-1 rounded-md border border-white/8 bg-[#07130f]/70 p-4">
-        <div className="mb-3 flex items-center gap-2 text-sm font-black text-white/72">
-          <Trophy className="h-4 w-4 text-[#f5c84b]" />
-          Most Recent Result
-        </div>
-        {league.recentResult ? <RecentResultBlock result={league.recentResult} /> : <p className="text-sm font-semibold text-white/42">No completed result has been published for this league.</p>}
+        <RecentResultDisplay result={league.recentResult} />
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
@@ -353,6 +376,50 @@ function SnapshotTile({ icon: Icon, label, value }: { icon: typeof Users; label:
       <Icon className="mb-2 h-4 w-4 text-[#51d884]" />
       <p className="text-xl font-black text-white">{value}</p>
       <p className="text-xs font-semibold text-white/42">{label}</p>
+    </div>
+  );
+}
+
+function FormGuide({ marks }: { marks: LeagueFormMark[] }) {
+  return (
+    <div className="mt-4 rounded-md border border-white/8 bg-white/[0.04] p-3">
+      <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-white/50">
+        <CalendarDays className="h-4 w-4 text-[#51d884]" />
+        Last 5 Form
+      </div>
+      {marks.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {marks.map((mark) => (
+            <span
+              key={mark.id}
+              title={mark.result ? mark.label : `${mark.label} - score missing`}
+              className={cn(
+                "inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-black",
+                mark.result === "W" && "bg-[#51d884] text-[#06110d]",
+                mark.result === "D" && "bg-[#f5c84b] text-[#102018]",
+                mark.result === "L" && "bg-white/14 text-white",
+                mark.result == null && "border border-white/14 bg-transparent text-white/45",
+              )}
+            >
+              {mark.result ?? "?"}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm font-semibold text-white/42">No completed matches are available for a form guide.</p>
+      )}
+    </div>
+  );
+}
+
+function RecentResultDisplay({ result }: { result?: RecentResult | null }) {
+  return (
+    <div>
+      <div className="mb-3 flex items-center gap-2 text-sm font-black text-white/72">
+        <Trophy className="h-4 w-4 text-[#f5c84b]" />
+        Most Recent Result
+      </div>
+      {result ? <RecentResultBlock result={result} /> : <p className="text-sm font-semibold text-white/42">No completed result has been published for this league.</p>}
     </div>
   );
 }
@@ -417,7 +484,7 @@ function ZeroLeaguesState() {
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button asChild className="h-12 rounded-md bg-[#26c267] px-5 font-bold text-[#06110d] hover:bg-[#51d884]">
-            <Link href="/onboarding/create-league">
+            <Link href="/organizers">
               Start a League
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
