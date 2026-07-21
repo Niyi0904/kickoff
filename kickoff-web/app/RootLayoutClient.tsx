@@ -15,7 +15,11 @@ export function RootLayoutClient({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isPublicRoute = pathname === "/" || pathname?.startsWith("/public-league") || pathname?.startsWith("/auth");
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname?.startsWith("/public-league") ||
+    pathname?.startsWith("/organizers") ||
+    pathname?.startsWith("/auth");
 
   if (isPublicRoute) {
     return (
