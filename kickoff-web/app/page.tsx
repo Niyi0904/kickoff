@@ -9,13 +9,16 @@ import {
   ArrowRight,
   CalendarDays,
   Loader2,
+  MapPin,
   Menu,
   Shield,
   Trophy,
   Users,
   X,
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { buildSeasonMetrics } from "@/lib/public-league-metrics";
 import { db } from "@/lib/firebase";
 import { cn } from "@/lib/utils";
 
@@ -29,9 +32,13 @@ type LeagueRecord = {
 
 type LeagueDirectoryItem = LeagueRecord & {
   teamCount: number;
+  playerCount: number;
+  goalCount: number;
   seasonName?: string | null;
   recentResult?: RecentResult | null;
-  formGuide: LeagueFormMark[];
+  nextFixture?: MatchRecord | null;
+  metrics: { label: string; value: number }[];
+  teams: { id: string; logo?: string | null; name?: string | null }[];
 };
 
 type TeamRecord = {
@@ -39,6 +46,7 @@ type TeamRecord = {
   leagueId?: string | null;
   league_id?: string | null;
   name?: string | null;
+  logo?: string | null;
 };
 
 type MatchRecord = {
@@ -52,21 +60,19 @@ type MatchRecord = {
   status?: string | null;
   scheduledDate?: string | null;
   matchDay?: number | null;
+  venue?: string | null;
+  time?: string | null;
 };
 
 type RecentResult = {
+  homeId?: string | null;
+  awayId?: string | null;
   homeName?: string | null;
   awayName?: string | null;
   homeScore?: number | null;
   awayScore?: number | null;
   scheduledDate?: string | null;
   matchDay?: number | null;
-};
-
-type LeagueFormMark = {
-  id: string;
-  result: "W" | "D" | "L" | null;
-  label: string;
 };
 
 const directoryNav = [
@@ -100,17 +106,23 @@ function formatResultDate(result: RecentResult) {
   return result.matchDay == null ? "Match date not published" : `Match Week ${result.matchDay}`;
 }
 
-function getResultMark(match: MatchRecord): LeagueFormMark["result"] {
-  if (match.homeScore == null || match.awayScore == null) return null;
-  if (match.homeScore === match.awayScore) return "D";
-  return match.homeScore > match.awayScore ? "W" : "L";
+function teamInitials(name = "") {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "FC";
 }
 
 async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
-  const [leaguesSnap, teamsSnap, matchesSnap] = await Promise.all([
+  const [leaguesSnap, teamsSnap, matchesSnap, playersSnap, goalsSnap] = await Promise.all([
     getDocs(collection(db, "leagues")),
     getDocs(collection(db, "teams")),
     getDocs(collection(db, "matches")),
+    getDocs(collection(db, "players")),
+    getDocs(collection(db, "goals")),
   ]);
 
   const leagues: LeagueRecord[] = leaguesSnap.docs.map((leagueDoc) => {
@@ -126,6 +138,8 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
 
   const teams: TeamRecord[] = teamsSnap.docs.map((teamDoc) => ({ id: teamDoc.id, ...teamDoc.data() } as TeamRecord));
   const matches: MatchRecord[] = matchesSnap.docs.map((matchDoc) => ({ id: matchDoc.id, ...matchDoc.data() } as MatchRecord));
+  const players: { id: string; teamId?: string | null }[] = playersSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+  const goals: { id: string }[] = goalsSnap.docs.map((goalDoc) => ({ id: goalDoc.id }));
 
   const teamsByLeague = new Map<string, TeamRecord[]>();
   teams.forEach((team) => {
@@ -135,15 +149,27 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
   });
 
   const teamNames = new Map(teams.map((team) => [team.id, team.name ?? null]));
+  const teamLogos = new Map(teams.map((team) => [team.id, team.logo ?? null]));
 
   const resultsByLeague = new Map<string, MatchRecord[]>();
-  matches
-    .filter((match) => match.status === "played")
-    .forEach((match) => {
-      const leagueId = getLeagueId(match);
-      if (!leagueId) return;
+  const upcomingByLeague = new Map<string, MatchRecord[]>();
+  matches.forEach((match) => {
+    const leagueId = getLeagueId(match);
+    if (!leagueId) return;
+    if (match.status === "played") {
       resultsByLeague.set(leagueId, [...(resultsByLeague.get(leagueId) ?? []), match]);
-    });
+    } else {
+      upcomingByLeague.set(leagueId, [...(upcomingByLeague.get(leagueId) ?? []), match]);
+    }
+  });
+
+  const playersByLeague = new Map<string, { id: string; teamId?: string | null }[]>();
+  players.forEach((player) => {
+    const team = teams.find((t) => t.id === player.teamId);
+    const leagueId = team ? getLeagueId(team) : null;
+    if (!leagueId) return;
+    playersByLeague.set(leagueId, [...(playersByLeague.get(leagueId) ?? []), player]);
+  });
 
   const settingsByLeague = await Promise.all(
     leagues.map(async (league) => {
@@ -162,8 +188,14 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
       );
       const recentMatch = playedMatches[0];
 
+      const upcomingMatches = [...(upcomingByLeague.get(league.id) ?? [])]
+        .sort((a, b) => safeDateValue(a.scheduledDate) - safeDateValue(b.scheduledDate) || (a.matchDay ?? 0) - (b.matchDay ?? 0));
+      const nextFixture = upcomingMatches[0] ?? null;
+
       const recentResult: RecentResult | null = recentMatch
         ? {
+            homeId: recentMatch.homeTeamId,
+            awayId: recentMatch.awayTeamId,
             homeName: recentMatch.homeTeamId ? teamNames.get(recentMatch.homeTeamId) ?? null : null,
             awayName: recentMatch.awayTeamId ? teamNames.get(recentMatch.awayTeamId) ?? null : null,
             homeScore: recentMatch.homeScore ?? null,
@@ -173,22 +205,31 @@ async function fetchLeagueDirectory(): Promise<LeagueDirectoryItem[]> {
           }
         : null;
 
-      const formGuide = playedMatches.slice(0, 5).map((match) => {
-        const homeName = match.homeTeamId ? teamNames.get(match.homeTeamId) ?? "Home team name missing" : "Home team name missing";
-        const awayName = match.awayTeamId ? teamNames.get(match.awayTeamId) ?? "Away team name missing" : "Away team name missing";
-        return {
-          id: match.id,
-          result: getResultMark(match),
-          label: `${homeName} vs ${awayName}`,
-        };
+      const teamObjects = teamsByLeague.get(league.id) ?? [];
+      const playerObjects = playersByLeague.get(league.id) ?? [];
+      const leagueGoals = goals.filter((goal) => {
+        const team = teams.find((t) => t.id === goal.id);
+        if (!team) return false;
+        return getLeagueId(team) === league.id;
+      });
+
+      const metrics = buildSeasonMetrics({
+        teams: teamObjects,
+        players: playerObjects,
+        matches: playedMatches,
+        goals: leagueGoals,
       });
 
       return {
         ...league,
-        teamCount: teamsByLeague.get(league.id)?.length ?? 0,
+        teamCount: teamObjects.length,
+        playerCount: playerObjects.length,
+        goalCount: leagueGoals.length,
         seasonName: seasonNames.get(league.id) ?? null,
         recentResult,
-        formGuide,
+        nextFixture,
+        metrics,
+        teams: teamObjects.map((t) => ({ id: t.id, logo: t.logo ?? null, name: t.name ?? null })),
       };
     })
     .sort((a, b) => {
@@ -324,8 +365,22 @@ function LeagueGrid({ leagues }: { leagues: LeagueDirectoryItem[] }) {
 
 function LeagueCard({ league }: { league: LeagueDirectoryItem }) {
   const logo = getLeagueLogo(league);
+  const data = teamDataFor(league);
   const content = (
-    <article className="group flex h-full min-h-[310px] flex-col rounded-md border border-white/10 bg-white/[0.05] p-5 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#51d884]/35 hover:bg-white/[0.075]">
+    <article className="relative flex h-full min-h-[360px] flex-col rounded-md border border-white/10 bg-white/[0.05] p-5 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#51d884]/35 hover:bg-white/[0.075]">
+      {/* Stamp Mark — top right, rotated */}
+      <div
+        className="absolute right-5 top-5 z-20 h-16 w-16 rotate-[-6deg] rounded-full border-2 border-[#ff5e2c]/70 bg-[#ff5e2c]/10"
+        aria-hidden="true"
+      >
+        <span className="flex h-full w-full items-center justify-center font-display text-[10px] font-bold uppercase leading-tight tracking-wider text-[#ff5e2c]">
+          KICKOFF
+          <br />
+          LEAGUE
+        </span>
+      </div>
+
+      {/* Identity zone */}
       <div className="flex items-start gap-4">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/10 bg-[#102018]">
           {logo ? (
@@ -340,17 +395,64 @@ function LeagueCard({ league }: { league: LeagueDirectoryItem }) {
           <p className="mt-1 truncate text-sm font-semibold text-white/48">
             {league.seasonName?.trim() || "Season settings not published"}
           </p>
+          <div className="mt-3 flex items-center gap-4">
+            {league.metrics
+              .filter((metric) => ["Teams", "Players", "Goals"].includes(metric.label))
+              .map((metric) => (
+                <MiniStatCompact key={metric.label} label={metric.label} value={metric.value} />
+              ))}
+          </div>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-2">
-        <SnapshotTile icon={Users} label="Teams" value={league.teamCount} />
+      {/* Perforated divider */}
+      <div className="relative mt-6">
+        <div className="border-t-2 border-dashed border-white/15" />
+        <div className="absolute -left-2 -right-2 top-[-9px] flex justify-between">
+          <span className="h-4 w-4 rounded-full bg-[#07130f]" />
+          <span className="h-4 w-4 rounded-full bg-[#07130f]" />
+        </div>
       </div>
 
-      <FormGuide marks={league.formGuide} />
+      {/* Stub zone */}
+      <div className="mt-5 space-y-5 flex-1">
+        {/* Next Fixture */}
+        <StubSectionHeading icon={CalendarDays} label="Next Fixture" />
+        {league.nextFixture ? (
+          <div className="rounded-md border border-white/8 bg-white/[0.04] p-3">
+            <div className="flex items-center justify-between gap-2">
+              {league.nextFixture.homeTeamId ? (
+                <TeamOrFallback teamId={league.nextFixture.homeTeamId} teamData={data} />
+              ) : (
+                <p className="truncate text-right text-xs font-black text-white">Home</p>
+              )}
+              <span className="font-display text-sm font-bold text-white/45">VS</span>
+              {league.nextFixture.awayTeamId ? (
+                <TeamOrFallback teamId={league.nextFixture.awayTeamId} teamData={data} />
+              ) : (
+                <p className="truncate text-left text-xs font-black text-white">Away</p>
+              )}
+            </div>
+            <div className="mt-3 flex items-center gap-2 font-body text-[10px] font-semibold text-white/45">
+              <MapPin className="h-3 w-3" />
+              <span>{league.nextFixture.venue || "Venue not announced"}</span>
+              <span>·</span>
+              <span>{formatResultDate({ ...league.nextFixture })}</span>
+            </div>
+          </div>
+        ) : (
+          <p className="font-body text-xs italic text-white/42">No upcoming fixture scheduled</p>
+        )}
 
-      <div className="mt-4 flex-1 rounded-md border border-white/8 bg-[#07130f]/70 p-4">
-        <RecentResultDisplay result={league.recentResult} />
+        {/* Most Recent Result */}
+        <div>
+          <StubSectionHeading icon={Trophy} label="Most Recent Result" />
+          {league.recentResult ? (
+            <ScoreboardResult result={league.recentResult} teamData={data} />
+          ) : (
+            <p className="font-body text-xs italic text-white/42">No completed result has been published for this league.</p>
+          )}
+        </div>
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
@@ -370,71 +472,96 @@ function LeagueCard({ league }: { league: LeagueDirectoryItem }) {
   return <Link href={`/public-league/${league.slug}`}>{content}</Link>;
 }
 
-function SnapshotTile({ icon: Icon, label, value }: { icon: typeof Users; label: string; value: string | number }) {
+function teamDataFor(league: LeagueDirectoryItem): Map<string, { name: string; logo: string | null }> {
+  return new Map(league.teams.map((t) => [t.id, { name: t.name?.trim() || t.id, logo: t.logo ?? null }]));
+}
+
+function TeamOrFallback({ teamId, teamData }: { teamId: string; teamData: Map<string, { name: string; logo: string | null }> }) {
+  const info = teamData.get(teamId);
+  const teamName = info?.name ?? teamId;
+  const logo = info?.logo ?? null;
+
+  return (
+    <div className="flex items-center gap-2">
+      <Avatar className="h-7 w-7 rounded-sm border border-white/10">
+        <AvatarImage src={logo ?? undefined} />
+        <AvatarFallback className="bg-[#2a7b4f] text-[10px] font-bold text-white">{teamInitials(teamName)}</AvatarFallback>
+      </Avatar>
+      <span className="truncate text-xs font-black text-white">{teamName || "TBD"}</span>
+    </div>
+  );
+}
+
+function StubSectionHeading({ icon: Icon, label }: { icon: typeof CalendarDays; label: string }) {
+  return (
+    <div className="mb-2 flex items-center gap-1.5">
+      <Icon className="h-4 w-4 text-[#51d884]" />
+      <span className="font-display text-[11px] font-semibold uppercase tracking-widest text-white/50">{label}</span>
+    </div>
+  );
+}
+
+function ScoreboardResult({ result, teamData }: { result: RecentResult; teamData: Map<string, { name: string; logo: string | null }> }) {
+  const homeInfo = result.homeId ? teamData.get(result.homeId) : null;
+  const awayInfo = result.awayId ? teamData.get(result.awayId) : null;
+  const homeLogo = homeInfo?.logo ?? null;
+  const awayLogo = awayInfo?.logo ?? null;
+  const homeName = result.homeName?.trim() || "Home";
+  const awayName = result.awayName?.trim() || "Away";
+  const homeScore = result.homeScore ?? 0;
+  const awayScore = result.awayScore ?? 0;
+  const draw = homeScore === awayScore;
+
   return (
     <div className="rounded-md border border-white/8 bg-white/[0.04] p-3">
-      <Icon className="mb-2 h-4 w-4 text-[#51d884]" />
-      <p className="text-xl font-black text-white">{value}</p>
-      <p className="text-xs font-semibold text-white/42">{label}</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Avatar className="h-7 w-7 rounded-sm border border-white/10">
+            <AvatarImage src={homeLogo ?? undefined} />
+            <AvatarFallback className="bg-[#2a7b4f] text-[10px] font-bold text-white">{teamInitials(homeName)}</AvatarFallback>
+          </Avatar>
+          <span className="truncate text-sm font-black text-white">{homeName}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <ScoreboardDigit value={homeScore} highlight={!draw} />
+          <span className="mx-1 font-display text-sm font-bold text-white/45">:</span>
+          <ScoreboardDigit value={awayScore} highlight={!draw} />
+        </div>
+      </div>
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Avatar className="h-7 w-7 rounded-sm border border-white/10">
+            <AvatarImage src={awayLogo ?? undefined} />
+            <AvatarFallback className="bg-[#2a7b4f] text-[10px] font-bold text-white">{teamInitials(awayName)}</AvatarFallback>
+          </Avatar>
+          <span className="truncate text-sm font-black text-white">{awayName}</span>
+        </div>
+        <span className="font-body text-[10px] font-bold text-white/40">{formatResultDate(result)}</span>
+      </div>
     </div>
   );
 }
 
-function FormGuide({ marks }: { marks: LeagueFormMark[] }) {
+function ScoreboardDigit({ value, highlight = false }: { value: number; highlight?: boolean }) {
   return (
-    <div className="mt-4 rounded-md border border-white/8 bg-white/[0.04] p-3">
-      <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-white/50">
-        <CalendarDays className="h-4 w-4 text-[#51d884]" />
-        Last 5 Form
-      </div>
-      {marks.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
-          {marks.map((mark) => (
-            <span
-              key={mark.id}
-              title={mark.result ? mark.label : `${mark.label} - score missing`}
-              className={cn(
-                "inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-black",
-                mark.result === "W" && "bg-[#51d884] text-[#06110d]",
-                mark.result === "D" && "bg-[#f5c84b] text-[#102018]",
-                mark.result === "L" && "bg-white/14 text-white",
-                mark.result == null && "border border-white/14 bg-transparent text-white/45",
-              )}
-            >
-              {mark.result ?? "?"}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm font-semibold text-white/42">No completed matches are available for a form guide.</p>
+    <span
+      className={cn(
+        "inline-flex h-8 w-8 items-center justify-center font-display text-lg font-bold leading-none tabular-nums",
+        highlight ? "bg-[#26c267] text-[#06110d]" : "bg-[#102018] text-white dark:bg-black dark:text-white",
+        "shadow-[inset_0_-2px_0_rgba(0,0,0,0.3)]"
       )}
-    </div>
+      style={{ borderRadius: 2 }}
+    >
+      {value}
+    </span>
   );
 }
 
-function RecentResultDisplay({ result }: { result?: RecentResult | null }) {
+function MiniStatCompact({ label, value }: { label: string; value: number }) {
   return (
-    <div>
-      <div className="mb-3 flex items-center gap-2 text-sm font-black text-white/72">
-        <Trophy className="h-4 w-4 text-[#f5c84b]" />
-        Most Recent Result
-      </div>
-      {result ? <RecentResultBlock result={result} /> : <p className="text-sm font-semibold text-white/42">No completed result has been published for this league.</p>}
-    </div>
-  );
-}
-
-function RecentResultBlock({ result }: { result: RecentResult }) {
-  return (
-    <div>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-        <p className="truncate text-right text-sm font-black text-white">{result.homeName?.trim() || "Home team name missing"}</p>
-        <div className="rounded-md bg-white/10 px-3 py-2 text-center font-mono text-lg font-black text-white">
-          {result.homeScore == null || result.awayScore == null ? "Score missing" : `${result.homeScore}-${result.awayScore}`}
-        </div>
-        <p className="truncate text-sm font-black text-white">{result.awayName?.trim() || "Away team name missing"}</p>
-      </div>
-      <p className="mt-3 text-center text-xs font-semibold text-white/42">{formatResultDate(result)}</p>
+    <div className="flex flex-col">
+      <span className="font-display text-sm font-bold leading-none text-white tabular-nums">{value}</span>
+      <span className="font-body text-[10px] font-semibold text-white/40">{label}</span>
     </div>
   );
 }
@@ -452,7 +579,7 @@ function LeagueGridSkeleton() {
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, index) => (
-        <div key={index} className="h-[310px] animate-pulse rounded-md border border-white/8 bg-white/[0.05]" />
+        <div key={index} className="h-[360px] animate-pulse rounded-md border border-white/8 bg-white/[0.05]" />
       ))}
     </div>
   );
