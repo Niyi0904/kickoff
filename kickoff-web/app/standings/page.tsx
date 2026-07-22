@@ -5,11 +5,14 @@ import { Trophy } from "lucide-react";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequirePaidPlayer } from "@/components/RequirePaidPlayer";
 
 export default function StandingsPage() {
   return (
     <ProtectedRoute>
-      <StandingsContent />
+      <RequirePaidPlayer>
+        <StandingsContent />
+      </RequirePaidPlayer>
     </ProtectedRoute>
   );
 }

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequirePaidPlayer } from "@/components/RequirePaidPlayer";
 import { useLeagueSettings } from "../hooks/use-leagueSettings";
 
 type StatTab = "goals" | "assists" | "cards";
@@ -60,7 +61,9 @@ function StatSummaryCard({ label, value, icon: Icon, accent, delay }: {
 export default function StatsPage() {
   return (
     <ProtectedRoute>
-      <StatsContent />
+      <RequirePaidPlayer>
+        <StatsContent />
+      </RequirePaidPlayer>
     </ProtectedRoute>
   );
 }

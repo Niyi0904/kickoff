@@ -8,7 +8,8 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyWebhookSignature } from '@/lib/paystack';
 import {
-  PAYSTACK_SUBSCRIPTION_PLAN_CODE,
+  PAYSTACK_SUBSCRIPTION_PLAN_CODE_MONTHLY,
+  PAYSTACK_SUBSCRIPTION_PLAN_CODE_ANNUAL,
 } from '@/lib/config';
 export const runtime = 'nodejs';
 
@@ -125,7 +126,8 @@ export async function POST(request: NextRequest) {
           }
         } else if (
           txType === 'subscription' ||
-          data.plan?.plan_code === PAYSTACK_SUBSCRIPTION_PLAN_CODE
+          data.plan?.plan_code === PAYSTACK_SUBSCRIPTION_PLAN_CODE_MONTHLY ||
+          data.plan?.plan_code === PAYSTACK_SUBSCRIPTION_PLAN_CODE_ANNUAL
         ) {
           const subscriptionCode =
             data.subscription?.subscription_code ??
@@ -238,6 +240,6 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     const msg = error?.message || 'Webhook processing failed';
     console.error('[payments/webhooks/paystack] Error:', msg, error);
-    return NextResponse.json({ status: 'error', message: msg });
+    return NextResponse.json({ status: 'error', message: msg }, { status: 500 });
   }
 }

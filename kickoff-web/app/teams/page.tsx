@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequirePaidPlayer } from "@/components/RequirePaidPlayer";
 import { Edit2 } from "lucide-react";
 import { Team } from "../hooks/useAppData";
 import {
@@ -33,7 +34,9 @@ import { Badge } from "@/components/ui/badge";
 export default function TeamsPage() {
   return (
     <ProtectedRoute>
-      <TeamsContent />
+      <RequirePaidPlayer>
+        <TeamsContent />
+      </RequirePaidPlayer>
     </ProtectedRoute>
   );
 }

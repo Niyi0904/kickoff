@@ -8,8 +8,12 @@ import {
   ShieldCheck,
   Trophy,
   UserRound,
+  Check,
+  Sparkles,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MANAGER_PLANS, PLAYER_FEE } from "@/lib/pricing-plans";
 
 const organizerFeatures = [
   { title: "League Management", text: "Season setup, clubs, managers, and role-aware league control.", icon: Trophy },
@@ -128,20 +132,104 @@ export default function OrganizersPage() {
         </div>
       </section>
 
-      <section id="pricing" className="bg-[#07130f] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl border-y border-white/10 py-12">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f5c84b]">Pricing</p>
-              <h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Pricing will live here.</h2>
-            </div>
-            <div className="rounded-md border border-dashed border-white/20 bg-white/[0.04] p-6">
-              <p className="text-base font-bold text-white">Pricing placeholder</p>
-              <p className="mt-3 text-sm leading-6 text-white/55">
-                Plan details are not published yet. This section is reserved for the pricing table when packages are ready.
-              </p>
+      <section id="pricing" className="bg-[#07130f] px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f5c84b]">Pricing</p>
+            <h2 className="mt-3 text-4xl font-black leading-tight text-white sm:text-5xl">
+              Simple, transparent pricing
+            </h2>
+            <p className="mt-4 text-base leading-7 text-white/55 max-w-2xl mx-auto">
+              One low monthly or annual fee covers your entire league. No hidden fees, no per-player charges.
+            </p>
+          </div>
+
+          {/* ── League Manager Plans ─────────────────────────── */}
+          <div className="mt-12 grid gap-6 lg:grid-cols-2 max-w-4xl mx-auto">
+            {MANAGER_PLANS.map((plan) => (
+              <div
+                key={plan.id}
+                className={`relative rounded-2xl border p-8 ${
+                  plan.highlighted
+                    ? 'border-[#f5c84b]/40 bg-[#f5c84b]/[0.04]'
+                    : 'border-white/10 bg-white/[0.04]'
+                }`}
+              >
+                {plan.highlighted && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 rounded-full bg-[#f5c84b] px-4 py-1 text-xs font-black uppercase tracking-wider text-[#102018]">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Best Value
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+                    <p className="text-sm text-white/55 mt-1">{plan.description}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-black text-white">{plan.priceLabel}</p>
+                    <p className="text-xs text-white/40 mt-0.5">
+                      per {plan.interval}{plan.interval === 'year' ? ' (save 17%)' : ''}
+                    </p>
+                  </div>
+                </div>
+                <ul className="mt-6 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li key={feature.text} className="flex items-start gap-3">
+                      <Check className={`w-4 h-4 mt-0.5 shrink-0 ${plan.highlighted ? 'text-[#f5c84b]' : 'text-[#51d884]'}`} />
+                      <span className="text-sm text-white/70">{feature.text}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  asChild
+                  className={`mt-8 w-full h-12 rounded-xl font-bold ${
+                    plan.highlighted
+                      ? 'bg-[#f5c84b] text-[#102018] hover:bg-[#ffd869]'
+                      : 'bg-white/10 text-white border border-white/20 hover:bg-white/18'
+                  }`}
+                >
+                  <Link href={plan.ctaHref}>{plan.cta}</Link>
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Player Fee ───────────────────────────────────── */}
+          <div className="mt-12 max-w-4xl mx-auto rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-[#26c267]/20 border border-[#26c267]/30 flex items-center justify-center shrink-0">
+                  <Users className="w-6 h-6 text-[#26c267]" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">For Players</h3>
+                  <p className="text-sm text-white/55 mt-1">
+                    Sign up free, then pay a one-time registration fee to join any league.
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    {PLAYER_FEE.features.map((feature) => (
+                      <li key={feature.text} className="flex items-start gap-3">
+                        <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#26c267]" />
+                        <span className="text-sm text-white/70">{feature.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <div className="text-center lg:text-right shrink-0">
+                <p className="text-2xl font-black text-white">{PLAYER_FEE.priceLabel}</p>
+                <p className="text-xs text-white/40 mt-0.5">one-time per league</p>
+                <Button asChild className="mt-3 h-11 rounded-xl bg-[#26c267] font-bold text-[#06110d] hover:bg-[#51d884] px-6">
+                  <Link href={PLAYER_FEE.ctaHref}>{PLAYER_FEE.cta}</Link>
+                </Button>
+              </div>
             </div>
           </div>
+
+          <p className="mt-8 text-center text-xs text-white/30">
+            All prices in Nigerian Naira (NGN). Subscription automatically renews. Cancel anytime.
+          </p>
         </div>
       </section>
 

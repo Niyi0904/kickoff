@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequirePaidPlayer } from "@/components/RequirePaidPlayer";
 import { Player } from "../hooks/useAppData";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Trash2 } from "lucide-react";
@@ -35,7 +36,9 @@ import { SuspensionBadge } from '@/components/SuspensionBadge';
 export default function Players() {
   return (
     <ProtectedRoute>
-      <PlayersContent />
+      <RequirePaidPlayer>
+        <PlayersContent />
+      </RequirePaidPlayer>
     </ProtectedRoute>
   );
 }

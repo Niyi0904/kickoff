@@ -20,6 +20,44 @@ export default function CallbackContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading');
   const [message, setMessage] = useState('');
 
+  const verifyPayment = async () => {
+    if (!reference) {
+      setStatus('failed');
+      setMessage('No transaction reference provided.');
+      return;
+    }
+
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch('/api/payments/verify', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ reference }),
+      });
+
+      const data = await res.json();
+
+      if (data.status === 'success') {
+        setStatus('success');
+        setMessage('Your registration fee has been confirmed as paid. Thank you!');
+      } else {
+        setStatus('failed');
+        setMessage(
+          data.message ||
+            'Payment could not be verified. If you believe this is an error, please contact the league manager.',
+        );
+      }
+    } catch {
+      setStatus('failed');
+      setMessage(
+        'We could not verify the payment right now. If your bank confirmed the payment, it will be processed shortly.',
+      );
+    }
+  };
+
   useEffect(() => {
     if (!reference) {
       setStatus('failed');
@@ -27,39 +65,7 @@ export default function CallbackContent() {
       return;
     }
 
-    const verify = async () => {
-      try {
-        const token = await auth.currentUser?.getIdToken();
-        const res = await fetch('/api/payments/verify', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ reference }),
-        });
-
-        const data = await res.json();
-
-        if (data.status === 'success') {
-          setStatus('success');
-          setMessage('Your registration fee has been confirmed as paid. Thank you!');
-        } else {
-          setStatus('failed');
-          setMessage(
-            data.message ||
-              'Payment could not be verified. If you believe this is an error, please contact the league manager.',
-          );
-        }
-      } catch {
-        setStatus('failed');
-        setMessage(
-          'We could not verify the payment right now. If your bank confirmed the payment, it will be processed shortly.',
-        );
-      }
-    };
-
-    const timeout = setTimeout(verify, 1500);
+    const timeout = setTimeout(verifyPayment, 1500);
     return () => clearTimeout(timeout);
   }, [reference]);
 
@@ -133,6 +139,7 @@ export default function CallbackContent() {
                   onClick={() => {
                     setStatus('loading');
                     setMessage('');
+                    verifyPayment();
                   }}
                 >
                   Try Again

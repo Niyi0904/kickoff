@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { useAppContext } from "@/app/context/AppDataContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequirePaidPlayer } from "@/components/RequirePaidPlayer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +77,9 @@ interface GoalsChartWidgetProps {
 export default function AnalyticsPage() {
   return (
     <ProtectedRoute>
-      <AnalyticsContent />
+      <RequirePaidPlayer>
+        <AnalyticsContent />
+      </RequirePaidPlayer>
     </ProtectedRoute>
   );
 }

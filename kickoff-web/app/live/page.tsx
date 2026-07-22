@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequirePaidPlayer } from "@/components/RequirePaidPlayer";
 import { useLivePolling } from "@/app/hooks/useLivePolling";
 import { LiveMatchCard } from "@/components/live/LiveMatchCard";
 import { LiveMatchView } from "@/components/live/LiveMatchView";
@@ -20,7 +21,9 @@ import {
 export default function LivePage() {
   return (
     <ProtectedRoute>
-      <LivePageContent />
+      <RequirePaidPlayer>
+        <LivePageContent />
+      </RequirePaidPlayer>
     </ProtectedRoute>
   );
 }

@@ -19,6 +19,7 @@ import {
   Shield, Activity, UserX, CreditCard, Loader2
 } from 'lucide-react';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 
 export default function MyProfilePage() {
@@ -66,6 +67,9 @@ function MyProfileContent() {
       </div>
     );
   }
+
+  const searchParams = useSearchParams();
+  const paymentRequired = searchParams.get('paymentRequired') === 'true';
 
   // ── Not linked yet ───────────────────────────────────────
   if (!linkedPlayer) {
@@ -116,6 +120,21 @@ function MyProfileContent() {
 
   return (
     <div className="space-y-8 pb-20 max-w-3xl px-4 min-w-0">
+
+      {paymentRequired && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 text-center"
+        >
+          <p className="text-amber-600 font-bold text-sm">
+            Payment required to access league features
+          </p>
+          <p className="text-amber-600/70 text-xs mt-1">
+            Pay your registration fee below to unlock teams, players, matches, and stats.
+          </p>
+        </motion.div>
+      )}
 
       {/* ── Profile header ─────────────────────────────────── */}
       <motion.div

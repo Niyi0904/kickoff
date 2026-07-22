@@ -11,7 +11,7 @@ import {
   createCustomer,
   initializeTransaction,
 } from '@/lib/paystack';
-import { PAYSTACK_SUBSCRIPTION_PLAN_CODE } from '@/lib/config';
+import { getSubscriptionPlanCode } from '@/lib/config';
 
 export const runtime = 'nodejs';
 
@@ -100,10 +100,13 @@ export async function POST(
       );
     }
 
-    const planCode = PAYSTACK_SUBSCRIPTION_PLAN_CODE;
+    const body = await request.json();
+    const billingInterval: 'monthly' | 'annual' = body.billingInterval === 'annual' ? 'annual' : 'monthly';
+
+    const planCode = getSubscriptionPlanCode(billingInterval);
     if (!planCode) {
       return NextResponse.json(
-        { error: 'Subscription plan is not configured. Contact support.' },
+        { error: `Subscription plan is not configured for ${billingInterval} billing. Contact support.` },
         { status: 500 },
       );
     }
@@ -143,16 +146,15 @@ export async function POST(
       leagueId,
       type: 'subscription',
       planCode,
+      billingInterval,
     };
 
-    // Initialize with zero amount — Paystack subscription flow
-    // uses the plan's configured price; amount is set to the plan price
-    // in kobo so the authorization covers the right amount on recurring charges.
     const { authorizationUrl, reference } = await initializeTransaction(
       managerEmail,
       0,
       null,
       metadata,
+      planCode,
     );
 
     await adminDb

@@ -6,6 +6,7 @@ import { useAppContext } from "@/app/context/AppDataContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RequirePaidPlayer } from "@/components/RequirePaidPlayer";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { AddMatchDialog } from "@/components/matches/addMatchDialog";
@@ -40,7 +41,9 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 export default function MatchRecordsPage() {
   return (
     <ProtectedRoute>
-      <MatchRecordsContent />
+      <RequirePaidPlayer>
+        <MatchRecordsContent />
+      </RequirePaidPlayer>
     </ProtectedRoute>
   );
 }

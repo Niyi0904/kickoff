@@ -77,13 +77,18 @@ export async function initializeTransaction(
   amountInKobo: number,
   subaccountCode: string | null,
   metadata: Record<string, unknown>,
+  plan?: string,
 ): Promise<{ authorizationUrl: string; reference: string }> {
   const body: Record<string, unknown> = {
     email,
-    amount: amountInKobo,
     currency: 'NGN',
     metadata,
   };
+  if (plan) {
+    body.plan = plan;
+  } else {
+    body.amount = amountInKobo;
+  }
   if (subaccountCode) {
     body.subaccount = subaccountCode;
     body.transaction_charge = 0;

@@ -89,6 +89,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (relatedPlayerId && typeof relatedPlayerId === 'string') {
+      const playerSnap = await adminDb
+        .collection('players')
+        .doc(relatedPlayerId)
+        .get();
+      if (!playerSnap.exists) {
+        return NextResponse.json(
+          { error: 'Player not found' },
+          { status: 404 },
+        );
+      }
+      const playerData = playerSnap.data()!;
+      if (playerData.leagueId !== leagueId) {
+        return NextResponse.json(
+          { error: 'Player does not belong to the specified league' },
+          { status: 400 },
+        );
+      }
+    }
+
     const leagueData = leagueSnap.data()!;
     const subaccountCode = leagueData.paystackSubaccountCode ?? null;
     const subaccountStatus = leagueData.subaccountStatus ?? null;

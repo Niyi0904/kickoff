@@ -4,6 +4,7 @@ import {
   cert,
   type App,
 } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyTransaction } from '@/lib/paystack';
@@ -39,6 +40,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Transaction reference is required' },
         { status: 400 },
+      );
+    }
+
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Missing or invalid Authorization header' },
+        { status: 401 },
+      );
+    }
+
+    const idToken = authHeader.slice(7);
+    const app = getAdminApp();
+
+    try {
+      await getAuth(app).verifyIdToken(idToken);
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid or expired authentication token' },
+        { status: 401 },
       );
     }
 
