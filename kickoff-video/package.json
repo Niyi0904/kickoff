@@ -1,0 +1,16 @@
+{
+  "name": "kickoff-video",
+  "version": "1.0.0",
+  "scripts": {
+    "generate-audio": "cd .. && gen_soundtrack_warm.exe",
+    "render": "npm run generate-audio && remotion render src/Root.tsx Showcase out/kickoff-showcase.mp4 --audio-codec=aac --log=verbose"
+  },
+  "dependencies": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.482",
+    "@remotion/cli": "4.0.482",
+    "@remotion/bundler": "4.0.482",
+    "@remotion/renderer": "4.0.482"
+  }
+}
