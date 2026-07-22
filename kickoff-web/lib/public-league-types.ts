@@ -76,6 +76,8 @@ export type PublicLeagueData = {
   yellowCards: EventRecord[];
   redCards: EventRecord[];
   settings: LeagueSettings;
+  leagueName?: string;
+  leagueLogo?: string | null;
 };
 
 export type PublicNavItem = {

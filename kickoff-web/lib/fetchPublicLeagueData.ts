@@ -13,10 +13,17 @@ const DEFAULT_SETTINGS: LeagueSettings = {
 export async function fetchPublicLeagueData(leagueSlug?: string): Promise<PublicLeagueData> {
   let leagueId: string | null = null;
 
+  let leagueName: string | undefined;
+  let leagueLogo: string | null | undefined;
+
   if (leagueSlug) {
     const slugSnap = await getDocs(query(collection(db, "leagues"), where("slug", "==", leagueSlug)));
     if (!slugSnap.empty) {
-      leagueId = slugSnap.docs[0].id;
+      const doc = slugSnap.docs[0];
+      const data = doc.data();
+      leagueId = doc.id;
+      leagueName = typeof data.leagueName === "string" ? data.leagueName : undefined;
+      leagueLogo = data.logoUrl ?? data.logo ?? null;
     }
   }
 
@@ -73,7 +80,7 @@ export async function fetchPublicLeagueData(leagueSlug?: string): Promise<Public
     ? ({ ...DEFAULT_SETTINGS, ...settingsSnap.data() } as LeagueSettings)
     : DEFAULT_SETTINGS;
 
-  return { teams, players, matches, goals, assists, yellowCards, redCards, settings };
+  return { teams, players, matches, goals, assists, yellowCards, redCards, settings, leagueName, leagueLogo };
 }
 
 export async function resolveLeagueId(leagueSlug: string): Promise<string | null> {

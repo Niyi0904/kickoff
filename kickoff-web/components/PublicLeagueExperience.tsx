@@ -329,54 +329,99 @@ export function PublicLeagueExperience({ leagueSlug }: { leagueSlug?: string }) 
         setMobileOpen={setMobileOpen}
       />
 
-      <section id="home" className="relative min-h-[88vh] overflow-hidden pt-20 min-w-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=1800&q=80"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-[#03120d]/75" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,18,13,0.96),rgba(3,18,13,0.62),rgba(3,18,13,0.82))]" />
+      <section id="home" className="relative overflow-hidden pt-20 min-w-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(38,194,103,0.07),transparent_60%)]" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#07130f] to-transparent" />
 
-        <div className="relative mx-auto flex min-h-[calc(88vh-5rem)] max-w-7xl flex-col justify-center px-4 pb-12 pt-10 sm:px-6 lg:px-8 min-w-0">
+        <div className="relative mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8 min-w-0">
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-4xl"
+            transition={{ duration: 0.4 }}
           >
-            <div className="mb-5 inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold text-emerald-100 backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold text-emerald-100 backdrop-blur">
               <Sparkles className="h-4 w-4 text-[#f5c84b]" />
               {settings.seasonName}
             </div>
+          </motion.div>
 
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] text-white sm:text-6xl lg:text-7xl">
-              Football league management with a live matchday pulse.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78 sm:text-xl">
-              Explore clubs, fixtures, tables, results, and top performers from one polished public home for the season.
-            </p>
+          <div className="mt-10 flex flex-col items-center">
+            <ShieldCrest leagueName={data?.leagueName} leagueLogo={data?.leagueLogo} />
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="h-12 rounded-md bg-[#26c267] px-5 font-bold text-[#06110d] hover:bg-[#51d884]">
-                <Link href="#leagues">
-                  Explore League
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="h-12 rounded-md border-white/25 bg-white/10 px-5 font-bold text-white hover:bg-white/18 hover:text-white">
-                <Link href={profileHref}>
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  Profile Dashboard
-                </Link>
-              </Button>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-3"
+            >
+              {teams.map((team) => (
+                <div key={team.id} className="flex flex-col items-center gap-1.5">
+                  <Avatar className="h-10 w-10 rounded-md border border-white/10">
+                    <AvatarImage src={team.logo ?? undefined} />
+                    <AvatarFallback style={{ backgroundColor: team.primaryColor }} className="text-[10px] font-bold text-white">
+                      {teamInitials(team.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-[9px] font-semibold text-white/45 truncate max-w-[64px] text-center leading-tight">
+                    {team.name}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
+            className="mt-10 grid gap-4 sm:grid-cols-2"
+          >
+            <div className="rounded-md border border-white/10 bg-white/[0.05] p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-[#f5c84b]" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Most Recent Result</span>
+              </div>
+              {playedMatches[0] ? (
+                <ScoreboardTile match={playedMatches[0]} teamsById={teamsById} />
+              ) : (
+                <p className="text-xs italic text-white/42">No completed results yet this season.</p>
+              )}
+            </div>
+
+            <div className="rounded-md border border-white/10 bg-white/[0.05] p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-[#51d884]" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Next Fixture</span>
+              </div>
+              {upcomingMatches[0] ? (
+                <FixtureTile match={upcomingMatches[0]} teamsById={teamsById} />
+              ) : (
+                <p className="text-xs italic text-white/42">No upcoming fixture scheduled.</p>
+              )}
             </div>
           </motion.div>
 
-          <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.45 }}
+            className="mt-8 flex flex-col gap-3 sm:flex-row"
+          >
+            <Button asChild size="lg" className="h-12 rounded-md bg-[#26c267] px-5 font-bold text-[#06110d] hover:bg-[#51d884]">
+              <Link href="#leagues">
+                Explore League
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="h-12 rounded-md border-white/25 bg-white/10 px-5 font-bold text-white hover:bg-white/18 hover:text-white">
+              <Link href={profileHref}>
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Profile Dashboard
+              </Link>
+            </Button>
+          </motion.div>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {metrics.map((metric, index) => (
               <motion.div
                 key={metric.label}
@@ -387,6 +432,14 @@ export function PublicLeagueExperience({ leagueSlug }: { leagueSlug?: string }) 
                 <MetricTile {...metric} />
               </motion.div>
             ))}
+          </div>
+        </div>
+
+        <div className="relative mt-16">
+          <div className="border-t-2 border-dashed border-white/15" />
+          <div className="absolute -left-2 -right-2 top-[-9px] flex justify-between">
+            <span className="h-4 w-4 rounded-full bg-[#07130f]" />
+            <span className="h-4 w-4 rounded-full bg-[#07130f]" />
           </div>
         </div>
       </section>
@@ -556,6 +609,88 @@ export function PublicLeagueExperience({ leagueSlug }: { leagueSlug?: string }) 
 
       <PublicFooter navItems={navItems} profileHref={profileHref} />
     </main>
+  );
+}
+
+function ShieldCrest({ leagueName, leagueLogo }: { leagueName?: string; leagueLogo?: string | null }) {
+  return (
+    <div className="relative mb-2">
+      <div className="flex h-20 w-20 items-center justify-center rounded-lg border-2 border-[#f5c84b]/40 bg-[#0c1b14] shadow-[0_0_0_4px_#07130f,0_0_0_6px_rgba(245,200,75,0.25)]">
+        {leagueLogo ? (
+          <img src={leagueLogo} alt={leagueName ?? "League"} className="h-12 w-12 object-contain" />
+        ) : (
+          <Shield className="h-10 w-10 text-[#f5c84b]/60" />
+        )}
+      </div>
+      {leagueName && (
+        <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-white/35">
+          {leagueName}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ScoreboardTile({ match, teamsById }: { match: Match; teamsById: Map<string, Team> }) {
+  const home = teamsById.get(match.homeTeamId);
+  const away = teamsById.get(match.awayTeamId);
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <Avatar className="h-7 w-7 shrink-0 rounded-sm border border-white/10">
+          <AvatarImage src={home?.logo ?? undefined} />
+          <AvatarFallback style={{ backgroundColor: home?.primaryColor }} className="text-[8px] font-bold text-white">
+            {teamInitials(home?.name)}
+          </AvatarFallback>
+        </Avatar>
+        <span className="truncate text-sm font-bold text-white">{home?.name ?? "Home"}</span>
+      </div>
+      <div className="flex shrink-0 items-center gap-2 rounded-md bg-white/10 px-3 py-1.5">
+        <span className="text-lg font-black tabular-nums text-white">{match.homeScore ?? 0}</span>
+        <span className="text-xs text-white/35">:</span>
+        <span className="text-lg font-black tabular-nums text-white">{match.awayScore ?? 0}</span>
+      </div>
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+        <span className="truncate text-sm font-bold text-white">{away?.name ?? "Away"}</span>
+        <Avatar className="h-7 w-7 shrink-0 rounded-sm border border-white/10">
+          <AvatarImage src={away?.logo ?? undefined} />
+          <AvatarFallback style={{ backgroundColor: away?.primaryColor }} className="text-[8px] font-bold text-white">
+            {teamInitials(away?.name)}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+    </div>
+  );
+}
+
+function FixtureTile({ match, teamsById }: { match: Match; teamsById: Map<string, Team> }) {
+  const home = teamsById.get(match.homeTeamId);
+  const away = teamsById.get(match.awayTeamId);
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <Avatar className="h-7 w-7 shrink-0 rounded-sm border border-white/10">
+          <AvatarImage src={home?.logo ?? undefined} />
+          <AvatarFallback style={{ backgroundColor: home?.primaryColor }} className="text-[8px] font-bold text-white">
+            {teamInitials(home?.name)}
+          </AvatarFallback>
+        </Avatar>
+        <span className="truncate text-sm font-bold text-white">{home?.name ?? "Home"}</span>
+      </div>
+      <div className="flex shrink-0 flex-col items-center px-2">
+        <span className="text-[10px] font-black uppercase tracking-wider text-[#51d884]">VS</span>
+        <span className="text-[9px] text-white/40">{formatMatchDate(match)}</span>
+      </div>
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+        <span className="truncate text-sm font-bold text-white">{away?.name ?? "Away"}</span>
+        <Avatar className="h-7 w-7 shrink-0 rounded-sm border border-white/10">
+          <AvatarImage src={away?.logo ?? undefined} />
+          <AvatarFallback style={{ backgroundColor: away?.primaryColor }} className="text-[8px] font-bold text-white">
+            {teamInitials(away?.name)}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+    </div>
   );
 }
 
