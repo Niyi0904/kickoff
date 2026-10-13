@@ -116,6 +116,19 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────────────────
+    // Player Transfers (audit trail — League Manager Only)
+    // One immutable record per transfer. League managers may
+    // create/delete for corrections; nobody else can write.
+    // ─────────────────────────────────────────────────────────
+
+    match /transfers/{transferId} {
+      allow read:   if isAuthenticated();
+      allow create: if isLeagueManager();
+      allow update: if isLeagueManager();
+      allow delete: if isLeagueManager();
+    }
+
+    // ─────────────────────────────────────────────────────────
     // PLAYER PROFILE AUTH LINKING
     // ─────────────────────────────────────────────────────────
 

@@ -29,7 +29,7 @@ const accentMap = {
 };
 
 function StatSummaryCard({ label, value, icon: Icon, accent, delay }: {
-  label: string; value: number; icon: React.ElementType;
+  label: string; value: number; icon: React.ComponentType<{ className?: string }>;
   accent: "primary" | "accent" | "destructive" | "warning"; delay: number;
 }) {
   const iconBg = {

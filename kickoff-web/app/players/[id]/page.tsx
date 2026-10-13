@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Target, Users, AlertTriangle, Trophy, TrendingUp, Calendar } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, ArrowRightLeft, Target, Users, AlertTriangle, Trophy, TrendingUp, Calendar } from "lucide-react";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,9 +14,12 @@ import {
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, parseISO } from "date-fns";
 import { SuspensionBadge } from '@/components/SuspensionBadge';
 import { ClaimProfileButton } from '@/components/ClaimProfileButton';
+import { TransferPlayerDialog } from '@/components/TransferPlayerDialog';
+import { firestoreTimeToMillis, type FirestoreTime } from '@/lib/transfers';
 
 
 
@@ -27,7 +31,9 @@ const performanceChartConfig: ChartConfig = {
 export default function PlayerProfile() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { players, teams, getPlayerStats, getPlayerRecords } = useAppContext();
+  const { players, teams, getPlayerStats, getPlayerRecords, isAdmin, transferPlayer } = useAppContext();
+  const [statsView, setStatsView] = useState<'career' | 'current'>('career');
+  const [showTransfer, setShowTransfer] = useState(false);
 
   const player = players.find((p) => p.id === id);
   if (!player) {
@@ -43,7 +49,10 @@ export default function PlayerProfile() {
   }
 
   const team = teams.find((t) => t.id === player.teamId);
-  const stats = getPlayerStats(player.id);
+  // Career stats span every team; current stats are time-locked to the open stint.
+  const careerStats = getPlayerStats(player.id);
+  const currentStats = getPlayerStats(player.id, player.teamId);
+  const stats = statsView === 'career' ? careerStats : currentStats;
   const records = getPlayerRecords(player.id).sort(
     (a, b) => new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime()
   );
@@ -109,12 +118,40 @@ export default function PlayerProfile() {
           </motion.div>
         </div>
 
-        <ClaimProfileButton
-          playerId={player.id}
-          playerName={player.name}
-          teamName={team?.name ?? ''}
-          linkedUserId={player.linkedUserId ?? null}
-        />
+        <div className="flex items-center gap-3">
+          {isAdmin && (
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => setShowTransfer(true)}
+            >
+              <ArrowRightLeft className="w-4 h-4" />
+              Transfer Player
+            </Button>
+          )}
+
+          <ClaimProfileButton
+            playerId={player.id}
+            playerName={player.name}
+            teamName={team?.name ?? ''}
+            linkedUserId={player.linkedUserId ?? null}
+          />
+        </div>
+      </div>
+
+      {/* Stats scope toggle — Career spans all teams, Current is this stint */}
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <Tabs value={statsView} onValueChange={(v) => setStatsView(v as 'career' | 'current')}>
+          <TabsList>
+            <TabsTrigger value="career">Career Stats</TabsTrigger>
+            <TabsTrigger value="current">Current Team</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <span className="text-xs text-muted-foreground">
+          {statsView === 'career'
+            ? 'All-time across every team'
+            : `Since joining ${team?.name ?? 'this team'}`}
+        </span>
       </div>
 
       {/* Stats Grid - 2 cols on mobile, 3 on tablet, flex on desktop */}
@@ -269,6 +306,43 @@ export default function PlayerProfile() {
           </Card>
         </div>
       )}
+      {player.teamHistory && player.teamHistory.length > 0 && (
+        <Card className="mt-8">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-sm sm:text-lg font-bold uppercase tracking-tight flex items-center gap-2">
+              <ArrowRightLeft className="w-4 h-4 text-primary" /> Club History
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6 pt-0 space-y-3">
+            {player.teamHistory
+              .slice()
+              .sort((a, b) => a.order - b.order)
+              .map((stint, i) => {
+                const stintTeam = teams.find((t) => t.id === stint.team_id);
+                const fmt = (ts: FirestoreTime) => {
+                  const ms = firestoreTimeToMillis(ts);
+                  return ms ? format(new Date(ms), 'MMM yyyy') : '—';
+                };
+                return (
+                  <div key={`${stint.team_id}-${i}`} className="flex items-center justify-between text-sm border-b border-border/50 last:border-0 pb-2 last:pb-0">
+                    <span className="font-semibold">{stintTeam?.name ?? 'Unknown team'}</span>
+                    <span className="text-muted-foreground text-xs">
+                      {fmt(stint.joined_at)} → {stint.left_at ? fmt(stint.left_at) : 'Present'}
+                    </span>
+                  </div>
+                );
+              })}
+          </CardContent>
+        </Card>
+      )}
+
+      <TransferPlayerDialog
+        player={player}
+        teams={teams}
+        open={showTransfer}
+        onOpenChange={setShowTransfer}
+        onTransfer={transferPlayer}
+      />
     </div>
   );
 }

@@ -19,7 +19,8 @@ import {
   UserCheck,
   Globe2,
   BarChart2,
-  Radio
+  Radio,
+  ArrowRightLeft
 } from "lucide-react";
 import { useMyLinkedPlayer } from '@/app/hooks/usePlayerLinking';
 import { useAppContext } from "@/app/context/AppDataContext";
@@ -43,6 +44,7 @@ const adminNavItems = [
   { path: "/admin/users", label: "All Users", icon: Users },
   { path: "/admin/settings", label: "Settings", icon: Settings },
   { path: "/admin/suspensions",  label: "Suspensions", icon: ShieldAlert },
+  { path: "/admin/transfers",    label: "Transfers",   icon: ArrowRightLeft },
   { path: "/admin/link-requests", label: "Profile Requests",  icon: UserCheck  }
 ];
 

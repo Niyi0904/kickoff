@@ -43,7 +43,7 @@ export default function OnboardingPage() {
 function ModeCard({
   selected, onClick, icon: Icon, title, description,
 }: {
-  selected: boolean; onClick: () => void; icon: React.ElementType;
+  selected: boolean; onClick: () => void; icon: React.ComponentType<{ className?: string }>;
   title: string; description: string;
 }) {
   return (

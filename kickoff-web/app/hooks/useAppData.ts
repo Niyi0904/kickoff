@@ -20,6 +20,12 @@ import {
 } from "firebase/firestore";
 import { useToast } from "@/app/hooks/use-toast";
 import { getAuth } from "firebase/auth";
+import {
+  transferPlayer as transferPlayerLib,
+  getTransfers,
+  type Transfer,
+  type TeamHistoryEntry,
+} from "@/lib/transfers";
 
 // ─────────────────────────────────────────────
 // Interfaces
@@ -36,6 +42,8 @@ export interface Player {
   linkedUserId?: string | null;
   leagueId?: string | null;
   deletedAt?: any;
+  /** Ordered stints at teams. Open stint has left_at === null. */
+  teamHistory?: TeamHistoryEntry[];
 }
 
 export interface Team {
@@ -47,6 +55,10 @@ export interface Team {
   primaryColor: string;
   founded: string;
   stadium: string;
+  /** Preferred formation, e.g. "4-3-3". Null → auto-derived default. */
+  formation?: string | null;
+  /** Player id per formation slot (index-aligned). Null → auto-derived XI. */
+  lineup?: string[] | null;
 }
 
 export interface MatchRecord {
@@ -60,6 +72,8 @@ export interface MatchRecord {
   yellowCards: number;
   redCards: number;
   minutesPlayed: number;
+  /** Team the player represented in this match (time-locked). */
+  teamId?: string;
 }
 
 export interface Match {
@@ -110,6 +124,8 @@ export interface PlayerEvent {
   matchId: string;
   matchDay: number;
   teamId: string;
+  /** Time-locked snapshot of the player's team when the event was recorded. */
+  team_id_at_match?: string;
   timestamp: any;
 }
 
@@ -136,6 +152,7 @@ export const QUERY_KEYS = {
   yellowCards: ['yellowCards'] as const,
   redCards:    ['redCards']    as const,
   attendance:  ['attendance']  as const,
+  transfers:   ['transfers']   as const,
 };
 
 // ─────────────────────────────────────────────
@@ -156,6 +173,8 @@ async function fetchTeams(): Promise<Team[]> {
       primaryColor: t.primary_color ?? t.primaryColor ?? "",
       founded: t.founded ?? "",
       stadium: t.stadium ?? "",
+      formation: t.formation ?? null,
+      lineup: t.lineup ?? null,
     };
   });
 }
@@ -176,6 +195,7 @@ async function fetchPlayers(): Promise<Player[]> {
       linkedUserId: p.linkedUserId ?? null,
       leagueId: p.leagueId ?? null,
       deletedAt: p.deletedAt ?? null,
+      teamHistory: Array.isArray(p.team_history) ? p.team_history : [],
     };
   });
 }
@@ -198,6 +218,10 @@ async function fetchAttendance(): Promise<MatchAttendance[]> {
   // Exclude soft-deleted attendance records (deletedAt != null)
   const snap = await getDocs(query(collection(db, "match_attendance"), where("deletedAt", "==", null)));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as MatchAttendance));
+}
+
+async function fetchTransfers(): Promise<Transfer[]> {
+  return getTransfers();
 }
 
 // ─────────────────────────────────────────────
@@ -249,6 +273,9 @@ export function useAppData() {
 
   const { data: attendance = [] } =
     useQuery({ queryKey: QUERY_KEYS.attendance, queryFn: fetchAttendance, staleTime: 1000 * 60 * 2 });
+
+  const { data: transfers = [] } =
+    useQuery({ queryKey: QUERY_KEYS.transfers, queryFn: fetchTransfers, staleTime: 1000 * 60 * 2 });
 
   const loading = teamsLoading || playersLoading || matchesLoading;
 
@@ -442,6 +469,41 @@ export function useAppData() {
       toast({ title: "Success", description: "Manager assigned successfully" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to assign manager", variant: "destructive" });
+    }
+  };
+
+  // ── Transfer a player between teams ────────────────────────────────────
+  // Preserves career stats (derived from events), closes/opens team_history,
+  // and carries active suspensions over to the new team.
+  const transferPlayer = async (payload: {
+    playerId: string;
+    fromTeamId: string;
+    toTeamId: string;
+    notes?: string;
+  }) => {
+    try {
+      const userInfo = await getCurrentUserRole();
+      if (!userInfo?.uid) {
+        toast({ title: "Error", description: "Not authenticated", variant: "destructive" });
+        return { error: "Not authenticated" };
+      }
+      const id = await transferPlayerLib(
+        payload.playerId,
+        payload.fromTeamId,
+        payload.toTeamId,
+        userInfo.uid,
+        payload.notes,
+      );
+      invalidate("players", "transfers");
+      toast({ title: "Transfer complete", description: "Player moved and career stats preserved." });
+      return { id, error: null };
+    } catch (error) {
+      toast({
+        title: "Transfer failed",
+        description: error instanceof Error ? error.message : "Failed to transfer player",
+        variant: "destructive",
+      });
+      return { error };
     }
   };
 
@@ -669,11 +731,11 @@ export function useAppData() {
       const ts = serverTimestamp();
       const eventBase = { deletedAt: null, ...(leagueId ? { leagueId } : {}) };
 
-      stats.goals.forEach((g) =>   batch.set(doc(collection(db, "goals")),        { ...g, matchId, matchDay, timestamp: ts, ...eventBase }));
-      stats.assists.forEach((a) =>  batch.set(doc(collection(db, "assists")),      { ...a, matchId, matchDay, timestamp: ts, ...eventBase }));
-      stats.yellows.forEach((y) =>  batch.set(doc(collection(db, "yellow_cards")), { ...y, matchId, matchDay, timestamp: ts, ...eventBase }));
-      stats.reds.forEach((r) =>     batch.set(doc(collection(db, "red_cards")),    { ...r, matchId, matchDay, timestamp: ts, ...eventBase }));
-      stats.attendance?.forEach((a) => batch.set(doc(collection(db, "match_attendance")), { ...a, matchId, matchDay, timestamp: ts, ...eventBase }));
+      stats.goals.forEach((g) =>   batch.set(doc(collection(db, "goals")),        { ...g, matchId, matchDay, team_id_at_match: g.teamId, timestamp: ts, ...eventBase }));
+      stats.assists.forEach((a) =>  batch.set(doc(collection(db, "assists")),      { ...a, matchId, matchDay, team_id_at_match: a.teamId, timestamp: ts, ...eventBase }));
+      stats.yellows.forEach((y) =>  batch.set(doc(collection(db, "yellow_cards")), { ...y, matchId, matchDay, team_id_at_match: y.teamId, timestamp: ts, ...eventBase }));
+      stats.reds.forEach((r) =>     batch.set(doc(collection(db, "red_cards")),    { ...r, matchId, matchDay, team_id_at_match: r.teamId, timestamp: ts, ...eventBase }));
+      stats.attendance?.forEach((a) => batch.set(doc(collection(db, "match_attendance")), { ...a, matchId, matchDay, team_id_at_match: a.teamId, timestamp: ts, ...eventBase }));
 
       await batch.commit();
       invalidate("goals", "assists", "yellowCards", "redCards", "attendance");
@@ -810,13 +872,18 @@ export function useAppData() {
   const getTeamPlayers = (teamId: string) => players.filter((p) => p.teamId === teamId);
   const getTeamManager = (teamId: string) => players.find((p) => p.teamId === teamId && p.isManager);
 
-  // O(1) per call — reads from pre-indexed maps, no array scanning
-  const getPlayerStats = useCallback((playerId: string) => {
-    const playerGoals   = goalsByPlayer.get(playerId)   ?? [];
-    const playerAssists = assistsByPlayer.get(playerId) ?? [];
-    const playerYellows = yellowsByPlayer.get(playerId) ?? [];
-    const playerReds    = redsByPlayer.get(playerId)    ?? [];
-    const playerAttendance = attendanceByPlayer.get(playerId) ?? [];
+  // O(1) per call — reads from pre-indexed maps, no array scanning.
+  // Pass a teamId to get per-team stats; omit (or null) for all-time career stats.
+  // The team a player represented is read from the time-locked snapshot.
+  const getPlayerStats = useCallback((playerId: string, teamId?: string | null) => {
+    const belongs = (e: { teamId?: string; team_id_at_match?: string }) =>
+      !teamId || (e.team_id_at_match ?? e.teamId) === teamId;
+
+    const playerGoals   = (goalsByPlayer.get(playerId)   ?? []).filter(belongs);
+    const playerAssists = (assistsByPlayer.get(playerId) ?? []).filter(belongs);
+    const playerYellows = (yellowsByPlayer.get(playerId) ?? []).filter(belongs);
+    const playerReds    = (redsByPlayer.get(playerId)    ?? []).filter(belongs);
+    const playerAttendance = (attendanceByPlayer.get(playerId) ?? []).filter(belongs);
 
     const matchIds = new Set([
       ...playerAttendance.map((a) => a.matchId),
@@ -901,11 +968,22 @@ export function useAppData() {
       ...playerReds.map((r) => r.matchId),
     ]);
 
+    // Time-lock: resolve the player's team per match from the event snapshot,
+    // not from their current team. This keeps historical matches correct
+    // after a transfer (player still shown with their team at match time).
+    const teamByMatch = new Map<string, string>();
+    const recordTeam = (e: { matchId: string; teamId?: string; team_id_at_match?: string }) => {
+      const t = e.team_id_at_match ?? e.teamId;
+      if (t && !teamByMatch.has(e.matchId)) teamByMatch.set(e.matchId, t);
+    };
+    [...playerGoals, ...playerAssists, ...playerYellows, ...playerReds, ...playerAttendance].forEach(recordTeam);
+
     return Array.from(matchIds).map((mId) => {
       const match = matchesById.get(mId);
       if (!match) return null;
 
-      const playerTeamId = players.find((p) => p.id === playerId)?.teamId;
+      const playerTeamId = teamByMatch.get(mId)
+        ?? players.find((p) => p.id === playerId)?.teamId;
       const opponentId   = match.homeTeamId === playerTeamId ? match.awayTeamId : match.homeTeamId;
       const opponentName = teamsById.get(opponentId)?.name ?? "Unknown Opponent";
       const rawDate      = match.createdAt?.seconds
@@ -929,6 +1007,7 @@ export function useAppData() {
         yellowCards:   matchYellows,
         redCards:      matchReds,
         minutesPlayed: match.minutesPlayed || 90,
+        teamId:        playerTeamId,
       };
     }).filter(Boolean) as MatchRecord[];
   }, [goalsByPlayer, assistsByPlayer, yellowsByPlayer, redsByPlayer, attendanceByPlayer, matchesById, teamsById, players]);
@@ -937,12 +1016,13 @@ export function useAppData() {
     // Data
     teams, players, matches, loading,
     goals, assists, yellowCards, redCards, attendance,
+    transfers,
     // Pre-computed (use these directly in components where possible)
     standings, topScorers,
     // Team
     addTeam, updateTeam, deleteTeam, approveTeam,
     // Player
-    addPlayer, updatePlayer, deletePlayer, setManager,
+    addPlayer, updatePlayer, deletePlayer, setManager, transferPlayer,
     // Match
     addMatch, addMatchesBatch, updateMatch, deleteMatch, deleteAllMatches,
     reorderMatches,

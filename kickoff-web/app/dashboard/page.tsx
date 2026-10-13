@@ -16,7 +16,7 @@ import { useLeagueSettings } from "../hooks/use-leagueSettings";
 interface StatCardProps {
   label: string;
   value: string | number;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   accent?: "primary" | "accent" | "destructive" | "warning" | "info";
   delay?: number;
   sublabel?: string;

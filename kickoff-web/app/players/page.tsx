@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Plus, Target, AlertTriangle, Edit2, X, Mail, Search } from "lucide-react";
+import { Users, Plus, Target, AlertTriangle, Edit2, X, Mail, Search, ArrowRightLeft } from "lucide-react";
 import { uploadProfileImage } from "@/lib/uploadImage";
 import { useAppContext } from "../context/AppDataContext";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,7 @@ import { useLeagueSettings } from "../hooks/use-leagueSettings";
 import { DeadlineBanner } from "@/components/deadlineBanner";
 import { getInitials } from "@/lib/utils";
 import { SuspensionBadge } from '@/components/SuspensionBadge';
+import { TransferPlayerDialog } from '@/components/TransferPlayerDialog';
 
 
 
@@ -57,8 +58,9 @@ const positions = [
 ]
 
 function PlayersContent() {
-  const { teams, players, addPlayer, updatePlayer, deletePlayer, getPlayerStats, isAdmin, isTeamManager, teamId } = useAppContext();
+  const { teams, players, addPlayer, updatePlayer, deletePlayer, getPlayerStats, isAdmin, isTeamManager, teamId, transferPlayer } = useAppContext();
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [transferTarget, setTransferTarget] = useState<Player | null>(null);
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [filterTeam, setFilterTeam] = useState<string>("all");
@@ -269,6 +271,22 @@ function PlayersContent() {
 
                 {canManageThisPlayer && (
                   <>
+                    {/* Transfer Button (admin only) */}
+                    {isAdmin && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTransferTarget(player);
+                        }}
+                        title="Transfer player"
+                      >
+                        <ArrowRightLeft className="w-4 h-4" />
+                      </Button>
+                    )}
+
                     {/* Edit Button */}
                     <Button
                       variant="ghost"
@@ -396,6 +414,14 @@ function PlayersContent() {
           )}
         </DialogContent>
       </Dialog>
+
+      <TransferPlayerDialog
+        player={transferTarget}
+        teams={teams}
+        open={transferTarget !== null}
+        onOpenChange={(open) => { if (!open) setTransferTarget(null); }}
+        onTransfer={transferPlayer}
+      />
     </div>
   );
 }

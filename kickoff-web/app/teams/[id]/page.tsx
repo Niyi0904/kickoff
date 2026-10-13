@@ -1,28 +1,41 @@
 'use client';
 
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Shield, Users, Trophy,
   Calendar, Target, Star, TrendingUp,
-  Crown
+  Crown, LayoutGrid, Pencil
 } from "lucide-react";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { FormationEditor } from "@/components/formation/FormationEditor";
+import { resolveFormation } from "@/lib/formation";
 import { format } from "date-fns";
+
+const Pitch3D = dynamic(() => import("@/components/formation/Pitch3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full aspect-[4/5] rounded-2xl border border-border/50 bg-[#07130f] animate-pulse sm:aspect-[3/4]" />
+  ),
+});
 
 export default function TeamProfile() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { teams, getTeamPlayers, getTeamManager, matches, goals, assists } = useAppContext();
+  const { teams, getTeamPlayers, getTeamManager, matches, goals, assists, isAdmin } = useAppContext();
+  const [editorOpen, setEditorOpen] = useState(false);
 
   const team = teams.find((t) => t.id === id);
   if (!team) return <div className="p-20 text-center">Team not found</div>;
 
   const teamPlayers = getTeamPlayers(team.id);
   const manager = getTeamManager(team.id);
+  const { formation, lineup } = resolveFormation(team, teamPlayers);
 
   // 1. Calculate Team Stats
   const teamMatches = matches.filter(m => (m.homeTeamId === id || m.awayTeamId === id) && m.status === "played");
@@ -94,6 +107,34 @@ export default function TeamProfile() {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Left Column: Squad & Staff */}
         <div className="space-y-6">
+          <Card className="border-none shadow-lg overflow-hidden">
+            <CardHeader>
+              <CardTitle className="text-sm font-bold uppercase flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <LayoutGrid className="w-4 h-4 text-primary" /> Formation
+                </span>
+                {isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1 text-xs"
+                    onClick={() => setEditorOpen(true)}
+                  >
+                    <Pencil className="w-3 h-3" /> Edit
+                  </Button>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Pitch3D
+                players={teamPlayers}
+                lineup={lineup}
+                formation={formation}
+                color={team.primaryColor || "#22c55e"}
+              />
+            </CardContent>
+          </Card>
+
           <Card className="glass-card border-none shadow-lg">
             <CardHeader>
               <CardTitle className="text-sm font-bold uppercase flex items-center gap-2">
@@ -224,6 +265,15 @@ export default function TeamProfile() {
           </Card>
         </div>
       </div>
+
+      {isAdmin && (
+        <FormationEditor
+          team={team}
+          players={teamPlayers}
+          open={editorOpen}
+          onOpenChange={setEditorOpen}
+        />
+      )}
     </div>
   );
 }
