@@ -78,6 +78,8 @@ export interface Match {
   minutesPlayed: number;
   league: string;
   leagueId?: string;
+  /** Manual position of this match within its match day (drag-to-reorder). */
+  order?: number;
   createdAt: any;
   time?: string;
   status: 'upcoming' | 'live' | 'played';
@@ -619,6 +621,35 @@ export function useAppData() {
     }
   };
 
+  // ── Reorder matches within a match day (drag-to-reorder) ───────────────
+  const reorderMatches = async (orderedIds: string[]) => {
+    const previous = queryClient.getQueryData<Match[]>(QUERY_KEYS.matches);
+
+    // Optimistically apply the new order so the UI doesn't flicker
+    if (previous) {
+      const orderMap = new Map(orderedIds.map((id, index) => [id, index]));
+      queryClient.setQueryData<Match[]>(
+        QUERY_KEYS.matches,
+        previous.map((m) => (orderMap.has(m.id) ? { ...m, order: orderMap.get(m.id) } : m))
+      );
+    }
+
+    try {
+      const batch = writeBatch(db);
+      orderedIds.forEach((id, index) => {
+        batch.update(doc(db, "matches", id), { order: index });
+      });
+      await batch.commit();
+      invalidate("matches");
+      return { error: null };
+    } catch (error) {
+      // Roll back the optimistic update on failure
+      if (previous) queryClient.setQueryData(QUERY_KEYS.matches, previous);
+      toast({ title: "Error", description: "Failed to reorder matches", variant: "destructive" });
+      return { error };
+    }
+  };
+
   // ── Record match stats ─────────────────────────────────────────────────
   const recordMatchStats = async (
     matchId: string,
@@ -914,6 +945,7 @@ export function useAppData() {
     addPlayer, updatePlayer, deletePlayer, setManager,
     // Match
     addMatch, addMatchesBatch, updateMatch, deleteMatch, deleteAllMatches,
+    reorderMatches,
     recordMatchStats, deleteMatchEvents,
     // Records (legacy)
     addRecord, updateRecord,

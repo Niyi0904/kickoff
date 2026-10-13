@@ -1,10 +1,13 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { Trophy } from "lucide-react";
+import { Download, Trophy } from "lucide-react";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Button } from "@/components/ui/button";
+import { useRef } from "react";
+import { domToPng } from 'modern-screenshot';
 
 export default function StandingsPage() {
   return (
@@ -20,15 +23,46 @@ function StandingsContent() {
 
   const { standings } = useAppContext();
 
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  const downloadStandings = async () => {
+    if (!exportRef.current) return;
+
+    const appBg = getComputedStyle(document.body).backgroundColor;
+
+    try {
+      const dataUrl = await domToPng(exportRef.current, {
+        scale: 2,
+        backgroundColor: appBg,
+      });
+
+      const link = document.createElement('a');
+      link.download = `Standings-Table.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Full export failed", err);
+    }
+  };
 
   return (
     <div className="space-y-8">
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl lg:text-4xl font-bold text-foreground">Standings</h1>
-        <p className="text-muted-foreground mt-1">Season ranking and performance</p>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-foreground">Standings</h1>
+          <p className="text-muted-foreground mt-1">Season ranking and performance</p>
+        </div>
+
+        <Button variant="outline" onClick={downloadStandings} className="gap-2">
+          <Download className="w-4 h-4" /> Download UI
+        </Button>
       </motion.div>
 
-      <div className="glass-card rounded-2xl overflow-hidden border border-border/50 shadow-xl min-w-0">
+      <div ref={exportRef} className="glass-card rounded-2xl overflow-hidden border border-border/50 shadow-xl min-w-0">
         {/* Mobile: Card List */}
         <div className="md:hidden space-y-2 p-4">
           {standings.map((team: any, index: number) => (

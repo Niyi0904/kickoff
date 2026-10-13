@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, AnimatePresence } from "framer-motion";
-import { ClipboardList, Clock, Calendar, Plus, Trophy, MoreVertical, Trash2, Edit2, Sparkles, AlertTriangle } from "lucide-react";
+import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion";
+import { ClipboardList, Clock, Calendar, Plus, Trophy, MoreVertical, Trash2, Edit2, Sparkles, AlertTriangle, GripVertical } from "lucide-react";
 import { useAppContext } from "@/app/context/AppDataContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +47,7 @@ export default function MatchRecordsPage() {
 
 
 function MatchRecordsContent() {
-  const { matches, teams, isAdmin, deleteMatch, addMatchesBatch, deleteAllMatches } = useAppContext();
+  const { matches, teams, isAdmin, deleteMatch, addMatchesBatch, deleteAllMatches, reorderMatches } = useAppContext();
   const { matchDay, defaultTime, seasonName } = useLeagueSettings();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [matchToEdit, setMatchToEdit] = useState<any>(null);
@@ -188,7 +188,20 @@ function MatchRecordsContent() {
     return acc;
   }, {});
 
+  // Apply the manual drag-to-reorder order within each match day.
+  // Matches without an explicit order keep their original position at the end.
+  Object.values(groupedMatches as Record<string, Match[]>).forEach((dayMatches: Match[]) => {
+    dayMatches.sort(
+      (a: Match, b: Match) =>
+        (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
+    );
+  });
+
   const matchDays = Object.keys(groupedMatches).sort((a, b) => Number(b) - Number(a));
+
+  const handleReorderDay = (newOrder: Match[]) => {
+    reorderMatches(newOrder.map((m) => m.id));
+  };
 
   return (
     <div className="space-y-10 pb-20 px-4 min-w-0">
@@ -370,22 +383,47 @@ function MatchRecordsContent() {
                     </div>
 
                     <AccordionContent className="pt-4 pb-2 px-1">
-                      <div className="grid gap-4">
-                        {groupedMatches[day].map((match: any) => (
-                          <MatchCard
-                            key={match.id}
-                            match={match}
-                            teams={teams}
-                            isAdmin={isAdmin}
-                            onEdit={(m: Match) => { setMatchToEdit(m); setIsEditDialogOpen(true); }}
-                            onDelete={deleteMatch}
-                            onViewDetails={(m: Match) => {
-                              setSelectedMatch(m);
-                              setIsDetailsOpen(true);
-                            }}
-                          />
-                        ))}
-                      </div>
+                      {isAdmin ? (
+                        <Reorder.Group
+                          as="div"
+                          axis="y"
+                          values={groupedMatches[day]}
+                          onReorder={handleReorderDay}
+                          className="grid gap-4"
+                        >
+                          {groupedMatches[day].map((match: Match) => (
+                            <DraggableMatchCard
+                              key={match.id}
+                              match={match}
+                              teams={teams}
+                              isAdmin={isAdmin}
+                              onEdit={(m: Match) => { setMatchToEdit(m); setIsEditDialogOpen(true); }}
+                              onDelete={deleteMatch}
+                              onViewDetails={(m: Match) => {
+                                setSelectedMatch(m);
+                                setIsDetailsOpen(true);
+                              }}
+                            />
+                          ))}
+                        </Reorder.Group>
+                      ) : (
+                        <div className="grid gap-4">
+                          {groupedMatches[day].map((match: Match) => (
+                            <MatchCard
+                              key={match.id}
+                              match={match}
+                              teams={teams}
+                              isAdmin={isAdmin}
+                              onEdit={(m: Match) => { setMatchToEdit(m); setIsEditDialogOpen(true); }}
+                              onDelete={deleteMatch}
+                              onViewDetails={(m: Match) => {
+                                setSelectedMatch(m);
+                                setIsDetailsOpen(true);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </AccordionContent>
                   </motion.div>
                 </AccordionItem>
@@ -456,6 +494,38 @@ function MatchRecordsContent() {
         loading={isDeleting}
       />
     </div>
+  );
+}
+
+function DraggableMatchCard({ match, teams, isAdmin, onEdit, onDelete, onViewDetails }: any) {
+  const dragControls = useDragControls();
+
+  return (
+    <Reorder.Item
+      as="div"
+      value={match}
+      dragListener={false}
+      dragControls={dragControls}
+      className="relative list-none"
+    >
+      <button
+        type="button"
+        onPointerDown={(e) => dragControls.start(e)}
+        className="absolute left-1.5 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-lg text-muted-foreground/40 hover:text-foreground hover:bg-secondary/60 cursor-grab active:cursor-grabbing touch-none transition-colors"
+        aria-label="Drag to reorder match"
+        title="Drag to reorder"
+      >
+        <GripVertical className="w-4 h-4" />
+      </button>
+      <MatchCard
+        match={match}
+        teams={teams}
+        isAdmin={isAdmin}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onViewDetails={onViewDetails}
+      />
+    </Reorder.Item>
   );
 }
 
