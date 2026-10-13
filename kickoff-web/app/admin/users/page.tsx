@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users as UsersIcon, Link2, Unlink } from 'lucide-react';
 import { useAppContext } from '@/app/context/AppDataContext';
-import { getAllUsersWithRoles, setUserRole } from '@/lib/admin';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getAllUsersWithRoles } from '@/lib/admin';
 import { useToast } from '@/app/hooks/use-toast';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { LinkUserToPlayerDialog } from '@/components/LinkUserToPlayerDialog';
+import { RoleSelect } from '@/components/admin/RoleSelect';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { unlinkPlayer } from '@/lib/playerLinking';
@@ -26,7 +26,6 @@ function UsersContent() {
   const { toast } = useToast();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [changingRoleUserId, setChangingRoleUserId] = useState<string | null>(null);
   const [linkTarget, setLinkTarget] = useState<{ userId: string; userName: string } | null>(null);
   const [unlinkingPlayerId, setUnlinkingPlayerId] = useState<string | null>(null);
 
@@ -59,19 +58,6 @@ function UsersContent() {
       </div>
     );
   }
-
-  const handleChangeRole = async (userId: string, newRole: 'league_manager' | 'team_manager' | 'player') => {
-    setChangingRoleUserId(userId);
-    try {
-      await setUserRole(userId, newRole);
-      toast({ title: 'Success', description: `User role updated to ${newRole}` });
-      await fetchUsers();
-    } catch (err) {
-      toast({ title: 'Error', description: 'Failed to update role', variant: 'destructive' });
-    } finally {
-      setChangingRoleUserId(null);
-    }
-  };
 
   const handleUnlink = async (playerId: string, userName: string) => {
     setUnlinkingPlayerId(playerId);
@@ -144,20 +130,11 @@ function UsersContent() {
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="py-4">
-                      <Select
-                        value={user.role}
-                        onValueChange={(newRole) => handleChangeRole(user.userId, newRole as 'league_manager' | 'team_manager' | 'player')}
-                        disabled={changingRoleUserId === user.userId}
-                      >
-                        <SelectTrigger className="w-40 bg-secondary border-border text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="league_manager">League Manager</SelectItem>
-                          <SelectItem value="team_manager">Team Manager</SelectItem>
-                          <SelectItem value="player">Player</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <RoleSelect
+                        userId={user.userId}
+                        role={user.role}
+                        onDone={fetchUsers}
+                      />
                     </td>
                     <td className="py-4">
                       {user.linkedPlayerId ? (

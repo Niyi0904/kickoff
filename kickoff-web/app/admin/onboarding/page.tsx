@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Plus, Mail, Copy, Trash2, Check, X, Link2, UserPlus, ChevronsUpDown } from 'lucide-react';
 import { useAppContext } from '@/app/context/AppDataContext';
 import {
-  createUserInvite, getPendingInvites, setUserRole,
+  createUserInvite, getPendingInvites,
   getAllUsersWithRoles, deleteUserInvite, findPendingInviteByEmail,
   isUserRegistered, linkExistingUserToPlayer,
 } from '@/lib/admin';
@@ -23,6 +23,7 @@ import { DeadlineBanner } from '@/components/deadlineBanner';
 import { InvitePlayerMode, NewPlayerData } from '@/lib/admin';
 import { cn } from '@/lib/utils';
 import { LinkUserToPlayerDialog } from '@/components/LinkUserToPlayerDialog';
+import { RoleSelect } from '@/components/admin/RoleSelect';
 
 const POSITIONS = [
   'Goal Keeper (GK)', 'Defender (DF)', 'Midfielder (MF)', 'Forward (FW)',
@@ -76,7 +77,7 @@ function OnboardingContent() {
 
   // ── Existing invite state ──────────────────────────────────
   const [inviteEmail,       setInviteEmail]       = useState('');
-  const [inviteRole,        setInviteRole]         = useState<'league_manager' | 'team_manager' | 'player'>('player');
+  const [inviteRole,        setInviteRole]         = useState<'league_manager' | 'player'>('player');
   const [sendEmail,         setSendEmail]          = useState(true);
   const [isSubmitting,      setIsSubmitting]       = useState(false);
   const [openInviteDialog,  setOpenInviteDialog]   = useState(false);
@@ -85,7 +86,6 @@ function OnboardingContent() {
   const [emailStatus,       setEmailStatus]        = useState<{ pendingInvite?: any; registered?: boolean } | null>(null);
   const [emailChecking,     setEmailChecking]      = useState(false);
   const [copiedCode,        setCopiedCode]         = useState<string | null>(null);
-  const [changingRoleUserId, setChangingRoleUserId] = useState<string | null>(null);
 
   // ── NEW: player linking state ──────────────────────────────
   const [playerMode,        setPlayerMode]         = useState<InvitePlayerMode>('none');
@@ -243,17 +243,6 @@ function OnboardingContent() {
     } finally { setIsSubmitting(false); }
   };
 
-  const handleChangeRole = async (userId: string, newRole: 'league_manager' | 'team_manager' | 'player') => {
-    setChangingRoleUserId(userId);
-    try {
-      await setUserRole(userId, newRole);
-      toast({ title: 'Success', description: `User role updated to ${newRole}` });
-      await fetchUsers();
-    } catch {
-      toast({ title: 'Error', description: 'Failed to update role', variant: 'destructive' });
-    } finally { setChangingRoleUserId(null); }
-  };
-
   // ── Debounced email check — identical to your existing logic ─
   useEffect(() => {
     let t: ReturnType<typeof setTimeout> | null = null;
@@ -336,11 +325,10 @@ function OnboardingContent() {
               {/* ── Role — same as before ─────────────────────── */}
               <div>
                 <label className="text-sm text-muted-foreground block mb-2">Role</label>
-                <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as 'league_manager' | 'team_manager' | 'player')}>
+                <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as 'league_manager' | 'player')}>
                   <SelectTrigger className="bg-secondary border-border"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="league_manager">League Manager</SelectItem>
-                    <SelectItem value="team_manager">Team Manager</SelectItem>
                     <SelectItem value="player">Player</SelectItem>
                   </SelectContent>
                 </Select>
@@ -563,19 +551,12 @@ function OnboardingContent() {
                         Link Player
                       </Button>
                     )}
-                    {/* ── Role dropdown — same as before ─────────── */}
-                    <Select
-                      value={usr.role}
-                      onValueChange={(newRole) => handleChangeRole(usr.userId, newRole as 'league_manager' | 'team_manager' | 'player')}
-                      disabled={changingRoleUserId === usr.userId}
-                    >
-                      <SelectTrigger className="w-32 bg-secondary border-border text-xs"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="league_manager">League Manager</SelectItem>
-                        <SelectItem value="team_manager">Team Manager</SelectItem>
-                        <SelectItem value="player">Player</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    {/* ── Role dropdown — admin-only team manager assignment ─────── */}
+                    <RoleSelect
+                      userId={usr.userId}
+                      role={usr.role}
+                      onDone={fetchUsers}
+                    />
                   </div>
                 </div>
               );

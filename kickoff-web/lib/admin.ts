@@ -45,7 +45,7 @@ export interface NewPlayerData {
 
 export interface CreateInviteOptions {
   email: string;
-  role: 'league_manager' | 'team_manager' | 'player';
+  role: 'league_manager' | 'player';
   createdByAdminId: string;
   playerMode: InvitePlayerMode;
   playerId?: string;
@@ -215,6 +215,142 @@ export async function isUserRegistered(email: string): Promise<boolean> {
 
 export async function setUserRole(userId: string, role: 'league_manager' | 'team_manager' | 'player'): Promise<void> {
   await setDoc(doc(db, 'user_roles', userId), { role, updatedAt: serverTimestamp() }, { merge: true });
+}
+
+// ── Team manager assignment ────────────────────────────────────────────
+// A team's manager is represented by a player on that team with
+// `is_manager: true`, and the managing user's role doc carries the
+// matching `teamId` + `playerId`. These helpers keep the two in sync.
+
+export interface LinkedPlayerInfo {
+  id: string;
+  name: string;
+  teamId: string | null;
+}
+
+export interface TeamManagerInfo {
+  /** The user account currently managing the team, if the manager player is linked. */
+  userId: string | null;
+  playerId: string;
+  playerName: string;
+}
+
+export interface RoleError {
+  code: 'NO_LINKED_PLAYER' | 'PLAYER_NOT_ON_TEAM' | 'MANAGER_REQUIRED' | 'UNKNOWN';
+  message: string;
+  managerName?: string;
+}
+
+/** Resolve the player profile linked to a user account (via user_roles or players.linkedUserId). */
+export async function getLinkedPlayerForUser(userId: string): Promise<LinkedPlayerInfo | null> {
+  const roleSnap = await getDoc(doc(db, 'user_roles', userId));
+  const rolePlayerId = roleSnap.exists() ? (roleSnap.data()?.playerId ?? null) : null;
+
+  const toInfo = (id: string, data: { name?: string | null; team_id?: string | null; teamId?: string | null }): LinkedPlayerInfo => ({
+    id,
+    name: data.name ?? 'Unknown',
+    teamId: data.team_id ?? data.teamId ?? null,
+  });
+
+  if (rolePlayerId) {
+    const ps = await getDoc(doc(db, 'players', rolePlayerId));
+    if (ps.exists()) return toInfo(ps.id, ps.data());
+  }
+
+  const snap = await getDocs(query(collection(db, 'players'), where('linkedUserId', '==', userId)));
+  if (!snap.empty) {
+    const d = snap.docs[0];
+    return toInfo(d.id, d.data());
+  }
+  return null;
+}
+
+/** The current manager player of a team (if any). */
+export async function getTeamManagerInfo(teamId: string): Promise<TeamManagerInfo | null> {
+  const snap = await getDocs(
+    query(collection(db, 'players'), where('team_id', '==', teamId), where('is_manager', '==', true))
+  );
+  if (snap.empty) return null;
+  const d = snap.docs[0];
+  const data = d.data();
+  return { userId: data.linkedUserId ?? null, playerId: d.id, playerName: data.name ?? 'Unknown' };
+}
+
+/**
+ * Make a user the manager of a team. Requires the user to be linked to a
+ * player on that team; marks that player as the team's sole manager.
+ */
+export async function assignTeamManager(
+  userId: string,
+  teamId: string
+): Promise<{ error: null } | { error: RoleError }> {
+  try {
+    const linked = await getLinkedPlayerForUser(userId);
+    if (!linked) {
+      return {
+        error: { code: 'NO_LINKED_PLAYER', message: 'This user is not linked to a player profile. Link a player first.' },
+      };
+    }
+    if (linked.teamId !== teamId) {
+      return {
+        error: { code: 'PLAYER_NOT_ON_TEAM', message: `This user's linked player (${linked.name}) is not on the selected team.` },
+      };
+    }
+
+    const snap = await getDocs(query(collection(db, 'players'), where('team_id', '==', teamId)));
+    const batch = writeBatch(db);
+    snap.docs.forEach((d) => batch.update(d.ref, { is_manager: d.id === linked.id }));
+    if (!snap.docs.some((d) => d.id === linked.id)) {
+      batch.update(doc(db, 'players', linked.id), { is_manager: true });
+    }
+    batch.set(
+      doc(db, 'user_roles', userId),
+      { role: 'team_manager', teamId, playerId: linked.id, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    await batch.commit();
+    return { error: null };
+  } catch (error) {
+    return { error: { code: 'UNKNOWN', message: error instanceof Error ? error.message : 'Failed to assign team manager.' } };
+  }
+}
+
+/**
+ * Change a user's role. Demoting a team manager to anything else is blocked
+ * when it would leave their team without a manager.
+ */
+export async function changeUserRole(
+  userId: string,
+  newRole: 'league_manager' | 'team_manager' | 'player'
+): Promise<{ error: null } | { error: RoleError }> {
+  try {
+    const roleSnap = await getDoc(doc(db, 'user_roles', userId));
+    const current = roleSnap.exists() ? roleSnap.data() : null;
+
+    if (current?.role === 'team_manager' && newRole !== 'team_manager') {
+      const teamId: string | null = current.teamId ?? null;
+      if (teamId) {
+        const [manager, linked] = await Promise.all([
+          getTeamManagerInfo(teamId),
+          getLinkedPlayerForUser(userId),
+        ]);
+        if (manager && (!linked || manager.playerId === linked.id)) {
+          return {
+            error: {
+              code: 'MANAGER_REQUIRED',
+              message: 'This team still needs a manager. Assign a new manager before changing this user\u2019s role.',
+              managerName: manager.playerName,
+            },
+          };
+        }
+      }
+    }
+
+    await setDoc(doc(db, 'user_roles', userId), { role: newRole, updatedAt: serverTimestamp() }, { merge: true });
+    return { error: null };
+  } catch (error) {
+    return { error: { code: 'UNKNOWN', message: error instanceof Error ? error.message : 'Failed to change role.' } };
+  }
 }
 
 export async function getAllUsersWithRoles(): Promise<any[]> {
